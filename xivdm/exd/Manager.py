@@ -1,0 +1,15 @@
+from xivdm.exd.exl import extract_categories
+from xivdm.exd.Category import Category
+
+class Manager:
+    def __init__(self, dat_manager):
+        self._categories = {
+            category_name: Category(dat_manager, category_name) 
+                for category_name in extract_categories(dat_manager.get_file('exd/root.exl'))
+        }
+
+    def get_categories(self):
+        return self._categories.keys()
+
+    def get_category(self, name):
+        return self._categories[name]
