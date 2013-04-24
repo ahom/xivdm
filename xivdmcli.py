@@ -5,11 +5,13 @@ import logging
 import sys
 from os import path, makedirs
 from configparser import SafeConfigParser
+import json
 
 from xivdm.logging_utils import set_logging
 from xivdm.dat.Manager import Manager as DatManager
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
+from xivdm.view.Manager import Manager as ViewManager
 
 def extract_file(args, conf):
     file_path = path.join(conf.get('output', 'path'), args.name)
@@ -39,6 +41,25 @@ def extract_exd(args, conf):
                     file_handle.write(line)
                     file_handle.write('\n')
 
+def extract_view(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    exd_manager = ExdManager(dat_manager)
+    view_manager = ViewManager(exd_manager)
+
+    for view_name in view_manager.get_mappings():
+        file_path = path.join(conf.get('output', 'path'), '%s.json' % (view_name))
+
+        if not path.exists(path.dirname(file_path)):
+            makedirs(path.dirname(file_path))
+
+        logging.info(view_manager.get_json(view_name))
+        open(file_path, 'w').write(
+            json.dumps(
+                view_manager.get_json(view_name), 
+                sort_keys=True, 
+                indent=4, 
+                separators=(',', ': ')))
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='xivdm command line interface')
     subparsers = parser.add_subparsers(title='sub modules')
@@ -55,8 +76,12 @@ if __name__ == '__main__':
     extract_file_parser.set_defaults(callback=extract_file)
 
     # Extract exd
-    extract_exd_parser = extract_subparsers.add_parser('exd', help='extract a exd files as csv')
+    extract_exd_parser = extract_subparsers.add_parser('exd', help='extract exd files as csv')
     extract_exd_parser.set_defaults(callback=extract_exd)
+
+    # Extract view
+    extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
+    extract_view_parser.set_defaults(callback=extract_view)
 
     args = parser.parse_args()
 

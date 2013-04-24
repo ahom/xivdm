@@ -3,6 +3,7 @@ from xivdm.exd.Category import Category
 
 class Manager:
     def __init__(self, dat_manager):
+        self._dat_manager = dat_manager
         self._categories = {
             category_name: Category(dat_manager, category_name) 
                 for category_name in extract_categories(dat_manager.get_file('exd/root.exl'))
