@@ -13,6 +13,23 @@ from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.view.Manager import Manager as ViewManager
 
+def extract_category(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+
+    category = dat_manager.get_category('exd')
+
+    for file_hash in category.get_dir_hash_table(0xE39B7999).keys():
+
+        file_path = path.join(conf.get('output', 'path'), '%0.8X' % 0xE39B7999, '%0.8X' % file_hash)
+
+        if not path.exists(path.dirname(file_path)):
+            makedirs(path.dirname(file_path))
+
+        file_data = category.get_file(0xE39B7999, file_hash)
+
+        with open(file_path, 'wb') as file_handle:
+            file_handle.write(file_data.getvalue())
+
 def extract_file(args, conf):
     file_path = path.join(conf.get('output', 'path'), args.name)
 
@@ -70,6 +87,11 @@ if __name__ == '__main__':
     ######################
     extract_parser = subparsers.add_parser('extract', help='extract files')
     extract_subparsers = extract_parser.add_subparsers(title='type')
+
+    # Extract category
+    extract_category_parser = extract_subparsers.add_parser('category', help='extract all files for category')
+    extract_category_parser.add_argument('-n', '--name', required=True)
+    extract_category_parser.set_defaults(callback=extract_category)
 
     # Extract file
     extract_file_parser = extract_subparsers.add_parser('file', help='extract a single file')
