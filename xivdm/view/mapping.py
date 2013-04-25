@@ -7,20 +7,9 @@ def simple_mapping(exd_name, mapping_function):
         }
     return generated_function
 
-LANGUAGE_NAME = [
-    '',
-    'ja',
-    'en',
-    'de',
-    'fr',
-    'chs'
-]
-
 def string(data, id, member_id):
-    for language in data.keys():
-        print(repr(data[language][id][member_id]))
     return {
-        LANGUAGE_NAME[language]: repr(data[language][id][member_id]) for language in data.keys()
+        language: data[language][id][member_id] for language in data.keys()
     }
 
 def ref(view_name, value):
@@ -49,7 +38,7 @@ def class_jobs(data, id, v):
         'acronym':          string(data, id, 1),
 
         'base_class':       ref('class_jobs', v[19]),
-        'is_job':           string(data, id, 20),
+        'is_job':           v[20],
         'caps_name':        string(data, id, 21),
 
         'caps_full_name':   string(data, id, 25),
