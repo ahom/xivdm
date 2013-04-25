@@ -31,7 +31,9 @@ def extract_exd(args, conf):
     for category_name in exd_manager.get_categories():
         data = exd_manager.get_category(category_name).get_csv()
         for language, csv in data.items():
-            file_path = path.join(conf.get('output', 'path'), 'exd/%s%s.exd' % (category_name, ExdCategory.LANGUAGE_SUFFIX[language]))
+            file_path = path.join(
+                conf.get('output', 'path'), 
+                'exd/%s%s.exd' % (category_name, ExdCategory.LANGUAGE_SUFFIX[language]))
 
             if not path.exists(path.dirname(file_path)):
                 makedirs(path.dirname(file_path))
@@ -52,7 +54,6 @@ def extract_view(args, conf):
         if not path.exists(path.dirname(file_path)):
             makedirs(path.dirname(file_path))
 
-        logging.info(view_manager.get_json(view_name))
         open(file_path, 'w').write(
             json.dumps(
                 view_manager.get_json(view_name), 

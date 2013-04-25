@@ -5,11 +5,39 @@ class Manager:
     def __init__(self, exd_manager):
         self._exd_manager = exd_manager
         self._mappings = {
-            'actions': simple_mapping('Action', actions),
             'action_categories': simple_mapping('ActionCategory', action_categories),
+            'actions': simple_mapping('Action', actions),
+            'addons': simple_mapping('Addon', addons),
             'attack_types': simple_mapping('AttackType', attack_types),
+            'bnpc_names': simple_mapping('BNpcName', bnpc_names),
             'class_jobs': simple_mapping('ClassJob', class_jobs),
-            'class_job_categories': simple_mapping('ClassJobCategory', class_job_categories)            
+            'class_job_categories': simple_mapping('ClassJobCategory', class_job_categories),
+            'companions': simple_mapping('Companion', companions),
+            'completions': simple_mapping('Completion', completions),
+            'emotes': simple_mapping('Emote', emotes),
+            'enpc_bases': simple_mapping('ENpcBase', enpc_bases),
+            'eobjs': simple_mapping('EObj', eobjs),
+            'fates': simple_mapping('Fate', fates),
+            # 'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank_gridania_female_texts), 
+            # 'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank_gridania_male_texts), 
+            # 'gcrank_limsa_female_texts': simple_mapping('GCRankLimsaFemaleText', gcrank_limsa_female_texts), 
+            # 'gcrank_limsa_male_texts': simple_mapping('GCRankLimsaMaleText', gcrank_limsa_male_texts), 
+            # 'gcrank_uldah_female_texts': simple_mapping('GCRankUldahFemaleText', gcrank_uldah_female_texts), 
+            # 'gcrank_uldah_male_texts': simple_mapping('GCRankUldahMaleText', gcrank_uldah_male_texts), 
+            'general_actions': simple_mapping('GeneralAction', general_actions), 
+            'grand_companies': simple_mapping('GrandCompany', grand_companies), 
+            'guardian_deities': simple_mapping('GuardianDeity', guardian_deities), 
+            'item_categories': simple_mapping('ItemCategory', item_categories), 
+            'item_foods': simple_mapping('ItemFood', item_foods), 
+            'item_search_categories': simple_mapping('ItemSearchCategory', item_search_categories), 
+            'item_search_class_filters': simple_mapping('ItemSearchClassFilter', item_search_class_filters), 
+            'item_ui_categories': simple_mapping('ItemUICategory', item_ui_categories), 
+            'items': simple_mapping('Item', items), 
+            'maps': simple_mapping('Map', maps), 
+            'parameters': simple_mapping('Parameter', parameters), 
+            'place_names': simple_mapping('PlaceName', place_names), 
+            'statuses': simple_mapping('Status', statuses), 
+            'traits': simple_mapping('Trait', traits),           
         }
         self._jsons = {}
 
