@@ -40,7 +40,8 @@ def extract_file(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     file_data = dat_manager.get_file(args.name)
 
-    open(file_path, 'wb').write(file_data.getvalue())
+    with open(file_path, 'wb') as file_handle:
+        file_handle.write(file_data.getvalue())
 
 def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -72,12 +73,33 @@ def extract_view(args, conf):
         if not path.exists(path.dirname(file_path)):
             makedirs(path.dirname(file_path))
 
-        open(file_path, 'w').write(
-            json.dumps(
-                view_manager.get_json(view_name), 
-                sort_keys=True, 
-                indent=4, 
-                separators=(',', ': ')))
+        with open(file_path, 'w') as file_handle:
+            file_handle.write(
+                json.dumps(
+                    view_manager.get_json(view_name), 
+                    sort_keys=True, 
+                    indent=4, 
+                    separators=(',', ': ')))
+
+def extract_icon(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    
+    for i in range(1000):
+        folder = i * 1000
+        folder_path = 'ui/icon/%0.6d/' % folder
+        if dat_manager.check_dir_existence(folder_path):
+            for j in range(1000):
+                icon = folder + j
+                icon_path = '%s%0.6d.dds' % (folder_path, icon)
+                if dat_manager.check_file_existence(icon_path):
+                    output_path = path.join(conf.get('output', 'path'), icon_path)
+
+                    if not path.exists(path.dirname(output_path)):
+                        makedirs(path.dirname(output_path))
+
+                    with open(output_path, 'wb') as file_handle:
+                        file_handle.write(dat_manager.get_file(icon_path).getvalue())
+
 
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
@@ -121,6 +143,10 @@ if __name__ == '__main__':
     # Extract view
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
     extract_view_parser.set_defaults(callback=extract_view)
+
+    # Extract icon
+    extract_icon_parser = extract_subparsers.add_parser('icon', help='extract icon files')
+    extract_icon_parser.set_defaults(callback=extract_icon)
 
     ######################
     # Patch sub module   #

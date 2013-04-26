@@ -46,8 +46,8 @@ class Manager:
         return self._get_category_from_filename(name).check_dir_existence(dir_hash)
 
     def check_file_existence(self, name):
-        (_, file_hash) = self._get_hashes(name)
-        return self._get_category_from_filename(name).check_file_existence(file_hash)
+        (dir_hash, file_hash) = self._get_hashes(name)
+        return self._get_category_from_filename(name).check_file_existence(dir_hash, file_hash)
 
 
     def _get_category_from_filename(self, name):
