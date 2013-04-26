@@ -18,12 +18,12 @@ class Manager:
             'enpc_bases': simple_mapping('ENpcBase', enpc_bases),
             'eobjs': simple_mapping('EObj', eobjs),
             'fates': simple_mapping('Fate', fates),
-            # 'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank_gridania_female_texts), 
-            # 'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank_gridania_male_texts), 
-            # 'gcrank_limsa_female_texts': simple_mapping('GCRankLimsaFemaleText', gcrank_limsa_female_texts), 
-            # 'gcrank_limsa_male_texts': simple_mapping('GCRankLimsaMaleText', gcrank_limsa_male_texts), 
-            # 'gcrank_uldah_female_texts': simple_mapping('GCRankUldahFemaleText', gcrank_uldah_female_texts), 
-            # 'gcrank_uldah_male_texts': simple_mapping('GCRankUldahMaleText', gcrank_uldah_male_texts), 
+            'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank), 
+            'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank), 
+            'gcrank_limsa_female_texts': simple_mapping('GCRankLimsaFemaleText', gcrank), 
+            'gcrank_limsa_male_texts': simple_mapping('GCRankLimsaMaleText', gcrank), 
+            'gcrank_uldah_female_texts': simple_mapping('GCRankUldahFemaleText', gcrank), 
+            'gcrank_uldah_male_texts': simple_mapping('GCRankUldahMaleText', gcrank), 
             'general_actions': simple_mapping('GeneralAction', general_actions), 
             'grand_companies': simple_mapping('GrandCompany', grand_companies), 
             'guardian_deities': simple_mapping('GuardianDeity', guardian_deities), 
@@ -37,7 +37,7 @@ class Manager:
             'parameters': simple_mapping('Parameter', parameters), 
             'place_names': simple_mapping('PlaceName', place_names), 
             'statuses': simple_mapping('Status', statuses), 
-            'traits': simple_mapping('Trait', traits),           
+            'traits': simple_mapping('Trait', traits)
         }
         self._jsons = {}
 

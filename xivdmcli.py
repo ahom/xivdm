@@ -12,6 +12,7 @@ from xivdm.dat.Manager import Manager as DatManager
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.view.Manager import Manager as ViewManager
+from xivdm.patch.Manager import Manager as PatchManager
 
 def extract_category(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -78,6 +79,21 @@ def extract_view(args, conf):
                 indent=4, 
                 separators=(',', ': ')))
 
+def patch_version(args, conf):
+    patch_manager = PatchManager(conf.get('game', 'path'))
+
+    for patchable_name in patch_manager.get_patchables():
+        print('%s: %s' % (patchable_name, patch_manager.get_patchable(patchable_name).get_version()))
+
+def patch_check(args, conf):
+    patch_manager = PatchManager(path.join(conf.get('game', 'path'), '../ffxiv_data_test'))
+    print('%s: %s' % ('boot', patch_manager.get_patchable('boot').check()))
+
+def patch_update(args, conf):
+    patch_manager = PatchManager(path.join(conf.get('game', 'path'), '../ffxiv_data_test'))
+    patch_manager.get_patchable('boot').update()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='xivdm command line interface')
     subparsers = parser.add_subparsers(title='sub modules')
@@ -105,6 +121,24 @@ if __name__ == '__main__':
     # Extract view
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
     extract_view_parser.set_defaults(callback=extract_view)
+
+    ######################
+    # Patch sub module   #
+    ######################
+    patch_parser = subparsers.add_parser('patch', help='handle patch')
+    patch_subparsers = patch_parser.add_subparsers(title='type')
+
+    # Patch version
+    patch_version_parser = patch_subparsers.add_parser('version', help='displays versions of patchables')
+    patch_version_parser.set_defaults(callback=patch_version)
+
+    # Patch check
+    patch_check_parser = patch_subparsers.add_parser('check', help='displays checks of patchables')
+    patch_check_parser.set_defaults(callback=patch_check)
+
+    # Patch check
+    patch_update_parser = patch_subparsers.add_parser('update', help='updates of patchables')
+    patch_update_parser.set_defaults(callback=patch_update)
 
     args = parser.parse_args()
 

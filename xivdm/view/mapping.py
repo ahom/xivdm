@@ -199,62 +199,7 @@ def fates(data, id, v):
             + list(range(15, 19)), v)
     }
 
-def gcrank_gridania_female_texts(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
-
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
-    }
-
-def gcrank_gridania_male_texts(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
-
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
-    }
-
-def gcrank_limsa_female_texts(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
-
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
-    }
-
-def gcrank_limsa_male_texts(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
-
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
-    }
-
-def gcrank_uldah_female_texts(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
-
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
-    }
-
-def gcrank_uldah_male_texts(data, id, v):
+def gcrank(data, id, v):
     return {
         'name':                 string(data, id, 0),
 
