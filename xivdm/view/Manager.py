@@ -1,3 +1,4 @@
+from xivdm.language import get_language_id
 from xivdm.view.mapping import *
 from xivdm.view.strings import StringConverter
 
@@ -56,18 +57,26 @@ class Manager:
 
     def _parse_string(self, key, value):
         if type(value) == bytes:
-            return StringConverter(self._exd_manager, key).convert(memoryview(value))
+            return StringConverter(self._exd_manager, get_language_id(key)).convert(memoryview(value))
         return None
 
     def _parse_view_refs(self, key, value):
-        if type(value) == dict and value.get('type') == 'view_ref':
-            view_ref = value.get('view')
-            id = value.get('value')
-            if view_ref and id is not None and id != -1:
-                id_json = self.get_json(view_ref)[id]
-                if 'name' in id_json:
-                    value['name'] = id_json['name'][2] # english == 2
-                    return value
+        if type(value) == dict:
+            if 'type' in value:
+                dict_type = value['type']
+                if dict_type in ['view_ref', 'full_view_ref']:
+                    is_full = dict_type == 'full_view_ref'
+                    view_ref = value.get('view')
+                    id = value.get('id')
+                    if view_ref and id is not None and id != -1:
+                        id_json = self.get_json(view_ref)[id]
+                        if not is_full:
+                            if 'name' in id_json:
+                                value['value'] = id_json['name']['en']
+                                return value
+                        else:
+                            value['value'] = id_json
+                            return value
         return None
 
     def _walk_json(self, node, process_function):

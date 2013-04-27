@@ -8,6 +8,7 @@ from configparser import SafeConfigParser
 import json
 
 from xivdm.logging_utils import set_logging
+from xivdm.language import get_language_name
 from xivdm.dat.Manager import Manager as DatManager
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
@@ -52,7 +53,7 @@ def extract_exd(args, conf):
         for language, csv in data.items():
             file_path = path.join(
                 conf.get('output', 'path'), 
-                'exd/%s%s.exd' % (category_name, ExdCategory.LANGUAGE_SUFFIX[language]))
+                'exd/%s%s.exd' % (category_name, get_language_name(language)))
 
             if not path.exists(path.dirname(file_path)):
                 makedirs(path.dirname(file_path))

@@ -1,17 +1,10 @@
+from xivdm.language import get_language_name, is_language_valid
 from xivdm.exd.exh import extract_header
 from xivdm.exd.exd import extract_data
 
 class Category:
     EXH_NAME = 'exd/%s.exh'
     EXD_NAME = 'exd/%s_%d%s.exd'
-    LANGUAGE_SUFFIX = [
-        '',
-        '_ja',
-        '_en',
-        '_de',
-        '_fr',
-        '_chs'
-    ]
 
     def __init__(self, dat_manager, category_name):
         self._dat_manager = dat_manager
@@ -46,7 +39,7 @@ class Category:
         data = self.get_data()
         return_dict = dict()
         for language in header.languages:
-            if language != 0x05: # chs not implemented yet
+            if is_language_valid(language):
                 return_dict[language] = [
                     '%d, %s' % (id, ', '.join([repr(value) for value in values])) for id, values in data[language].items()
                 ]
@@ -59,7 +52,10 @@ class Category:
         header = self.get_header()
         self._data = {}
         for language in header.languages:
-            if language != 0x05: # chs not implemented yet
+            if is_language_valid(language):
+                language_name = get_language_name(language)
+                if language_name != '':
+                    language_name = '_%s' % language_name
                 self._data[language] = extract_data(
-                        self._dat_manager.get_file(Category.EXD_NAME % (self._name, header.start_id, Category.LANGUAGE_SUFFIX[language])),
+                        self._dat_manager.get_file(Category.EXD_NAME % (self._name, header.start_id, language_name)),
                         header)

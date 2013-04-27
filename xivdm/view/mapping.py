@@ -1,3 +1,5 @@
+from xivdm.language import get_language_name
+
 def simple_mapping(exd_name, mapping_function):
     def generated_function(exd_manager):
         data = exd_manager.get_category(exd_name).get_data()
@@ -9,20 +11,21 @@ def simple_mapping(exd_name, mapping_function):
 
 def string(data, id, member_id):
     return {
-        language: data[language][id][member_id] for language in data.keys()
+        get_language_name(language): data[language][id][member_id] for language in data.keys()
     }
 
 def ref(view_name, value):
     return {
         'type': 'view_ref',
         'view': view_name,
-        'value': value
+        'id': value
     }
 
-def icon(value):
+def full_ref(view_name, value):
     return {
-        'type': 'icon',
-        'value': value
+        'type': 'full_view_ref',
+        'view': view_name,
+        'id': value
     }
 
 def unmapped(index_list, v):
@@ -53,7 +56,7 @@ def actions(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
-        'icon':                 icon(v[2]),
+        'icon':                 v[2],
         'category':             ref('action_categories', v[3]),
 
         'class_job':            ref('class_jobs', v[9]),
@@ -151,7 +154,7 @@ def completions(data, id, v):
 def emotes(data, id, v):
     return {
         'name':                 string(data, id, 13),
-        'icon':                 icon(14),
+        'icon':                 v[14],
 
         'unmapped_values':      unmapped(
             list(range(0, 13))
@@ -231,7 +234,7 @@ def guardian_deities(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
-        'icon':                 string(data, id, 2),
+        'icon':                 v[2],
     }
 
 def item_categories(data, id, v):
@@ -256,7 +259,7 @@ def item_foods(data, id, v):
 def item_search_categories(data, id, v):
     return {
         'name': string(data, id, 0),
-        'icon': icon(1),
+        'icon': v[1],
 
         'unmapped_values':  unmapped(
             list(range(2, 5)), v)
@@ -273,7 +276,7 @@ def item_search_class_filters(data, id, v):
 def item_ui_categories(data, id, v):
     return {
         'name': string(data, id, 0),
-        'icon': icon(1)
+        'icon': v[1]
     }
 
 def items(data, id, v):
@@ -284,7 +287,7 @@ def items(data, id, v):
 
         'description':              string(data, id, 8),
         'name':                     string(data, id, 9),
-        'icon':                     icon(10),
+        'icon':                     v[10],
         'item_level':               v[11],
         'class_job_level':          v[12],
 
@@ -314,7 +317,7 @@ def items(data, id, v):
                                     stat(21, v[66]),  # defense
                                     stat(24, v[67])], # magic_defense
 
-        'item_food':                ref('item_foods',                   v[71]),
+        'item_food':                full_ref('item_foods',                   v[71]),
         'effet_duration':           v[72],
 
         'is_unique':                v[74],
@@ -379,7 +382,7 @@ def statuses(data, id, v):
     return {
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
-        'icon':         icon(2),
+        'icon':         v[2],
 
         'unmapped_values':      unmapped(
             list(range(3, 15)), v)
@@ -389,7 +392,7 @@ def traits(data, id, v):
     return {
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
-        'icon':         icon(2),
+        'icon':         v[2],
         'class_job':    ref('class_jobs', v[3]),
         'level':        v[4],
 
