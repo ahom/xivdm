@@ -11,7 +11,6 @@ def do_http_request(host, method, uri, data=None, headers={}, is_https=False):
         conn = http.client.HTTPSConnection(host, 443)
     else:
         conn = http.client.HTTPConnection(host, 80)
-    conn.set_debuglevel(1)
     conn.request(method,
                  uri,
                  data,

@@ -100,6 +100,40 @@ def extract_icon(args, conf):
                     with open(output_path, 'wb') as file_handle:
                         file_handle.write(dat_manager.get_file(icon_path).getvalue())
 
+def extract_map(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    for a in map(chr, range(ord('a'), ord('z') + 1)):
+        for i in range(10):
+            for b in map(chr, range(ord('a'), ord('z') + 1)):
+                for j in range(10):
+                    for k in range(100):
+                        basename = '%s%d%s%d' % (a, i, b, j)
+                        num = '%0.2d' % k
+                        folder_path = 'ui/map/%s/%s/' % (basename, num)
+                        if dat_manager.check_dir_existence(folder_path):
+                            background_path = '%s%s%sm.dds' % (folder_path, basename, num)
+                            if dat_manager.check_file_existence(background_path):
+                                output_path = path.join(conf.get('output', 'path'), background_path)
+
+                                if not path.exists(path.dirname(output_path)):
+                                    makedirs(path.dirname(output_path))
+
+                                with open(output_path, 'wb') as file_handle:
+                                    file_handle.write(dat_manager.get_file(background_path).getvalue())
+
+                            for x in range(16):
+                                for y in range(16):
+                                    tile_path = '%s%s%s_%d_%d.dds' % (folder_path, basename, num, x, y)
+
+                                    if dat_manager.check_file_existence(tile_path):
+                                        output_path = path.join(conf.get('output', 'path'), tile_path)
+
+                                        if not path.exists(path.dirname(output_path)):
+                                            makedirs(path.dirname(output_path))
+
+                                        with open(output_path, 'wb') as file_handle:
+                                            file_handle.write(dat_manager.get_file(tile_path).getvalue())
+
 
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
@@ -147,6 +181,10 @@ if __name__ == '__main__':
     # Extract icon
     extract_icon_parser = extract_subparsers.add_parser('icon', help='extract icon files')
     extract_icon_parser.set_defaults(callback=extract_icon)
+
+    # Extract map
+    extract_map_parser = extract_subparsers.add_parser('map', help='extract map files')
+    extract_map_parser.set_defaults(callback=extract_map)
 
     ######################
     # Patch sub module   #
