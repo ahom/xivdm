@@ -441,6 +441,21 @@ def items(data, id, v):
             + list(range(92, 93)), v)
     }
 
+def leves(data, id, v):
+    return {
+        'name':                 string(data, id, 0),
+        'description':          string(data, id, 1),
+        'client':               ref('leve_clients', v[2]),
+
+        'unmapped_values':      unmapped(
+            list(range(3, 28)), v)
+    }
+
+def leve_clients(data, id, v):
+    return {
+        'name':                 string(data, id, 0)
+    }
+
 def maps(data, id, v):
     return {
         'name':                 string(data, id, 3),
@@ -452,6 +467,45 @@ def maps(data, id, v):
             list(range(0, 3))
             + list(range(4, 6))
             + list(range(8, 10)), v)
+    }
+
+def markers(data, id, v):
+    return {
+        'icon':                 v[0],
+        'name':                 string(data, id, 1)
+    }
+
+def monster_notes(data, id, v):
+    return {
+        'npcs':                 [ref('bnpc_names', v[i]) for i in range(0, 3)],
+
+        'npc_quantities':       [v[i] for i in range(4, 7)],
+
+        'exp':                  v[8],
+        'name':                 string(data, id, 9),
+
+        'icons':                [v[i] for i in range(14, 17)],
+        
+        'unmapped_values':      unmapped(
+            list(range(3, 4))
+            + list(range(7, 8))
+            + list(range(10, 14))
+            + list(range(17, 18)), v)
+    }
+
+def npc_yells(data, id, v):
+    return {
+        'name':                 string(data, id, 0),
+        
+        'unmapped_values':      unmapped(
+            list(range(1, 5)), v)
+    }
+
+
+def online_statuses(data, id, v):
+    return {
+        'name':                 string(data, id, 0),
+        'icon':                 v[1]
     }
 
 def parameters(data, id, v):
@@ -478,6 +532,31 @@ def quests(data, id , v):
             list(range(1, 778)), v)
     }
 
+def roles(data, id , v):
+    return {
+        'name':                 string(data, id, 0),
+        'abbr':                 string(data, id, 1),
+
+        'unmapped_values':      unmapped(
+            list(range(2, 3)), v)
+    }
+
+def shops(data, id , v):
+    return {
+        'icon':                 v[1],
+        'items':                [ref('shop_items', v[i]) for i in range(2, 42)],
+
+        'name':                 string(data, id, 42),
+        'unmapped_values':      unmapped(
+            list(range(0, 1)), v)
+    }
+
+def shop_items(data, id , v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 6)), v)
+    }
+
 def statuses(data, id, v):
     return {
         'name':         string(data, id, 0),
@@ -498,6 +577,34 @@ def recipes(data, id, v):
             list(range(20, 31)), v)
     }
 
+def text_commands(data, id , v):
+    return {
+        'name':                 string(data, id, 5),
+        'small_name':           string(data, id, 6),
+        'description':          string(data, id, 7),
+
+        'unmapped_values':      unmapped(
+            list(range(0, 5))
+            + list(range(8, 10)), v)
+    }
+
+def titles(data, id , v):
+    return {
+        'name':                 string(data, id, 0),
+        'plural_name':          string(data, id, 1),
+        'unmapped_values':      unmapped(
+            list(range(2, 3)), v)
+    }
+
+def towns(data, id , v):
+    return {
+        'name':            string(data, id, 0),
+        'screen':          v[1],
+
+        'unmapped_values':      unmapped(
+            list(range(2, 4)), v)
+    }
+
 def traits(data, id, v):
     return {
         'name':         string(data, id, 0),
@@ -508,5 +615,17 @@ def traits(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(5, 7)), v)
+    }
+
+def weathers(data, id , v):
+    return {
+        'icon':          v[0],
+        'name':          string(data, id, 1)
+    }
+
+def worlds(data, id , v):
+    return {
+        'name':            string(data, id, 0),
+        'message':         string(data, id, 1)
     }
 

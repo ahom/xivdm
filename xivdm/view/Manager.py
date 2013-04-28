@@ -46,13 +46,27 @@ class Manager:
             'item_search_class_filters': simple_mapping('ItemSearchClassFilter', item_search_class_filters), 
             'item_ui_categories': simple_mapping('ItemUICategory', item_ui_categories), 
             'items': simple_mapping('Item', items), 
+            'leves': simple_mapping('Leve', leves), 
+            'leve_clients': simple_mapping('LeveClient', leve_clients), 
             'maps': simple_mapping('Map', maps), 
+            'markers': simple_mapping('Marker', markers), 
+            'monster_notes': simple_mapping('MonsterNote', monster_notes), 
+            'npc_yells': simple_mapping('NpcYell', npc_yells), 
+            'online_statuses': simple_mapping('OnlineStatus', online_statuses), 
             'parameters': simple_mapping('Parameter', parameters), 
             'place_names': simple_mapping('PlaceName', place_names), 
             'quests': simple_mapping('Quest', quests),
             'recipes': simple_mapping('Recipe', recipes), 
+            'roles': simple_mapping('Role', roles), 
+            'shops': simple_mapping('Shop', shops),
+            'shop_items': simple_mapping('ShopItem', shop_items),
             'statuses': simple_mapping('Status', statuses), 
-            'traits': simple_mapping('Trait', traits)
+            'text_commands': simple_mapping('TextCommand', text_commands),
+            'titles': simple_mapping('Title', titles),
+            'towns': simple_mapping('Town', towns),
+            'traits': simple_mapping('Trait', traits),
+            'weathers': simple_mapping('Weather', weathers),
+            'worlds': simple_mapping('World', worlds)
         }
         self._jsons = {}
 
