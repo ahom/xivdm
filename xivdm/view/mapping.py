@@ -46,6 +46,12 @@ def stat(stat_type, stat_value):
         'value': stat_value
     }
 
+def mat(item_id, quantity):
+    return {
+        'item': ref('items', item_id),
+        'quantity': quantity
+    }
+
 #### MAPPINGS ####
 def action_categories(data, id, v):
     return {
@@ -96,6 +102,25 @@ def attack_types(data, id, v):
         'name': string(data, id, 0)
     }
 
+def balloons(data, id, v):
+    return {
+        'text': string(data, id, 1),
+
+        'unmapped_values':  unmapped(
+            [0], v)
+    }
+
+def behest_rewards(data, id, v):
+    return {
+        'items': [ref('items', v[i]) for i in range(1, 4)],
+
+        'level': v[6],
+
+        'unmapped_values':      unmapped(
+            list(range(0, 1))
+            + list(range(4, 6)), v) 
+    }
+
 def bnpc_names(data, id, v):
     return {
         'name':                 string(data, id, 0),
@@ -107,6 +132,11 @@ def bnpc_names(data, id, v):
             + list(range(3, 8)), v)
     }
 
+def chain_bonuses(data, id, v):
+    return {
+        'exp_percent':  v[0],
+        'timer':        v[1]
+    }
 
 def class_job_categories(data, id, v):
     return {
@@ -140,6 +170,17 @@ def companions(data, id, v):
         'unmapped_values':      unmapped(
             list(range(1, 2))
             + list(range(3, 13)), v)
+    }
+
+def complete_journals(data, id, v):
+    return {
+        'header_image':     v[3],
+
+        'name':             string(data, id, 5),
+
+        'unmapped_values':      unmapped(
+            list(range(0, 3))
+            + list(range(4, 5)), v)
     }
 
 def completions(data, id, v):
@@ -186,6 +227,29 @@ def eobjs(data, id, v):
             + list(range(3, 16)), v)
     }
 
+def errors(data, id, v):
+    return {
+        'name':                 string(data, id, 0)
+    }
+
+def event_items(data, id, v):
+    return {
+        'name':                 string(data, id, 0),
+
+        'name_plural':          string(data, id, 2),
+
+        'description':          string(data, id, 8),
+        'description_bis':      string(data, id, 9),
+
+        'quest':                ref('quests', v[13]),
+
+        'unmapped_values':          unmapped(
+            list(range(1, 2))
+            + list(range(3, 8))
+            + list(range(10, 13))
+            + list(range(14, 15)), v)
+    }
+
 def fates(data, id, v):
     return {
         'level':                v[0],
@@ -213,6 +277,11 @@ def gcrank(data, id, v):
             + list(range(3, 10)), v)
     }
 
+def gcshop_item_categories(data, id, v):
+    return {
+        'name':                 string(data, id, 0)
+    }
+
 def general_actions(data, id, v):
     return {
         'name':                 string(data, id, 0),
@@ -230,11 +299,41 @@ def grand_companies(data, id, v):
             list(range(1, 2)), v)
     }
 
+def grand_company_ranks(data, id, v):
+    return {
+        'rank':                 v[0],
+        'max_seals':            v[1],
+
+        'unmapped_values':      unmapped(
+            list(range(2, 6)), v)
+    }
+
+def grand_company_seal_shop_items(data, id, v):
+    return {
+        'item':                 ref('items', v[0]),
+        
+        'seal_cost':            v[3],
+        'category':             ref('gcshop_item_categories', v[4]),
+        'name':                 string(data, id, 5),
+
+        'unmapped_values':      unmapped(
+            list(range(1, 3)), v)
+    }
+
 def guardian_deities(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
         'icon':                 v[2],
+    }
+
+def instance_contents(data, id, v):
+    return {
+        'name':                 string(data, id, 1),  
+
+        'unmapped_values':          unmapped(
+            list(range(0, 1))
+            + list(range(2, 6)), v)
     }
 
 def item_categories(data, id, v):
@@ -297,12 +396,7 @@ def items(data, id, v):
         'item_search_category':     ref('item_search_categories',       v[17]),
         'rarity':                   v[18],
 
-        'stats': [                  stat(v[31], v[32]),
-                                    stat(v[33], v[34]),
-                                    stat(v[35], v[36]),
-                                    stat(v[37], v[38]),
-                                    stat(v[39], v[40]),
-                                    stat(v[41], v[42])],
+        'stats':                    [stat(v[i], v[i+1]) for i in range(31, 43, 2)],
 
         'repair_class_job':         ref('class_jobs',                   v[56]),
         'repair_material':          ref('items',                        v[57]),
@@ -323,13 +417,10 @@ def items(data, id, v):
         'is_unique':                v[74],
         'is_untradable':            v[75],
 
-        'race_restrictions': [      v[82],
-                                    v[83],
-                                    v[84],
-                                    v[85],
-                                    v[86]],
-        'gender_restrictions': [    v[87],
-                                    v[88]],
+        'buy_price':                v[78],
+
+        'race_restrictions':        [v[i] for i in range(82, 87)],
+        'gender_restrictions':      [v[i] for i in range(87, 89)],
         'class_job_category':       ref('class_job_categories',         v[89]),
 
         'grand_company':            ref('grand_companies',              v[91]),
@@ -344,7 +435,8 @@ def items(data, id, v):
             + list(range(63, 64))
             + list(range(68, 71))
             + list(range(73, 74))
-            + list(range(76, 82))
+            + list(range(76, 78))
+            + list(range(79, 82))
             + list(range(90, 91))
             + list(range(92, 93)), v)
     }
@@ -378,6 +470,14 @@ def place_names(data, id, v):
             list(range(1, 10)), v)
     }
 
+def quests(data, id , v):
+    return {
+        'name':                 string(data, id, 0),
+
+        'unmapped_values':      unmapped(
+            list(range(1, 778)), v)
+    }
+
 def statuses(data, id, v):
     return {
         'name':         string(data, id, 0),
@@ -386,6 +486,16 @@ def statuses(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(3, 15)), v)
+    }
+
+def recipes(data, id, v):
+    return {
+        'level':        v[1],
+        'result':       mat(v[2], v[3]),
+        'mats':         [mat(v[i], v[i+1]) for i in range(4, 20, 2)],
+
+        'unmapped_values':      unmapped(
+            list(range(20, 31)), v)
     }
 
 def traits(data, id, v):

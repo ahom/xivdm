@@ -1,3 +1,5 @@
+import logging
+
 from xivdm.language import get_language_id
 from xivdm.view.mapping import *
 from xivdm.view.strings import StringConverter
@@ -10,14 +12,20 @@ class Manager:
             'actions': simple_mapping('Action', actions),
             'addons': simple_mapping('Addon', addons),
             'attack_types': simple_mapping('AttackType', attack_types),
+            'balloons': simple_mapping('Balloon', balloons), 
+            'behest_rewards': simple_mapping('BehestReward', behest_rewards), 
             'bnpc_names': simple_mapping('BNpcName', bnpc_names),
+            'chain_bonuses': simple_mapping('ChainBonus', chain_bonuses),
             'class_jobs': simple_mapping('ClassJob', class_jobs),
             'class_job_categories': simple_mapping('ClassJobCategory', class_job_categories),
             'companions': simple_mapping('Companion', companions),
+            'complete_journals': simple_mapping('CompleteJournal', complete_journals),
             'completions': simple_mapping('Completion', completions),
             'emotes': simple_mapping('Emote', emotes),
             'enpc_bases': simple_mapping('ENpcBase', enpc_bases),
             'eobjs': simple_mapping('EObj', eobjs),
+            'errors': simple_mapping('Error', errors),
+            'event_items': simple_mapping('EventItem', event_items),
             'fates': simple_mapping('Fate', fates),
             'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank), 
             'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank), 
@@ -25,9 +33,13 @@ class Manager:
             'gcrank_limsa_male_texts': simple_mapping('GCRankLimsaMaleText', gcrank), 
             'gcrank_uldah_female_texts': simple_mapping('GCRankUldahFemaleText', gcrank), 
             'gcrank_uldah_male_texts': simple_mapping('GCRankUldahMaleText', gcrank), 
+            'gcshop_item_categories': simple_mapping('GCShopItemCategory', gcshop_item_categories),
             'general_actions': simple_mapping('GeneralAction', general_actions), 
             'grand_companies': simple_mapping('GrandCompany', grand_companies), 
+            'grand_company_ranks': simple_mapping('GrandCompanyRank', grand_company_ranks),
+            'grand_company_seal_shop_items': simple_mapping('GrandCompanySealShopItem', grand_company_seal_shop_items),
             'guardian_deities': simple_mapping('GuardianDeity', guardian_deities), 
+            'instance_contents': simple_mapping('InstanceContent', instance_contents), 
             'item_categories': simple_mapping('ItemCategory', item_categories), 
             'item_foods': simple_mapping('ItemFood', item_foods), 
             'item_search_categories': simple_mapping('ItemSearchCategory', item_search_categories), 
@@ -37,6 +49,8 @@ class Manager:
             'maps': simple_mapping('Map', maps), 
             'parameters': simple_mapping('Parameter', parameters), 
             'place_names': simple_mapping('PlaceName', place_names), 
+            'quests': simple_mapping('Quest', quests),
+            'recipes': simple_mapping('Recipe', recipes), 
             'statuses': simple_mapping('Status', statuses), 
             'traits': simple_mapping('Trait', traits)
         }
@@ -68,7 +82,8 @@ class Manager:
                     is_full = dict_type == 'full_view_ref'
                     view_ref = value.get('view')
                     id = value.get('id')
-                    if view_ref and id is not None and id != -1:
+                    if view_ref and id is not None and id not in [-1, 0]:
+                        logging.debug('view: %s - id: %d' % (view_ref, id))
                         id_json = self.get_json(view_ref)[id]
                         if not is_full:
                             if 'name' in id_json:
