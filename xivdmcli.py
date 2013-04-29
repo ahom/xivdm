@@ -13,6 +13,7 @@ from xivdm.dat.Manager import Manager as DatManager
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.view.Manager import Manager as ViewManager
+from xivdm.gen.Manager import Manager as GenManager
 from xivdm.patch.Manager import Manager as PatchManager
 
 def extract_category(args, conf):
@@ -82,59 +83,26 @@ def extract_view(args, conf):
                     indent=4, 
                     separators=(',', ': ')))
 
-def extract_icon(args, conf):
+def extract_from_generator(args, conf, name):
     dat_manager = DatManager(conf.get('game', 'path'))
-    
-    for i in range(1000):
-        folder = i * 1000
-        folder_path = 'ui/icon/%0.6d/' % folder
+
+    for folder_path, file_path_gen in GenManager().get_generator(name):
         if dat_manager.check_dir_existence(folder_path):
-            for j in range(1000):
-                icon = folder + j
-                icon_path = '%s%0.6d.dds' % (folder_path, icon)
-                if dat_manager.check_file_existence(icon_path):
-                    output_path = path.join(conf.get('output', 'path'), icon_path)
+            for file_path in file_path_gen():
+                if dat_manager.check_file_existence(file_path):
+                    output_path = path.join(conf.get('output', 'path'), file_path)
 
                     if not path.exists(path.dirname(output_path)):
                         makedirs(path.dirname(output_path))
 
                     with open(output_path, 'wb') as file_handle:
-                        file_handle.write(dat_manager.get_file(icon_path).getvalue())
+                        file_handle.write(dat_manager.get_file(file_path).getvalue())
+
+def extract_icon(args, conf):
+    extract_from_generator(args, conf, 'icons')
 
 def extract_map(args, conf):
-    dat_manager = DatManager(conf.get('game', 'path'))
-    for a in map(chr, range(ord('a'), ord('z') + 1)):
-        for i in range(10):
-            for b in map(chr, range(ord('a'), ord('z') + 1)):
-                for j in range(10):
-                    for k in range(100):
-                        basename = '%s%d%s%d' % (a, i, b, j)
-                        num = '%0.2d' % k
-                        folder_path = 'ui/map/%s/%s/' % (basename, num)
-                        if dat_manager.check_dir_existence(folder_path):
-                            background_path = '%s%s%sm.dds' % (folder_path, basename, num)
-                            if dat_manager.check_file_existence(background_path):
-                                output_path = path.join(conf.get('output', 'path'), background_path)
-
-                                if not path.exists(path.dirname(output_path)):
-                                    makedirs(path.dirname(output_path))
-
-                                with open(output_path, 'wb') as file_handle:
-                                    file_handle.write(dat_manager.get_file(background_path).getvalue())
-
-                            for x in range(16):
-                                for y in range(16):
-                                    tile_path = '%s%s%s_%d_%d.dds' % (folder_path, basename, num, x, y)
-
-                                    if dat_manager.check_file_existence(tile_path):
-                                        output_path = path.join(conf.get('output', 'path'), tile_path)
-
-                                        if not path.exists(path.dirname(output_path)):
-                                            makedirs(path.dirname(output_path))
-
-                                        with open(output_path, 'wb') as file_handle:
-                                            file_handle.write(dat_manager.get_file(tile_path).getvalue())
-
+    extract_from_generator(args, conf, 'maps')
 
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
