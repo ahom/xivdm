@@ -79,7 +79,7 @@ cookie_dict = {
 print('sid: ' + str(sid))
 print('https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2012.01.01.0000.0000/%s' % sid)
 
-request = Request(url='https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2012.01.01.0000.0000/%s' % sid,
+request = Request(url='https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2013.04.16.0000.0000/%s' % sid,
                   method='POST',
                   data=b'ffxivboot.exe/791360/0c6e4c8682a457826942c923008a3e9c3220cec9,ffxivlauncher.exe/3680064/1b5b736573f989638596b372cf0aecd770f9689e,ffxivupdater.exe/817472/09e77ca42db0db721d6c36514a6a1481c2800d60',
                   headers={
