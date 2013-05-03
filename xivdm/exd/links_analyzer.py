@@ -22,9 +22,11 @@ def analyze_links(exd_manager):
 
             for index, member in enumerate(data_ln_id):
                 if type(member) == int:
-                    result_set = set([data_ln[id][index] for id in data_ln.keys()]) - set([-1, 0])
-                    if result_set:
-                        ids_to_analyze.setdefault(category_name, {})[index] = result_set 
+                    result_set = set([data_ln[id][index] for id in data_ln.keys()]) - set([-2, -1])
+                    if len(result_set) > 9:
+                        if not category_name in ids_to_analyze:
+                            ids_to_analyze[category_name] = {}
+                        ids_to_analyze[category_name][index] = result_set 
 
     results = {}
     for category_name in ids_to_analyze.keys():
@@ -33,20 +35,23 @@ def analyze_links(exd_manager):
             values_set = category_data[index]
 
             limits_eligible_categories = []
-            for category_name, (min_value, max_value) in ids_limits.items():
+            for limits_category_name, (min_value, max_value) in ids_limits.items():
                 if min_value <= min(values_set) and max_value >= max(values_set):
-                    limits_eligible_categories.append(category_name)
+                    limits_eligible_categories.append(limits_category_name)
 
             strict_eligible_categories = []
-            for category_name in limits_eligible_categories:
-                if values_set.issubset(ids_sets[category_name]):
-                    strict_eligible_categories.append(category_name)
+            for limits_category_name in limits_eligible_categories:
+                if values_set.issubset(ids_sets[limits_category_name]):
+                    strict_eligible_categories.append(limits_category_name)
 
-            if strict_eligible_categories:
+            if len(strict_eligible_categories) > 0:
                 num_values = len(values_set)
 
-                results.setdefault(category_name, {})[index] = {
-                    eligible_category_name: num_values/ids_nums[eligible_category_name] * 100 for eligible_category_name in strict_eligible_categories
+                if not category_name in results:
+                    results[category_name] = {}
+
+                results[category_name][index] = {
+                    eligible_category_name: ((num_values/ids_nums[eligible_category_name]) * 100) for eligible_category_name in strict_eligible_categories
                 }
 
     return results

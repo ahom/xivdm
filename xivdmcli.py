@@ -56,7 +56,7 @@ def extract_exd(args, conf):
         for language, csv in data.items():
             file_path = path.join(
                 conf.get('output', 'path'), 
-                'exd/%s%s.exd' % (category_name, get_language_name(language)))
+                'exd/%s_%s.exd' % (category_name, get_language_name(language)))
 
             if not path.exists(path.dirname(file_path)):
                 makedirs(path.dirname(file_path))
@@ -111,6 +111,7 @@ def analyze_exd_links(args, conf):
     exd_manager = ExdManager(dat_manager)
 
     results = analyze_links(exd_manager)
+
     logging.info(pformat(results))
 
 def patch_version(args, conf):
