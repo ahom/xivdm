@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+from pprint import pformat
 import sys
 from os import path, makedirs
 from configparser import SafeConfigParser
@@ -12,6 +13,7 @@ from xivdm.language import get_language_name
 from xivdm.dat.Manager import Manager as DatManager
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
+from xivdm.exd.links_analyzer import analyze_links
 from xivdm.view.Manager import Manager as ViewManager
 from xivdm.gen.Manager import Manager as GenManager
 from xivdm.patch.Manager import Manager as PatchManager
@@ -54,7 +56,7 @@ def extract_exd(args, conf):
         for language, csv in data.items():
             file_path = path.join(
                 conf.get('output', 'path'), 
-                'exd/%s%s.exd' % (category_name, get_language_name(language)))
+                'exd/%s_%s.exd' % (category_name, get_language_name(language)))
 
             if not path.exists(path.dirname(file_path)):
                 makedirs(path.dirname(file_path))
@@ -103,6 +105,14 @@ def extract_icon(args, conf):
 
 def extract_map(args, conf):
     extract_from_generator(args, conf, 'maps')
+
+def analyze_exd_links(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    exd_manager = ExdManager(dat_manager)
+
+    results = analyze_links(exd_manager)
+
+    logging.info(pformat(results))
 
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
@@ -154,6 +164,16 @@ if __name__ == '__main__':
     # Extract map
     extract_map_parser = extract_subparsers.add_parser('map', help='extract map files')
     extract_map_parser.set_defaults(callback=extract_map)
+
+    ######################
+    # Analyze sub module #
+    ######################
+    analyze_parser = subparsers.add_parser('analyze', help='analyze stuff')
+    analyze_subparsers = analyze_parser.add_subparsers(title='type')
+
+    # Analyze exd_links category
+    analyze_exd_links_parser = analyze_subparsers.add_parser('exd_links', help='analyze exd_links')
+    analyze_exd_links_parser.set_defaults(callback=analyze_exd_links)
 
     ######################
     # Patch sub module   #
