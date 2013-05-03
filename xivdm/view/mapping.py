@@ -252,8 +252,9 @@ def event_items(data, id, v):
 
 def fates(data, id, v):
     return {
-        'level':                v[0],
-
+        'level':                v[7],
+		'icon':                	v[18],
+		
         'name':                 string(data, id, 8),
         'description':          string(data, id, 9),
         'special_text_1':       string(data, id, 10),
@@ -262,8 +263,8 @@ def fates(data, id, v):
         'special_text_4':       string(data, id, 13),
 
         'unmapped_values':          unmapped(
-            list(range(1, 8))
-            + list(range(15, 19)), v)
+            list(range(0, 7))
+            + list(range(15, 17)), v)
     }
 
 def gcrank(data, id, v):
