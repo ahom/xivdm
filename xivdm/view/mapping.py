@@ -192,6 +192,14 @@ def completions(data, id, v):
             + list(range(3, 4)), v)
     }
 
+def craft_types(data, id, v):
+    return {
+        'name':                 string(data, id, 2),
+
+        'unmapped_values':      unmapped(
+            list(range(0, 2)), v)
+    }
+
 def emotes(data, id, v):
     return {
         'name':                 string(data, id, 13),
@@ -570,6 +578,7 @@ def statuses(data, id, v):
 
 def recipes(data, id, v):
     return {
+        'craft_type':   ref('craft_types', v[0]),
         'level':        v[1],
         'result':       mat(v[2], v[3]),
         'mats':         [mat(v[i], v[i+1]) for i in range(4, 20, 2)],

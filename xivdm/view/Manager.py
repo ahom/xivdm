@@ -21,6 +21,7 @@ class Manager:
             'companions': simple_mapping('Companion', companions),
             'complete_journals': simple_mapping('CompleteJournal', complete_journals),
             'completions': simple_mapping('Completion', completions),
+            'craft_types': simple_mapping('CraftType', craft_types), 
             'emotes': simple_mapping('Emote', emotes),
             'enpc_bases': simple_mapping('ENpcBase', enpc_bases),
             'eobjs': simple_mapping('EObj', eobjs),
@@ -96,8 +97,14 @@ class Manager:
                     is_full = dict_type == 'full_view_ref'
                     view_ref = value.get('view')
                     id = value.get('id')
-                    if view_ref and id is not None and id not in [-1, 0]:
+                    if view_ref and id is not None: 
                         logging.debug('view: %s - id: %d' % (view_ref, id))
+                        raw_json = self.get_json(view_ref)
+                        if not id in raw_json:
+                            if id in [-1, 0]:
+                                return None
+                            else:
+                                raise Exception('Id not found for view: %s - id: %d' % (view_ref, id))
                         id_json = self.get_json(view_ref)[id]
                         if not is_full:
                             if 'name' in id_json:
