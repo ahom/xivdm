@@ -54,33 +54,36 @@ def mat(item_id, quantity):
         'quantity': quantity
     }
 
-def npc_stuff_range(value):
+def npc_stuff_range(return_dict, value):
+    view_name = None
     if value == 0:
-        return None
+        pass
     elif value < 65536:
         raise Exception('Unmapped id range: %d' % value)
     elif value < 262144:
-        return ref('quests', value)
+        view_name = 'quests'
     elif value < 393216:
-        return ref('shops', value)
+        view_name = 'shops'
     elif value < 458752:
-        return ref('guildleve_assignments', value)
+        view_name = 'guildleve_assignments'
     elif value < 589824:
-        return ref('guildleve_offers', value)
+        view_name = 'guildleve_offers'
     elif value < 720896:
-        return ref('default_talks', value)
+        view_name = 'default_talks'
     elif value < 786432:
-        return ref('custom_talks', value)
+        view_name = 'custom_talks'
     elif value == 786432:
         logging.warn('Unmapped value: %d', 786432)
     elif value < 1179648:
-        return ref('craft_leves', value)
+        view_name = 'craft_leves'
     elif value == 1245184:
         logging.warn('Unmapped value: %d', 1245184)
     elif value < 1441792:
-        return ref('chocobo_taxi_stands', value)
+        view_name = 'chocobo_taxi_stands'
     else:
-        return ref('gcshops', value)
+        view_name = 'gcshops'
+    if view_name:
+        return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
 #### MAPPINGS ####
 def action_categories(data, id, v):
@@ -268,14 +271,12 @@ def emotes(data, id, v):
     }
 
 def enpc_bases(data, id, v):
-    return {
+    return_dict = {
         'name':                 string(data, id, 0),
 
         'name_bis':             string(data, id, 2),
 
         'title':                string(data, id, 8),
-
-        'links':                [npc_stuff_range(v[i]) for i in range(12, 42)],
         
         'unmapped_values':          unmapped(
             list(range(1, 2))
@@ -283,6 +284,10 @@ def enpc_bases(data, id, v):
             + list(range(9, 12))
             + list(range(41, 102)), v)
     }
+
+    for i in range(12, 42):
+        npc_stuff_range(return_dict, v[i])
+    return return_dict
 
 def eobjs(data, id, v):
     return {
