@@ -553,7 +553,7 @@ def roles(data, id , v):
 def shops(data, id , v):
     return {
         'icon':                 v[1],
-        'items':                [ref('shop_items', v[i]) for i in range(2, 42)],
+        'items':                [full_ref('shop_items', v[i]) for i in range(2, 42)],
 
         'name':                 string(data, id, 42),
         'unmapped_values':      unmapped(
@@ -562,8 +562,10 @@ def shops(data, id , v):
 
 def shop_items(data, id , v):
     return {
+        'item':                 ref('items', v[0]),
+
         'unmapped_values':      unmapped(
-            list(range(0, 6)), v)
+            list(range(1, 6)), v)
     }
 
 def statuses(data, id, v):
