@@ -1,3 +1,5 @@
+import logging
+
 from xivdm.language import get_language_name
 
 def simple_mapping(exd_name, mapping_function):
@@ -51,6 +53,34 @@ def mat(item_id, quantity):
         'item': ref('items', item_id),
         'quantity': quantity
     }
+
+def npc_stuff_range(value):
+    if value == 0:
+        return None
+    elif value < 65536:
+        raise Exception('Unmapped id range: %d' % value)
+    elif value < 262144:
+        return ref('quests', value)
+    elif value < 393216:
+        return ref('shops', value)
+    elif value < 458752:
+        return ref('guildleve_assignments', value)
+    elif value < 589824:
+        return ref('guildleve_offers', value)
+    elif value < 720896:
+        return ref('default_talks', value)
+    elif value < 786432:
+        return ref('custom_talks', value)
+    elif value == 786432:
+        logging.warn('Unmapped value: %d', 786432)
+    elif value < 1179648:
+        return ref('craft_leves', value)
+    elif value == 1245184:
+        logging.warn('Unmapped value: %d', 1245184)
+    elif value < 1441792:
+        return ref('chocobo_taxi_stands', value)
+    else:
+        return ref('gcshops', value)
 
 #### MAPPINGS ####
 def action_categories(data, id, v):
@@ -138,6 +168,15 @@ def chain_bonuses(data, id, v):
         'timer':        v[1]
     }
 
+def chocobo_taxi_stands(data, id, v):
+    return {
+        'name':                 string(data, id, 8),
+
+        'unmapped_values':      unmapped(
+            list(range(0, 8))
+            + list(range(9, 10)), v)
+    }
+
 def class_job_categories(data, id, v):
     return {
         'name':                     string(data, id, 0),
@@ -192,12 +231,30 @@ def completions(data, id, v):
             + list(range(3, 4)), v)
     }
 
+def craft_leves(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 15)), v)
+    }
+
 def craft_types(data, id, v):
     return {
         'name':                 string(data, id, 2),
 
         'unmapped_values':      unmapped(
             list(range(0, 2)), v)
+    }
+
+def custom_talks(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 68)), v)
+    }
+
+def default_talks(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 21)), v)
     }
 
 def emotes(data, id, v):
@@ -217,11 +274,14 @@ def enpc_bases(data, id, v):
         'name_bis':             string(data, id, 2),
 
         'title':                string(data, id, 8),
+
+        'links':                [npc_stuff_range(v[i]) for i in range(12, 42)],
         
         'unmapped_values':          unmapped(
             list(range(1, 2))
             + list(range(3, 8))
-            + list(range(9, 102)), v)
+            + list(range(9, 12))
+            + list(range(41, 102)), v)
     }
 
 def eobjs(data, id, v):
@@ -286,6 +346,12 @@ def gcrank(data, id, v):
             + list(range(3, 10)), v)
     }
 
+def gcshops(data, id, v):
+    return {
+        'unmapped_values':          unmapped(
+            list(range(0, 2)), v)
+    }
+
 def gcshop_item_categories(data, id, v):
     return {
         'name':                 string(data, id, 0)
@@ -334,6 +400,18 @@ def guardian_deities(data, id, v):
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
         'icon':                 v[2],
+    }
+
+def guildleve_assignments(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 3)), v)
+    }
+
+def guildleve_offers(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 2)), v)
     }
 
 def instance_contents(data, id, v):
