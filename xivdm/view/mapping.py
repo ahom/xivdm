@@ -619,9 +619,26 @@ def place_names(data, id, v):
 def quests(data, id , v):
     return {
         'name':                 string(data, id, 0),
+        'exd':                  string(data, id, 1),
+
+        'level':                v[3],
+
+        'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
+
+        'start_npc':            ref('enpc_bases', v[17]),
+        'end_npc':              ref('enpc_bases', v[18]),
+
+        'main_reward':          mat(v[728], v[729]),
+        
+        'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
 
         'unmapped_values':      unmapped(
-            list(range(1, 778)), v)
+            list(range(2, 3))
+            + list(range(4, 8))
+            + list(range(11, 17))
+            + list(range(19, 728))
+            + list(range(729, 750))
+            + list(range(767, 778)), v)
     }
 
 def roles(data, id , v):
