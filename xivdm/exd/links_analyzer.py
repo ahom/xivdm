@@ -1,3 +1,6 @@
+import logging
+from pprint import pformat
+
 def analyze_links(exd_manager):
     # Construct ids maps
 
@@ -12,6 +15,8 @@ def analyze_links(exd_manager):
             ids_sets[category_name] = set(data_ln.keys())
             ids_limits[category_name] = (min(ids_sets[category_name]), max(ids_sets[category_name]))
             ids_nums[category_name] = len(ids_sets[category_name])
+
+    logging.info(pformat(ids_limits))
 
     ids_to_analyze = {}
     for category_name in exd_manager.get_categories():

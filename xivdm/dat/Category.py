@@ -29,8 +29,7 @@ class Category:
     def get_file(self, dir_hash, file_hash):
         file_infos = self.get_dir_hash_table(dir_hash)[file_hash]
         dat_file_handle = self._get_dat_file_handle(file_infos.dat_nb)
-        dat_file_handle.seek(file_infos.dat_offset)
-        return extract_file(dat_file_handle)
+        return extract_file(dat_file_handle, file_infos.dat_offset)
 
     def get_hash_table(self):
         return self._hash_table
