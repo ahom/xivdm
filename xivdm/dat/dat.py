@@ -65,6 +65,9 @@ def extract_file(file_handle, offset):
     else:
         raise Exception("Unknown entry type: %d" % entry_type)
 
+    output.flush()
+    output.seek(0)
+
     return output
 
 

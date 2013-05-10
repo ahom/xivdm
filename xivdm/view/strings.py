@@ -109,7 +109,7 @@ class StringConverter:
             result = 'level'
         else:
             result = 'not_implemented(0x%0.2X-0x%0.2X)' % (special_type, value)
-            logging.warn(result)
+            #logging.warn(result)
             
         return bytes_mem_view, ''
 
@@ -276,7 +276,7 @@ class StringConverter:
             else:
                 logging.debug('Unknown control types: 0x%0.2X - %s', ascii_control_type, repr(ascii_control_mem_view.tobytes()))
         except Exception as exc:
-            logging.warning('Exception caught: %s', exc)
+            logging.warning('Exception caught in string_parsing F***ing SE: %s', exc)
         
         return remainder, result
 
