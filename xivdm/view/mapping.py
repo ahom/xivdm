@@ -625,8 +625,8 @@ def quests(data, id , v):
 
         'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
-        'start_npc':            ref('enpc_bases', v[17]),
-        'end_npc':              ref('enpc_bases', v[18]),
+        'npcs':                 [ref('enpc_bases', v[17]),
+                                 ref('enpc_bases', v[18])],           
 
         'main_reward':          mat(v[728], v[729]),
         

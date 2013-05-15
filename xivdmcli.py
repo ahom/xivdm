@@ -21,20 +21,6 @@ from xivdm.patch.Manager import Manager as PatchManager
 def extract_category(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
 
-    category = dat_manager.get_category('exd')
-
-    for file_hash in category.get_dir_hash_table(0xE39B7999).keys():
-
-        file_path = path.join(conf.get('output', 'path'), '%0.8X' % 0xE39B7999, '%0.8X' % file_hash)
-
-        if not path.exists(path.dirname(file_path)):
-            makedirs(path.dirname(file_path))
-
-        file_data = category.get_file(0xE39B7999, file_hash)
-
-        with open(file_path, 'wb') as file_handle:
-            file_handle.write(file_data.getvalue())
-
 def extract_file(args, conf):
     file_path = path.join(conf.get('output', 'path'), args.name)
 
@@ -72,7 +58,7 @@ def extract_view(args, conf):
     view_manager = ViewManager(exd_manager)
 
     for view_name in view_manager.get_mappings():
-        file_path = path.join(conf.get('output', 'path'), '%s.json' % (view_name))
+        file_path = path.join(conf.get('output', 'path'), 'json', '%s.json' % (view_name))
 
         if not path.exists(path.dirname(file_path)):
             makedirs(path.dirname(file_path))

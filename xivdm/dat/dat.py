@@ -18,6 +18,8 @@ def extract_file(file_handle, offset):
     file_handle.seek(offset)
     (header_size, entry_type, total_uncompressed_size, _, _, block_count) = FILE_HEADER_STRUCT.unpack(file_handle.read(FILE_HEADER_STRUCT.size))
 
+    logging.debug('entry_type: %d - total_uncompressed_size: %d - file_handle: %s - offset: %d', 
+                    entry_type, total_uncompressed_size, file_handle, offset)
     if entry_type == 0x02:
         pos = file_handle.tell()
         blocks_infos = list()
@@ -33,22 +35,27 @@ def extract_file(file_handle, offset):
 
         block_infos = list()
         for block_index in range(block_count):
-            block_infos.append(BLOCK_INFOS_TYPE4.unpack(file_handle.read(BLOCK_INFOS_TYPE4.size)))
+            (_, _, _, from_part, num_part) = BLOCK_INFOS_TYPE4.unpack(file_handle.read(BLOCK_INFOS_TYPE4.size))
         
-        real_block_count = block_infos[-1][3] + block_infos[-1][4]
+        real_block_count = from_part + num_part
         
         blocks_effective_size = list()
         for block_effective_size_index in range(real_block_count):
             blocks_effective_size.append(BLOCK_EFFECTIVE_SIZE.unpack(file_handle.read(BLOCK_EFFECTIVE_SIZE.size))[0])
         
-        pos = offset + header_size + block_infos[0][0]
+        pos = offset + header_size
+        file_handle.seek(pos)
+        output.write(file_handle.read(0x50))
+        pos += 0x50
         for block_effective_size in blocks_effective_size:
             read_block(file_handle, pos, output)
             pos += block_effective_size
 
     elif entry_type == 0x03:
         # skipping bytes
-        file_handle.seek(134, 1)
+        file_handle.seek(64, 1)
+        output.write(file_handle.read(0x44))
+        file_handle.seek(2, 1)
         
         read_size = 134 + FILE_HEADER_STRUCT.size
         blocks_effective_size = list()
