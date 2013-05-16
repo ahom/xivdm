@@ -37,17 +37,17 @@ class Manager:
 
     def get_file(self, name):
         logging.info('%s', name)
-        dir_hash, file_hash = self._get_hashes(name)
+        dir_hash, file_hash = self.get_hashes(name)
         logging.debug('%0.8X:%0.8X', dir_hash, file_hash)
-        return self._get_category_from_filename(name).get_file(dir_hash, file_hash)
+        return self.get_category_from_filename(name).get_file(dir_hash, file_hash)
 
     def check_dir_existence(self, name):
-        (dir_hash, _) = self._get_hashes(name)
-        return self._get_category_from_filename(name).check_dir_existence(dir_hash)
+        (dir_hash, _) = self.get_hashes(name)
+        return self.get_category_from_filename(name).check_dir_existence(dir_hash)
 
     def check_file_existence(self, name):
-        (dir_hash, file_hash) = self._get_hashes(name)
-        return self._get_category_from_filename(name).check_file_existence(dir_hash, file_hash)
+        (dir_hash, file_hash) = self.get_hashes(name)
+        return self.get_category_from_filename(name).check_file_existence(dir_hash, file_hash)
 
 
     def get_category_from_filename(self, name):

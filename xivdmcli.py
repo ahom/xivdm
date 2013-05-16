@@ -167,6 +167,32 @@ def analyze_exd_links(args, conf):
 
     logging.info(pformat(results))
 
+def extract_music(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    exd_manager = ExdManager(dat_manager)
+
+    output_path = path.join(conf.get('output', 'path'), 'music')
+
+    for data in exd_manager.get_category('BGM').get_ln_data(0).values():
+        file_path = data[0].decode('utf-8')
+
+        if file_path == '':
+            continue
+
+        output_file_path = path.join(output_path, file_path)
+
+        if not path.exists(path.dirname(output_file_path)):
+            makedirs(path.dirname(output_file_path))
+
+        try:
+            file_data = dat_manager.get_file(file_path)
+        except:
+            continue
+
+        with open(output_file_path, 'wb') as file_handle:
+            file_handle.write(file_data.getvalue())
+
+
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
 
@@ -226,6 +252,10 @@ if __name__ == '__main__':
     # Extract map
     extract_map_parser = extract_subparsers.add_parser('map', help='extract map files')
     extract_map_parser.set_defaults(callback=extract_map)
+
+    # Extract music
+    extract_music_parser = extract_subparsers.add_parser('music', help='extract music files')
+    extract_music_parser.set_defaults(callback=extract_music)
 
     ######################
     # Analyze sub module #
