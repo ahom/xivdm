@@ -188,17 +188,20 @@ def class_job_categories(data, id, v):
 
 def class_jobs(data, id, v):
     return {
-        'name':             string(data, id, 0),
-        'acronym':          string(data, id, 1),
+        'name':                 string(data, id, 0),
+        'acronym':              string(data, id, 1),
 
-        'base_class':       ref('class_jobs', v[19]),
-        'is_job':           v[20],
-        'caps_name':        string(data, id, 21),
+        'class_job_category':   ref('class_job_categories', v[3]),
 
-        'caps_full_name':   string(data, id, 25),
+        'base_class':           ref('class_jobs', v[19]),
+        'is_job':               v[20],
+        'caps_name':            string(data, id, 21),
+
+        'caps_full_name':       string(data, id, 25),
 
         'unmapped_values':  unmapped(
-            list(range(2, 19))
+            list(range(2, 3))
+            + list(range(4, 19))
             + list(range(22, 25))
             + list(range(26, 28)), v)
     }

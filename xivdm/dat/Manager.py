@@ -50,12 +50,14 @@ class Manager:
         return self._get_category_from_filename(name).check_file_existence(dir_hash, file_hash)
 
 
-    def _get_category_from_filename(self, name):
+    def get_category_from_filename(self, name):
         return self.get_category(name.split('/', 1)[0].lower())
+
+    def get_hashes(self, name):
+        dir_part, file_part = name.lower().rsplit('/', 1)
+        return self._get_hash(dir_part), self._get_hash(file_part)
 
     def _get_hash(self, string):
         return zlib.crc32(bytes(string, 'ascii')) ^ 0xFFFFFFFF
 
-    def _get_hashes(self, name):
-        dir_part, file_part = name.lower().rsplit('/', 1)
-        return self._get_hash(dir_part), self._get_hash(file_part)
+    

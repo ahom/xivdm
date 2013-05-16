@@ -18,36 +18,100 @@ from xivdm.view.Manager import Manager as ViewManager
 from xivdm.gen.Manager import Manager as GenManager
 from xivdm.patch.Manager import Manager as PatchManager
 
+def extract_all(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+
+    output_path = path.join(conf.get('output', 'path'), 'all')
+
+    for category_name in dat_manager.get_categories():
+        category = dat_manager.get_category(category_name)
+
+        output_cat_path = path.join(output_path, category_name)
+
+        for dir_hash in category.get_hash_table().keys():
+            output_dir_path = path.join(output_cat_path, '%0.8X' % dir_hash)
+
+            if not path.exists(output_dir_path):
+                makedirs(output_dir_path)
+
+            for file_hash in category.get_dir_hash_table(dir_hash).keys():
+                output_file_path = path.join(output_dir_path, '%0.8X' % file_hash)
+
+                file_data = category.get_file(dir_hash, file_hash)
+
+                with open(output_file_path, 'wb') as file_handle:
+                    file_handle.write(file_data.getvalue())
+
 def extract_category(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
 
-def extract_file(args, conf):
-    file_path = path.join(conf.get('output', 'path'), args.name)
+    category = dat_manager.get_category(args.name)
+    output_path = path.join(conf.get('output', 'path'), 'cat', args.name)
 
-    if not path.exists(path.dirname(file_path)):
-        makedirs(path.dirname(file_path))
+    for dir_hash in category.get_hash_table().keys():
+        output_dir_path = path.join(output_path, '%0.8X' % dir_hash)
 
+        if not path.exists(output_dir_path):
+            makedirs(output_dir_path)
+
+        for file_hash in category.get_dir_hash_table(dir_hash).keys():
+            output_file_path = path.join(output_dir_path, '%0.8X' % file_hash)
+
+            file_data = category.get_file(dir_hash, file_hash)
+
+            with open(output_file_path, 'wb') as file_handle:
+                file_handle.write(file_data.getvalue())
+
+def extract_folder(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
+
+    output_path = path.join(conf.get('output', 'path'), 'folder', args.name)
+    category = dat_manager.get_category_from_filename(args.name)
+
+    (dir_hash, _) = dat_manager.get_hashes(args.name)
+
+    dir_hash_table = category.get_dir_hash_table(dir_hash)
+
+    if not path.exists(output_path):
+        makedirs(output_path)
+
+    for file_hash in dir_hash_table.keys():
+        output_file_path = path.join(output_path, '%0.8X' % file_hash)
+
+        file_data = category.get_file(dir_hash, file_hash)
+
+        with open(output_file_path, 'wb') as file_handle:
+            file_handle.write(file_data.getvalue())
+
+def extract_file(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+
+    output_file_path = path.join(conf.get('output', 'path'), 'file', args.name)
     file_data = dat_manager.get_file(args.name)
 
-    with open(file_path, 'wb') as file_handle:
+    if not path.exists(path.dirname(output_file_path)):
+        makedirs(path.dirname(output_file_path))
+
+    with open(output_file_path, 'wb') as file_handle:
         file_handle.write(file_data.getvalue())
 
 def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     exd_manager = ExdManager(dat_manager)
 
+    output_path = path.join(conf.get('output', 'path'), 'csv')
+
     for category_name in exd_manager.get_categories():
         data = exd_manager.get_category(category_name).get_csv()
         for language, csv in data.items():
-            file_path = path.join(
-                conf.get('output', 'path'), 
+            output_file_path = path.join(
+                output_path, 
                 'exd/%s_%s.exd' % (category_name, get_language_name(language)))
 
-            if not path.exists(path.dirname(file_path)):
-                makedirs(path.dirname(file_path))
+            if not path.exists(path.dirname(output_file_path)):
+                makedirs(path.dirname(output_file_path))
 
-            with open(file_path, 'w') as file_handle:
+            with open(output_file_path, 'w') as file_handle:
                 for line in csv:
                     file_handle.write(line)
                     file_handle.write('\n')
@@ -57,13 +121,15 @@ def extract_view(args, conf):
     exd_manager = ExdManager(dat_manager)
     view_manager = ViewManager(exd_manager)
 
+    output_path = path.join(conf.get('output', 'path'), 'json')
+
     for view_name in view_manager.get_mappings():
-        file_path = path.join(conf.get('output', 'path'), 'json', '%s.json' % (view_name))
+        output_file_path = path.join(output_path, '%s.json' % (view_name))
 
-        if not path.exists(path.dirname(file_path)):
-            makedirs(path.dirname(file_path))
+        if not path.exists(path.dirname(output_file_path)):
+            makedirs(path.dirname(output_file_path))
 
-        with open(file_path, 'w') as file_handle:
+        with open(output_file_path, 'w') as file_handle:
             file_handle.write(
                 json.dumps(
                     view_manager.get_json(view_name), 
@@ -73,17 +139,18 @@ def extract_view(args, conf):
 
 def extract_from_generator(args, conf, name):
     dat_manager = DatManager(conf.get('game', 'path'))
+    output_path = path.join(conf.get('output', 'path'), 'gen')
 
     for folder_path, file_path_gen in GenManager().get_generator(name):
         if dat_manager.check_dir_existence(folder_path):
             for file_path in file_path_gen():
                 if dat_manager.check_file_existence(file_path):
-                    output_path = path.join(conf.get('output', 'path'), file_path)
+                    output_file_path = path.join(output_path, file_path)
 
-                    if not path.exists(path.dirname(output_path)):
-                        makedirs(path.dirname(output_path))
+                    if not path.exists(path.dirname(output_file_path)):
+                        makedirs(path.dirname(output_file_path))
 
-                    with open(output_path, 'wb') as file_handle:
+                    with open(output_file_path, 'wb') as file_handle:
                         file_handle.write(dat_manager.get_file(file_path).getvalue())
 
 def extract_icon(args, conf):
@@ -125,10 +192,19 @@ if __name__ == '__main__':
     extract_parser = subparsers.add_parser('extract', help='extract files')
     extract_subparsers = extract_parser.add_subparsers(title='type')
 
+    # Extract all
+    extract_all_parser = extract_subparsers.add_parser('all', help='extract all files')
+    extract_all_parser.set_defaults(callback=extract_all)
+
     # Extract category
     extract_category_parser = extract_subparsers.add_parser('category', help='extract all files for category')
     extract_category_parser.add_argument('-n', '--name', required=True)
     extract_category_parser.set_defaults(callback=extract_category)
+
+    # Extract folder
+    extract_folder_parser = extract_subparsers.add_parser('folder', help='extract all files for folder')
+    extract_folder_parser.add_argument('-n', '--name', required=True)
+    extract_folder_parser.set_defaults(callback=extract_folder)
 
     # Extract file
     extract_file_parser = extract_subparsers.add_parser('file', help='extract a single file')
