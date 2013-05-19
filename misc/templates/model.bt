@@ -1,0 +1,137 @@
+struct FileHeader
+{
+    char unknown[0x40];
+    uint16 mesh_nb;
+    uint16 material_nb;
+};
+
+struct MeshHeader
+{
+    uint16 unknown[0x44];
+};
+
+struct StringBlock
+{
+    uint32 nb;
+    uint32 block_size;
+    char strings[block_size];
+};
+
+struct Header
+{
+    float unknown1;
+    uint16 mesh_nb;
+    uint16 unknown_type_nb;
+    uint16 type4_nb;
+    uint16 material_nb;
+    uint16 bone_nb;
+    uint16 unknown3;
+    uint32 unknown4;
+    uint16 zero2;
+    ubyte unknown7;
+    ubyte unknown6;
+    uint16 zero3;
+    uint16 type3_nb;
+    uint32 zeros4[2];
+    uint16 unknown8;
+    uint16 type5_nb;
+    uint32 zeros5[4];
+};
+
+struct DataPart
+{
+    uint16 first_mesh_index;
+    uint16 mesh_nb;
+    float unknown1;
+    float unknown2;
+    uint16 next_mesh_index;
+    uint16 additional_mesh_nb;
+    uint32 next_next_mesh_index;
+    uint16 index;
+    uint16 has_next_buffer_infos;
+    uint32 zeros[5];
+    uint32 vertex_buffer_size;
+    uint32 index_buffer_size;
+    uint32 vertex_buffer_offset;
+    uint32 index_buffer_offset;
+};
+
+struct Mesh
+{
+    uint32 vertex_buffer_number_index;
+    uint32 index_buffer_number_index; // *2
+    uint16 index;
+    uint16 type4_start_index;
+    uint16 type4_number_index;
+    uint16 group_index;
+    uint32 index_buffer_start_index; // *2
+    uint32 vexter_buffer_start_offset;
+    uint32 vertex_buffer_end_offset;
+    uint32 unknown10;
+    uint16 unknown11;
+    uint16 unknown12; 
+};
+
+struct Type3
+{
+    uint16 index_buffer_number_index;  // *2
+    uint16 unknown1;
+    uint16 index_buffer_start_index;  // *2
+    uint16 unknown3;
+    uint16 vertex_buffer_start_offset;
+    uint16 unknown5;
+    uint16 vertex_buffer_number_index;
+    uint16 type5_start_index;
+    uint16 type5_number_index;
+    uint16 vertex_size;
+};
+
+struct Type4
+{
+    uint32 index_buffer_start_index; // *2
+    uint32 index_buffer_number_index; // *2
+    uint32 index;
+    int16 bone_start_index;
+    uint16 bone_number_index;
+};
+
+struct Type5
+{
+    uint32 index_buffer_start_index; // *2
+    uint32 index_buffer_number_index; // *2
+    uint32 index;
+};
+
+struct Type6
+{
+    uint16 bone_indexes[64];
+    uint32 unknown2;
+};
+
+// Read of Data
+
+FileHeader file_header;
+MeshHeader mesh_headers[file_header.mesh_nb];
+StringBlock string_block;
+
+Header header;
+DataPart data_parts[3];
+Mesh meshes[header.mesh_nb];
+
+uint32 unknown_type_string_offsets[header.unknown_type_nb];
+
+Type3 type3[header.type3_nb];
+Type4 type4[header.type4_nb];
+Type5 type5[header.type5_nb];
+
+uint32 materials_string_offsets[header.material_nb];
+uint32 bones_string_offsets[header.bone_nb];
+
+Type6 type6[header.unknown3];
+
+if (header.bone_nb > 0)
+{
+    uint32 bone_indexes_size;
+    uint16 bone_indexes[bone_indexes_size / 2];
+}
+
