@@ -38,7 +38,6 @@ class Manager:
     def get_file(self, name):
         logging.info('%s', name)
         dir_hash, file_hash = self.get_hashes(name)
-        logging.debug('%0.8X:%0.8X', dir_hash, file_hash)
         return self.get_category_from_filename(name).get_file(dir_hash, file_hash)
 
     def check_dir_existence(self, name):

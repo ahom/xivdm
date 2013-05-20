@@ -1,4 +1,5 @@
 from os import path
+import logging
 
 from xivdm.dat.index import extract_hash_table 
 from xivdm.dat.dat import extract_file
@@ -8,12 +9,15 @@ class Category:
     DAT_NAME = '%s.dat%d'
 
     def __init__(self, sqpack_path, sqpack_base_name):
+        logging.info('%s', sqpack_base_name)
         self._path = sqpack_path
         self._base_name = sqpack_base_name
         self._base_path = path.join(self._path, self._base_name)
 
         with open(self._get_index_path(), 'rb') as index_file_handle:
             self._hash_table = extract_hash_table(index_file_handle)
+
+        logging.info('dirs: %d - files: %s', len(self._hash_table), sum([len(dir_dict) for dir_dict in self._hash_table.values()]))
 
         self._dat_file_handles = {}
 
@@ -27,7 +31,9 @@ class Category:
         return self.check_dir_existence(dir_hash) and file_hash in self.get_dir_hash_table(dir_hash)
 
     def get_file(self, dir_hash, file_hash):
+        logging.info('%0.8X/%0.8X', dir_hash, file_hash)
         file_infos = self.get_dir_hash_table(dir_hash)[file_hash]
+        logging.info('%s', file_infos)
         dat_file_handle = self._get_dat_file_handle(file_infos.dat_nb)
         return extract_file(dat_file_handle, file_infos.dat_offset)
 
