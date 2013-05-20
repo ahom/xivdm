@@ -625,6 +625,8 @@ def quests(data, id , v):
         'exd':                  string(data, id, 1),
 
         'level':                v[3],
+		'class':                v[14],
+		'gil_reward':           v[723],
 
         'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
@@ -638,8 +640,10 @@ def quests(data, id , v):
         'unmapped_values':      unmapped(
             list(range(2, 3))
             + list(range(4, 8))
-            + list(range(11, 17))
-            + list(range(19, 728))
+            + list(range(11, 14))
+			+ list(range(15, 17))
+            + list(range(19, 723))
+			+ list(range(724, 728))
             + list(range(729, 750))
             + list(range(767, 778)), v)
     }
