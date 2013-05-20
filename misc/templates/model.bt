@@ -1,3 +1,5 @@
+#include "half.bt"
+
 struct FileHeader
 {
     char unknown[0x40];
@@ -26,7 +28,8 @@ struct Header
     uint16 material_nb;
     uint16 bone_nb;
     uint16 unknown3;
-    uint32 unknown4;
+    uint16 unknown4;
+    uint16 unknown5;
     uint16 zero2;
     ubyte unknown7;
     ubyte unknown6;
@@ -63,12 +66,13 @@ struct Mesh
     uint16 index;
     uint16 type4_start_index;
     uint16 type4_number_index;
-    uint16 group_index;
+    int16 group_index;
     uint32 index_buffer_start_index; // *2
-    uint32 vexter_buffer_start_offset;
+    uint32 vertex_buffer_start_offset;
     uint32 vertex_buffer_end_offset;
     uint32 unknown10;
-    uint16 unknown11;
+    ubyte vertex_size;
+    ubyte unknown11;
     uint16 unknown12; 
 };
 
@@ -134,4 +138,3 @@ if (header.bone_nb > 0)
     uint32 bone_indexes_size;
     uint16 bone_indexes[bone_indexes_size / 2];
 }
-
