@@ -4,7 +4,8 @@ class Manager:
     def __init__(self):
         self._generators = {
             'icons': icons(),
-            'maps': maps()
+            'maps': maps(),
+            'models': models()
         }
 
     def get_generators(self):

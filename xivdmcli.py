@@ -137,11 +137,11 @@ def extract_view(args, conf):
                     indent=4, 
                     separators=(',', ': ')))
 
-def extract_from_generator(args, conf, name):
+def extract_gen(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     output_path = path.join(conf.get('output', 'path'), 'gen')
 
-    for folder_path, file_path_gen in GenManager().get_generator(name):
+    for folder_path, file_path_gen in GenManager().get_generator(args.name):
         if dat_manager.check_dir_existence(folder_path):
             for file_path in file_path_gen():
                 if dat_manager.check_file_existence(file_path):
@@ -152,12 +152,6 @@ def extract_from_generator(args, conf, name):
 
                     with open(output_file_path, 'wb') as file_handle:
                         file_handle.write(dat_manager.get_file(file_path).getvalue())
-
-def extract_icon(args, conf):
-    extract_from_generator(args, conf, 'icons')
-
-def extract_map(args, conf):
-    extract_from_generator(args, conf, 'maps')
 
 def analyze_exd_links(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -245,17 +239,16 @@ if __name__ == '__main__':
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
     extract_view_parser.set_defaults(callback=extract_view)
 
-    # Extract icon
-    extract_icon_parser = extract_subparsers.add_parser('icon', help='extract icon files')
-    extract_icon_parser.set_defaults(callback=extract_icon)
-
-    # Extract map
-    extract_map_parser = extract_subparsers.add_parser('map', help='extract map files')
-    extract_map_parser.set_defaults(callback=extract_map)
-
     # Extract music
     extract_music_parser = extract_subparsers.add_parser('music', help='extract music files')
     extract_music_parser.set_defaults(callback=extract_music)
+
+    # Extract gen
+    extract_gen_parser = extract_subparsers.add_parser('gen', help='extract gen files')
+    extract_gen_parser.add_argument('-n', '--name', required=True)
+    extract_gen_parser.set_defaults(callback=extract_gen)
+
+
 
     ######################
     # Analyze sub module #
