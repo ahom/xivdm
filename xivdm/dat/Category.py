@@ -8,9 +8,10 @@ class Category:
     INDEX_NAME = '%s.index'
     DAT_NAME = '%s.dat%d'
 
-    def __init__(self, sqpack_path, sqpack_base_name):
+    def __init__(self, name, sqpack_path, sqpack_base_name):
         logging.info('%s', sqpack_base_name)
         self._path = sqpack_path
+        self._name = name
         self._base_name = sqpack_base_name
         self._base_path = path.join(self._path, self._base_name)
 
@@ -22,7 +23,7 @@ class Category:
         self._dat_file_handles = {}
 
     def get_name(self):
-        return self._base_name
+        return self._name
 
     def check_dir_existence(self, dir_hash):
         return dir_hash in self._hash_table

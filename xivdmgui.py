@@ -7,7 +7,6 @@ from configparser import SafeConfigParser
 from PyQt4 import QtGui, QtOpenGL
 
 from xivdm.dat.Manager import Manager as DatManager
-from xivdm.name.Manager import Manager as NameManager
 from xivdm.logging_utils import set_logging
 
 def process_item(parent, dir_map):
@@ -24,7 +23,6 @@ def main():
     set_logging(config.get('logs', 'path'), 'xivdmgui')
 
     dat_manager = DatManager(config.get('game', 'path'))
-    name_manager = NameManager(dat_manager)
 
     app = QtGui.QApplication(sys.argv)
 
@@ -35,11 +33,11 @@ def main():
     tree_widget.setHeaderLabels(['dat'])
 
     dirs = {}
-    for category_name in ['ui', 'chara']:
+    for category_name in dat_manager.get_categories():
         dirs[category_name] = {}
         category = dat_manager.get_category(category_name)
         for dir_hash in category.get_hash_table().keys():
-            dir_name = name_manager.get_dir_name(category_name, dir_hash)
+            dir_name = dat_manager.get_dir_name(category_name, dir_hash)
             current_dir = dirs[category_name]
             for name in dir_name.split('/'):
                 if name == category_name:
@@ -49,7 +47,7 @@ def main():
                 current_dir = current_dir[name]
 
             current_dir.update({
-                name_manager.get_file_name(category_name, dir_hash, file_hash): None for file_hash in category.get_dir_hash_table(dir_hash).keys()
+                dat_manager.get_file_name(category_name, dir_hash, file_hash): None for file_hash in category.get_dir_hash_table(dir_hash).keys()
                 })
 
     for category_name in sorted(list(dirs.keys()))[::-1]:
