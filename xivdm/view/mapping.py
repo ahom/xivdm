@@ -1,4 +1,5 @@
 import logging
+import re
 
 from xivdm.language import get_language_name
 
@@ -84,6 +85,32 @@ def npc_stuff_range(return_dict, value):
         view_name = 'gcshops'
     if view_name:
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
+
+STEP_RE = re.compile(r'^SEQ_(?P<step_number>\d+)_(?P<step_action>.*)$')
+ACTOR_RE = re.compile(r'^ACTOR(\d+)$')
+
+def quest_steps(labels, ids):
+    result_steps = []
+    actor_dict = {}
+    for index, label in enumerate(labels):
+        label_utf8 = label.decode('utf-8')
+
+        actor_match_result = ACTOR_RE.match(label_utf8)
+        if actor_match_result:
+            if ids[index] >= 10000:
+                actor_dict[label_utf8] = ids[index]
+        else:
+            step_match_result = STEP_RE.match(label_utf8)
+            if step_match_result:
+                step_action = step_match_result.group('step_action')
+                actor_match_result = ACTOR_RE.match(step_action)
+                if actor_match_result:
+                    if step_action in actor_dict:
+                        result_steps.append({
+                            'step': int(step_match_result.group('step_number')),
+                            'value': ref('enpc_bases', actor_dict[step_action])
+                        })
+    return result_steps
 
 #### MAPPINGS ####
 def action_categories(data, id, v):
@@ -631,7 +658,10 @@ def quests(data, id , v):
         'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
         'npcs':                 [ref('enpc_bases', v[17]),
-                                 ref('enpc_bases', v[18])],           
+                                 ref('enpc_bases', v[18])],    
+
+        'steps':                quest_steps(v[21:71], v[71:121]),
+
 
         'main_reward':          mat(v[728], v[729]),
         
