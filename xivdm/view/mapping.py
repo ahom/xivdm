@@ -86,32 +86,6 @@ def npc_stuff_range(return_dict, value):
     if view_name:
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
-STEP_RE = re.compile(r'^SEQ_(?P<step_number>\d+)_(?P<step_action>.*)$')
-ACTOR_RE = re.compile(r'^ACTOR(\d+)$')
-
-def quest_steps(labels, ids):
-    result_steps = []
-    actor_dict = {}
-    for index, label in enumerate(labels):
-        label_utf8 = label.decode('utf-8')
-
-        actor_match_result = ACTOR_RE.match(label_utf8)
-        if actor_match_result:
-            if ids[index] >= 10000:
-                actor_dict[label_utf8] = ids[index]
-        else:
-            step_match_result = STEP_RE.match(label_utf8)
-            if step_match_result:
-                step_action = step_match_result.group('step_action')
-                actor_match_result = ACTOR_RE.match(step_action)
-                if actor_match_result:
-                    if step_action in actor_dict:
-                        result_steps.append({
-                            'step': int(step_match_result.group('step_number')),
-                            'value': ref('enpc_bases', actor_dict[step_action])
-                        })
-    return result_steps
-
 #### MAPPINGS ####
 def action_categories(data, id, v):
     return {
@@ -646,37 +620,86 @@ def place_names(data, id, v):
             list(range(1, 10)), v)
     }
 
-def quests(data, id , v):
-    return {
-        'name':                 string(data, id, 0),
-        'exd':                  string(data, id, 1),
 
-        'level':                v[3],
-		'class':                v[14],
-		'gil_reward':           v[723],
+QUEST_STEP_RE = re.compile(r'^SEQ_(?P<step_number>\d+)_(?P<step_action>.*)$')
+QUEST_ACTOR_RE = re.compile(r'^ACTOR(\d+)$')
 
-        'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
+def quest_steps(labels, ids):
+    result_steps = []
+    actor_dict = {}
+    for index, label in enumerate(labels):
+        label_utf8 = label.decode('utf-8')
 
-        'npcs':                 [ref('enpc_bases', v[17]),
-                                 ref('enpc_bases', v[18])],    
+        actor_match_result = QUEST_ACTOR_RE.match(label_utf8)
+        if actor_match_result:
+            if ids[index] >= 10000:
+                actor_dict[label_utf8] = ids[index]
+        else:
+            step_match_result = QUEST_STEP_RE.match(label_utf8)
+            if step_match_result:
+                step_action = step_match_result.group('step_action')
+                actor_match_result = QUEST_ACTOR_RE.match(step_action)
+                if actor_match_result:
+                    if step_action in actor_dict:
+                        result_steps.append({
+                            'step': int(step_match_result.group('step_number')),
+                            'value': ref('enpc_bases', actor_dict[step_action])
+                        })
+    return result_steps
 
-        'steps':                quest_steps(v[21:71], v[71:121]),
+def quests(exd_manager):
+    data = exd_manager.get_category('Quest').get_data()
+    data_ln = data[list(data.keys())[0]]
+    return_dict = {}
+
+    for id, v in data_ln.items():
+        return_dict[id] = {
+            'name':                 string(data, id, 0),
+
+            'level':                v[3],
+            'class':                v[14],
+            'gil_reward':           v[723],
+
+            'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
+
+            'npcs':                 [ref('enpc_bases', v[17]),
+                                     ref('enpc_bases', v[18])],    
+
+            'steps':                quest_steps(v[21:71], v[71:121]),
 
 
-        'main_reward':          mat(v[728], v[729]),
+            'main_reward':          mat(v[728], v[729]),
+            
+            'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
+
+            'unmapped_values':      unmapped(
+                list(range(2, 3))
+                + list(range(4, 8))
+                + list(range(11, 14))
+                + list(range(15, 17))
+                + list(range(19, 723))
+                + list(range(724, 728))
+                + list(range(729, 750))
+                + list(range(767, 778)), v)
+        }
+
+        if v[1] != b'':
+            quest_base_exd_name = v[1].decode('utf-8')
+            quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
+            quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
+            quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
+            return_dict[id].update({
+                'text_ids':         [
+                    quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
+                ],
+                'texts': {
+                    get_language_name(language): [
+                        quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
+                    ] for language in quest_exd_data.keys()
+                }  
+            })
         
-        'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
-
-        'unmapped_values':      unmapped(
-            list(range(2, 3))
-            + list(range(4, 8))
-            + list(range(11, 14))
-			+ list(range(15, 17))
-            + list(range(19, 723))
-			+ list(range(724, 728))
-            + list(range(729, 750))
-            + list(range(767, 778)), v)
-    }
+    return return_dict
 
 def roles(data, id , v):
     return {

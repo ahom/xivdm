@@ -63,7 +63,7 @@ class Manager:
             'online_statuses': simple_mapping('OnlineStatus', online_statuses), 
             'parameters': simple_mapping('Parameter', parameters), 
             'place_names': simple_mapping('PlaceName', place_names), 
-            'quests': simple_mapping('Quest', quests),
+            'quests': quests,
             'recipes': simple_mapping('Recipe', recipes), 
             'roles': simple_mapping('Role', roles), 
             'shops': simple_mapping('Shop', shops),
@@ -94,6 +94,10 @@ class Manager:
     def _parse_string(self, key, value):
         if type(value) == bytes:
             return StringConverter(self._exd_manager, get_language_id(key)).convert(memoryview(value))
+        elif type(value) == list and value and type(value[0]) == bytes:
+            return [
+                StringConverter(self._exd_manager, get_language_id(key)).convert(memoryview(sub_value)) for sub_value in value
+            ]
         return None
 
     def _parse_view_refs(self, key, value):
