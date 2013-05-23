@@ -52,11 +52,19 @@ class Manager:
 
     def check_dir_existence(self, name):
         (dir_hash, _) = get_hashes(name)
-        return self.get_category_from_filename(name).check_dir_existence(dir_hash)
+        category = self.get_category_from_filename(name)
+        result = category.check_dir_existence(dir_hash)
+        if result:
+            self._register_name(category.get_name(), name, dir_hash)
+        return result
 
     def check_file_existence(self, name):
         (dir_hash, file_hash) = get_hashes(name)
-        return self.get_category_from_filename(name).check_file_existence(dir_hash, file_hash)
+        category = self.get_category_from_filename(name)
+        result = category.check_file_existence(dir_hash, file_hash)
+        if result:
+            self._register_name(category.get_name(), name, dir_hash, file_hash)
+        return result
 
     def get_category_from_filename(self, name):
         return self.get_category(name.split('/', 1)[0].lower())
@@ -75,7 +83,7 @@ class Manager:
                 return dir_cache[file_hash]
         return '%0.8X' % file_hash
 
-    def _register_name(self, category_name, name, dir_hash, file_hash):
+    def _register_name(self, category_name, name, dir_hash, file_hash=None):
         cache = self._get_cache(category_name)
         if not dir_hash in cache:
             cache[dir_hash] = {
@@ -84,7 +92,7 @@ class Manager:
             }
 
         dir_cache = cache[dir_hash]['hashes']
-        if not file_hash in dir_cache:
+        if file_hash and not file_hash in dir_cache:
             dir_cache[file_hash] = name.rsplit('/', 1)[1]
 
     def _get_cache(self, category_name):

@@ -1,11 +1,12 @@
 from xivdm.gen.generators import *
 
 class Manager:
-    def __init__(self):
+    def __init__(self, dat_manager):
+        self._dat_manager = dat_manager
         self._generators = {
-            'icons': icons(),
-            'maps': maps(),
-            'models': models()
+            'icons': icons(self._dat_manager),
+            'maps': maps(self._dat_manager),
+            'models': models(self._dat_manager)
         }
 
     def get_generators(self):

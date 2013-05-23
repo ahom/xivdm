@@ -1,6 +1,6 @@
 import logging
 
-def icons():
+def icons(dat_manager):
     def folders():
         for i in range(1000):
             folder = i * 1000
@@ -9,9 +9,16 @@ def icons():
                 for j in range(1000):
                     yield '%s%0.6d.dds' % (folder_path, folder + j)
             yield folder_path, files
+
+            for ln in ['en', 'fr', 'de', 'ja']:
+                ln_folder_path = '%s%s/' % (folder_path, ln)
+                def files():
+                    for j in range(1000):
+                        yield '%s%0.6d.dds' % (ln_folder_path, folder + j)
+                yield ln_folder_path, files
     return folders
 
-def maps():
+def maps(dat_manager):
     def folders():
         for a in map(chr, range(ord('a'), ord('z') + 1)):
             for i in range(10):
@@ -22,13 +29,14 @@ def maps():
                             num = '%0.2d' % k
                             folder_path = 'ui/map/%s/%s/' % (basename, num)
                             def files():
+                                yield '%s%s%sm.dds' % (folder_path, basename, num)
                                 for x in range(16):
                                     for y in range(16):
                                         yield '%s%s%s_%d_%d.dds' % (folder_path, basename, num, x, y)
                             yield folder_path, files
     return folders
 
-def models():
+def models(dat_manager):
     def folders():
         for i in range(10000):
             if i%100 == 0:

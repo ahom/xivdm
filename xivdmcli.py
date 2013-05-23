@@ -141,7 +141,7 @@ def extract_gen(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     output_path = path.join(conf.get('output', 'path'), 'gen')
 
-    for folder_path, file_path_gen in GenManager().get_generator(args.name):
+    for folder_path, file_path_gen in GenManager(dat_manager).get_generator(args.name):
         if dat_manager.check_dir_existence(folder_path):
             for file_path in file_path_gen():
                 if dat_manager.check_file_existence(file_path):
