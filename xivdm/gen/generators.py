@@ -36,47 +36,54 @@ def maps(dat_manager):
                             yield folder_path, files
     return folders
 
+def get_mod_range():
+    for i in range(100):
+        for j in range(10):
+            yield i*10 + j
+
 def models(dat_manager):
     def folders():
-        for i in range(10000):
-            if i%100 == 0:
-                logging.debug('Human: %0.2d/100', i//100)
-            base_folder_path = 'chara/human/c%0.4d/obj/' % i
-            for j in range(10000):
-                for s in [('face', 'fac'), ('hair', 'hir'), ('tail', 'til'), ('body', 'top')]:
-                    folder_path = '%s%s/%s%0.4d/model/' % (base_folder_path, s[0], s[0][0], j)
-                    def files():
-                        yield '%sc%0.4d%s%0.4d_%s.mdl' % (folder_path, i, s[0][0], j, s[1])
-                    yield folder_path, files
-
-        for i in range(10000):
-            if i%100 == 0:
-                logging.debug('Equipment/Accessory: %0.2d/100', i//100)
-            for s in ['equipment', 'accessory']:
-                folder_path = 'chara/%s/%s%0.4d/model/' % (s, s[0], i)
-                def files():
+        # humans
+        for c in range(10000):
+            c_name = 'c%0.4d' % c
+            base_folder_path = 'chara/human/%s/obj/' % c_name
+            if dat_manager.check_dir_existence('%sbody/b0001/model/' % base_folder_path):
+                for part, postfix in [('face', 'fac'), ('hair', 'hir'), ('tail', 'til'), ('body', 'top')]:
                     for j in range(10000):
-                        for s2 in ['ril', 'rir', 'wrs', 'nek', 'ear', 'sho', 'dwn', 'glv', 'top', 'met']:
-                            yield '%sc%0.4d%s%0.4d_%s.mdl' % (folder_path, j, s[0], i, s2)
-                yield folder_path, files   
+                        p_name = '%s%0.4d' % (part[0], j)
+                        folder_path = '%s%s/%s/model/' % (base_folder_path, part, p_name)
+                        def files():
+                            yield '%s%s%s_%s.mdl' % (folder_path, c_name, p_name, postfix)
+                        yield folder_path, files
 
-        for i in range(10000):
-            if i%100 == 0:
-                logging.debug('Demihuman: %0.2d/100', i//100)
-            for j in range(10000):
-                folder_path = 'chara/demihuman/d%0.4d/obj/equipment/e%0.4d/model/' % (i, j)
-                def files():
-                    for s in ['sho', 'dwn', 'glv', 'top', 'met']:
-                        yield '%sd%0.4de%0.4d_%s.mdl' % (folder_path, i, j, s)
-                yield folder_path, files   
+        # for i in range(10000):
+        #     if i%100 == 0:
+        #         logging.debug('Equipment/Accessory: %0.2d/100', i//100)
+        #     for s in ['equipment', 'accessory']:
+        #         folder_path = 'chara/%s/%s%0.4d/model/' % (s, s[0], i)
+        #         def files():
+        #             for j in range(10000):
+        #                 for s2 in ['ril', 'rir', 'wrs', 'nek', 'ear', 'sho', 'dwn', 'glv', 'top', 'met']:
+        #                     yield '%sc%0.4d%s%0.4d_%s.mdl' % (folder_path, j, s[0], i, s2)
+        #         yield folder_path, files   
 
-        for i in range(10000):
-            if i%100 == 0:
-                logging.debug('Weapon/Monster: %0.2d/100', i//100)
-            for j in range(10000):
-                for s in ['weapon', 'monster']:
-                    folder_path = 'chara/%s/%s%04d/obj/body/b%04d/model/' % (s, s[0], i, j)
-                    def files():
-                        yield '%s%s%0.4db%0.4d.mdl' % (folder_path, s[0], i, j)
-                yield folder_path, files   
+        # for i in range(10000):
+        #     if i%100 == 0:
+        #         logging.debug('Demihuman: %0.2d/100', i//100)
+        #     for j in range(10000):
+        #         folder_path = 'chara/demihuman/d%0.4d/obj/equipment/e%0.4d/model/' % (i, j)
+        #         def files():
+        #             for s in ['sho', 'dwn', 'glv', 'top', 'met']:
+        #                 yield '%sd%0.4de%0.4d_%s.mdl' % (folder_path, i, j, s)
+        #         yield folder_path, files   
+
+        # for i in range(10000):
+        #     if i%100 == 0:
+        #         logging.debug('Weapon/Monster: %0.2d/100', i//100)
+        #     for j in range(10000):
+        #         for s in ['weapon', 'monster']:
+        #             folder_path = 'chara/%s/%s%04d/obj/body/b%04d/model/' % (s, s[0], i, j)
+        #             def files():
+        #                 yield '%s%s%0.4db%0.4d.mdl' % (folder_path, s[0], i, j)
+        #         yield folder_path, files   
     return folders

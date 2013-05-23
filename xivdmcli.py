@@ -10,7 +10,7 @@ import json
 
 from xivdm.logging_utils import set_logging
 from xivdm.language import get_language_name
-from xivdm.dat.Manager import Manager as DatManager
+from xivdm.dat.Manager import Manager as DatManager, get_hashes
 from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.exd.links_analyzer import analyze_links
@@ -68,7 +68,7 @@ def extract_folder(args, conf):
     output_path = path.join(conf.get('output', 'path'), 'folder', args.name)
     category = dat_manager.get_category_from_filename(args.name)
 
-    (dir_hash, _) = dat_manager.get_hashes(args.name)
+    (dir_hash, _) = get_hashes(args.name)
 
     dir_hash_table = category.get_dir_hash_table(dir_hash)
 
