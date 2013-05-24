@@ -7,7 +7,6 @@ import sys
 from os import path, makedirs
 from configparser import SafeConfigParser
 import json
-from multiprocessing import Pool
 
 from xivdm.logging_utils import set_logging
 from xivdm.language import get_language_name
@@ -16,7 +15,7 @@ from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.exd.links_analyzer import analyze_links
 from xivdm.view.Manager import Manager as ViewManager
-from xivdm.gen.Manager import Manager as GenManager
+from xivdm.cache.Manager import Manager as CacheManager
 from xivdm.patch.Manager import Manager as PatchManager
 
 def extract_all(args, conf):
@@ -138,34 +137,36 @@ def extract_view(args, conf):
                     indent=4, 
                     separators=(',', ': ')))
 
-def extract_gen(args, conf):
+def walk_cache(dat_manager, node, output_path):
+    if type(node) == dict:
+        for key, value in node.items():
+            walk_cache(dat_manager, value, output_path)
+    elif type(node) == list:
+        for value in node:
+            walk_cache(dat_manager, value, output_path)
+    elif type(node) == str:
+        output_file_path = path.join(output_path, node)
+        if not path.exists(path.dirname(output_file_path)):
+            makedirs(path.dirname(output_file_path))
+        data = dat_manager.get_file(node)
+        with open(output_file_path, 'wb') as file_handle:
+            file_handle.write(data.getvalue())
+
+def extract_cache(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
-    output_path = path.join(conf.get('output', 'path'), 'gen')
-
-    for folder_path, file_path_gen in GenManager().get_generator(args.name)():
-        if dat_manager.check_dir_existence(folder_path):
-            for file_path in file_path_gen():
-                if dat_manager.check_file_existence(file_path):
-                    output_file_path = path.join(output_path, file_path)
-
-                    if not path.exists(path.dirname(output_file_path)):
-                        makedirs(path.dirname(output_file_path))
-
-                    with open(output_file_path, 'wb') as file_handle:
-                        file_handle.write(dat_manager.get_file(file_path).getvalue())
+    cache_manager = CacheManager(dat_manager)
+    output_path = path.join(conf.get('output', 'path'), 'cache', args.name)
+    walk_cache(dat_manager, cache_manager.get_category(args.name), output_path)
 
 def analyze_exd_links(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     exd_manager = ExdManager(dat_manager)
-
     results = analyze_links(exd_manager)
-
     logging.info(pformat(results))
 
 def extract_music(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     exd_manager = ExdManager(dat_manager)
-
     output_path = path.join(conf.get('output', 'path'), 'music')
 
     for data in exd_manager.get_category('BGM').get_ln_data(0).values():
@@ -244,10 +245,10 @@ if __name__ == '__main__':
     extract_music_parser = extract_subparsers.add_parser('music', help='extract music files')
     extract_music_parser.set_defaults(callback=extract_music)
 
-    # Extract gen
-    extract_gen_parser = extract_subparsers.add_parser('gen', help='extract gen files')
-    extract_gen_parser.add_argument('-n', '--name', required=True)
-    extract_gen_parser.set_defaults(callback=extract_gen)
+    # Extract cache
+    extract_cache_parser = extract_subparsers.add_parser('cache', help='extract cache files')
+    extract_cache_parser.add_argument('-n', '--name', required=True)
+    extract_cache_parser.set_defaults(callback=extract_cache)
 
     ######################
     # Analyze sub module #
