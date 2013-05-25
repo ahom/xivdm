@@ -1,6 +1,6 @@
 #include "model.bt"
 
-local uint32 data_part_index = 0;
+local uint32 buffer_object_index = 0;
 local uint32 face_index;
 local uint32 mesh_index;
 
@@ -11,17 +11,19 @@ local uint32 vertex_index;
 local uint32 vertex_offset = 1;
 local uint32 triangle_index;
 
-while (exists(data_parts[data_part_index]))
-{
+buffer_object_index = 0;
+
+//while (exists(buffer_objects[buffer_object_index]))
+//{
     struct
     {
-        for (mesh_index = data_parts[data_part_index].first_mesh_index; 
-             mesh_index < data_parts[data_part_index].first_mesh_index + data_parts[data_part_index].mesh_nb;
+        for (mesh_index = buffer_objects[buffer_object_index].first_mesh_index; 
+             mesh_index < buffer_objects[buffer_object_index].first_mesh_index + buffer_objects[buffer_object_index].mesh_nb;
              mesh_index++)
         {
             struct
             {
-                FSeek(data_parts[data_part_index].vertex_buffer_offset
+                FSeek(buffer_objects[buffer_object_index].vertex_buffer_offset
                       + meshes[mesh_index].vertex_buffer_start_offset);
                 struct
                 {
@@ -41,7 +43,7 @@ while (exists(data_parts[data_part_index]))
                             hfloatRead(vertices[vertex_index].w));                            
                 }
 
-                FSeek(data_parts[data_part_index].index_buffer_offset
+                FSeek(buffer_objects[buffer_object_index].index_buffer_offset
                       + (meshes[mesh_index].index_buffer_start_index * 2));
 
                 struct
@@ -64,5 +66,5 @@ while (exists(data_parts[data_part_index]))
         }  
     } data;  
 
-    data_part_index++;
-}
+//    buffer_object_index++;
+//}

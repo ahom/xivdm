@@ -657,8 +657,8 @@ def quests(exd_manager):
             'name':                 string(data, id, 0),
 
             'level':                v[3],
+
             'class':                v[14],
-            'gil_reward':           v[723],
 
             'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
@@ -667,6 +667,7 @@ def quests(exd_manager):
 
             'steps':                quest_steps(v[21:71], v[71:121]),
 
+            'gil_reward':           v[723],
 
             'main_reward':          mat(v[728], v[729]),
             
@@ -677,7 +678,8 @@ def quests(exd_manager):
                 + list(range(4, 8))
                 + list(range(11, 14))
                 + list(range(15, 17))
-                + list(range(19, 723))
+                + list(range(19, 21))
+                + list(range(121, 723))
                 + list(range(724, 728))
                 + list(range(729, 750))
                 + list(range(767, 778)), v)

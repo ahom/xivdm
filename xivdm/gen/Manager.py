@@ -2,7 +2,7 @@ from os import path, makedirs
 import pickle
 import gzip
 
-from xivdm.cache.gens import *
+from xivdm.gen.gens import *
 
 class Manager:
     CACHE_PATH ='cache/%s.gz'

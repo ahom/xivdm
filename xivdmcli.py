@@ -15,7 +15,7 @@ from xivdm.exd.Manager import Manager as ExdManager
 from xivdm.exd.Category import Category as ExdCategory
 from xivdm.exd.links_analyzer import analyze_links
 from xivdm.view.Manager import Manager as ViewManager
-from xivdm.cache.Manager import Manager as CacheManager
+from xivdm.gen.Manager import Manager as GenManager
 from xivdm.patch.Manager import Manager as PatchManager
 
 def extract_all(args, conf):
@@ -137,13 +137,13 @@ def extract_view(args, conf):
                     indent=4, 
                     separators=(',', ': ')))
 
-def walk_cache(dat_manager, node, output_path):
+def walk_gen(dat_manager, node, output_path):
     if type(node) == dict:
         for key, value in node.items():
-            walk_cache(dat_manager, value, output_path)
+            walk_gen(dat_manager, value, output_path)
     elif type(node) == list:
         for value in node:
-            walk_cache(dat_manager, value, output_path)
+            walk_gen(dat_manager, value, output_path)
     elif type(node) == str:
         output_file_path = path.join(output_path, node)
         if not path.exists(path.dirname(output_file_path)):
@@ -152,11 +152,11 @@ def walk_cache(dat_manager, node, output_path):
         with open(output_file_path, 'wb') as file_handle:
             file_handle.write(data.getvalue())
 
-def extract_cache(args, conf):
+def extract_gen(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
-    cache_manager = CacheManager(dat_manager)
-    output_path = path.join(conf.get('output', 'path'), 'cache', args.name)
-    walk_cache(dat_manager, cache_manager.get_category(args.name), output_path)
+    gen_manager = GenManager(dat_manager)
+    output_path = path.join(conf.get('output', 'path'), 'gen', args.name)
+    walk_gen(dat_manager, gen_manager.get_category(args.name), output_path)
 
 def analyze_exd_links(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -245,10 +245,10 @@ if __name__ == '__main__':
     extract_music_parser = extract_subparsers.add_parser('music', help='extract music files')
     extract_music_parser.set_defaults(callback=extract_music)
 
-    # Extract cache
-    extract_cache_parser = extract_subparsers.add_parser('cache', help='extract cache files')
-    extract_cache_parser.add_argument('-n', '--name', required=True)
-    extract_cache_parser.set_defaults(callback=extract_cache)
+    # Extract gen
+    extract_gen_parser = extract_subparsers.add_parser('gen', help='extract gen files')
+    extract_gen_parser.add_argument('-n', '--name', required=True)
+    extract_gen_parser.set_defaults(callback=extract_gen)
 
     ######################
     # Analyze sub module #
