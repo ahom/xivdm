@@ -4,24 +4,19 @@ import sys
 import logging
 from configparser import SafeConfigParser
 
-from PyQt4 import QtGui, QtOpenGL
+from PySide import QtGui, QtOpenGL
 
 from xivdm.dat.Manager import Manager as DatManager
 from xivdm.logging_utils import set_logging
 
 from xivdm.model.Model import Model
 
-import OpenGL
-
 import OpenGL.GL as gl
-
 from OpenGL.GL import shaders
 
-OpenGL.FULL_LOGGING = True
-
-import OpenGL.arrays.vbo as glvbo
-
 class OpenGLWidget(QtOpenGL.QGLWidget):
+
+
     def __init__(self, dat_manager):
         QtOpenGL.QGLWidget.__init__(self)
         self._dat_manager = dat_manager
@@ -36,8 +31,23 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
         gl.glClearColor(0,0,0,0)
 
-        self._vertex_vbo = glvbo.VBO(self._model._vertex_buffer, usage=gl.GL_STATIC_DRAW)
-        self._index_vbo = glvbo.VBO(self._model._index_buffer, usage=gl.GL_STATIC_DRAW, target=gl.GL_ELEMENT_ARRAY_BUFFER)
+        self._vertex_shader = shaders.compileShader(b"#version 330\nattribute vec4 vPosition;\nvoid main()\n{gl_Position = vPosition;}", gl.GL_VERTEX_SHADER)
+
+        self._fragment_shader = shaders.compileShader("""#version 330
+            void main() 
+            {
+                gl_FragColor = vec4( 0, 1, 0, 1 );
+            }""", gl.GL_FRAGMENT_SHADER)
+
+        self._shader = shaders.compileProgram(self._vertex_shader, self._fragment_shader)
+
+        self._vertex_vbo = gl.glGenBuffers(1)
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo);
+        gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self._model._vertex_buffer), self._model._vertex_buffer, gl.GL_STATIC_DRAW);
+
+        self._index_vbo = gl.glGenBuffers(1)
+        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo);
+        gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, len(self._model._index_buffer), self._model._index_buffer, gl.GL_STATIC_DRAW);
 
     def resizeGL(self, w, h):
         gl.glViewport(0, 0, w, h)
@@ -45,20 +55,19 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         # the window corner OpenGL coordinates are (-+1, -+1)
-        gl.glOrtho(-1, 1, -1, 1, -1, 1)
+        gl.glOrtho(-20, 20, -20, 20, -20, 20)
 
     def paintGL(self):
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-        gl.glColor(1,1,0)            
+        shaders.glUseProgram(self._shader)
 
-        for mesh in self._model._meshes:
-            self._vertex_vbo.bind()
-            gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
-            gl.glVertexPointer(4, gl.GL_HALF_FLOAT, mesh._vertex_size - 8, mesh._vertex_buffer_offset)
+        mesh = self._model._meshes[0]
 
-            self._index_vbo.bind()
-            gl.glEnableClientState(gl.GL_INDEX_ARRAY)
-            gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, mesh._index_buffer_offset);
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo);
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 4, gl.GL_HALF_NV, False, mesh._vertex_size - 8, mesh._vertex_buffer_offset);
+     
+        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo);
+        gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, mesh._index_buffer_offset);          
 
 def main():
     config = SafeConfigParser()
