@@ -11,6 +11,15 @@ from xivdm.logging_utils import set_logging
 
 from xivdm.model.Model import Model
 
+import OpenGL
+
+import OpenGL.GL as gl
+
+from OpenGL.GL import shaders
+
+OpenGL.FULL_LOGGING = True
+
+import OpenGL.arrays.vbo as glvbo
 
 class OpenGLWidget(QtOpenGL.QGLWidget):
     def __init__(self, dat_manager):
@@ -18,87 +27,38 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self._dat_manager = dat_manager
         self._model = None
 
-        self._vertex_buffers = []
-        self._index_buffers = []
-
+        self._vertex_vbo = None
+        self._index_vbo = None
 
     def initializeGL(self):
         file_path = 'chara/monster/m0104/obj/body/b0001/model/m0104b0001.mdl'
         self._model = Model(file_path, self._dat_manager.get_file(file_path))
 
-        for buffer_object in self._model._buffer_objects:
-            vertex_buffer = QtOpenGL.QGLBuffer(QtOpenGL.QGLBuffer.VertexBuffer)
-            vertex_buffer.create();
-            vertex_buffer.bind();
-            vertex_buffer.setUsagePattern(QtOpenGL.QGLBuffer.StaticDraw);
-            vertex_buffer.allocate(len(buffer_object._vertex_buffer));
-            vertex_buffer.write(0, buffer_object._vertex_buffer, len(buffer_object._vertex_buffer));
-            self._vertex_buffers.append(vertex_buffer)
+        gl.glClearColor(0,0,0,0)
 
-            index_buffer = QtOpenGL.QGLBuffer(QtOpenGL.QGLBuffer.IndexBuffer)
-            index_buffer.create();
-            index_buffer.bind();
-            index_buffer.setUsagePattern(QtOpenGL.QGLBuffer.StaticDraw);
-            index_buffer.allocate(len(buffer_object._index_buffer));
-            index_buffer.write(0, buffer_object._index_buffer, len(buffer_object._index_buffer));
-            self._index_buffers.append(index_buffer)
+        self._vertex_vbo = glvbo.VBO(self._model._vertex_buffer, usage=gl.GL_STATIC_DRAW)
+        self._index_vbo = glvbo.VBO(self._model._index_buffer, usage=gl.GL_STATIC_DRAW, target=gl.GL_ELEMENT_ARRAY_BUFFER)
 
     def resizeGL(self, w, h):
-        logging.warning("resizeGL")
+        gl.glViewport(0, 0, w, h)
+        # set orthographic projection (2D only)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        # the window corner OpenGL coordinates are (-+1, -+1)
+        gl.glOrtho(-1, 1, -1, 1, -1, 1)
 
     def paintGL(self):
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+        gl.glColor(1,1,0)            
+
         for mesh in self._model._meshes:
+            self._vertex_vbo.bind()
+            gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
+            gl.glVertexPointer(4, gl.GL_HALF_FLOAT, mesh._vertex_size - 8, mesh._vertex_buffer_offset)
 
-            self._buffer_object_id = None
-
-            self._vertex_buffer_offset = None
-            self._vertex_count = None
-            self._vertex_size = None
-
-            self._index_buffer_offset = None
-            self._index_count = None
-
-            self._read(file_handle)
-
-        glBindBuffer(GL_ARRAY_BUFFER, staticBuffer);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_FLOAT, sizeof(vertexStatic), (void*)offsetof(vertexStatic,position));
-        glBindBuffer(GL_ARRAY_BUFFER, dynamicBuffer);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(vertexDynamic), (void*)offsetof(vertexDynamic,color));
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glDrawElements(GL_TRIANGLE_STRIP, sizeof(indices)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)0);
-     #     void initializeGL()
-     # {
-     #     // Set up the rendering context, define display lists etc.:
-     #     ...
-     #     glClearColor(0.0, 0.0, 0.0, 0.0);
-     #     glEnable(GL_DEPTH_TEST);
-     #     ...
-     # }
-
-     # void resizeGL(int w, int h)
-     # {
-     #     // setup viewport, projection etc.:
-     #     glViewport(0, 0, (GLint)w, (GLint)h);
-     #     ...
-     #     glFrustum(...);
-     #     ...
-     # }
-
-     # void paintGL()
-     # {
-     #     // draw the scene:
-     #     ...
-     #     glRotatef(...);
-     #     glMaterialfv(...);
-     #     glBegin(GL_QUADS);
-     #     glVertex3f(...);
-     #     glVertex3f(...);
-     #     ...
-     #     glEnd();
-     #     ...
-     # }
+            self._index_vbo.bind()
+            gl.glEnableClientState(gl.GL_INDEX_ARRAY)
+            gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, mesh._index_buffer_offset);
 
 def main():
     config = SafeConfigParser()
@@ -110,19 +70,12 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    main_window = QtGui.QWidget()
+    main_window = QtGui.QMainWindow()
     main_window.setWindowTitle('Model Viewer')
-
-    opengl_widget = OpenGLWidget(dat_manager)
-
-    layout = QtGui.QHBoxLayout()
-    layout.addWidget(opengl_widget)
-
-    main_window.setLayout(layout)
+ 
+    main_window.setCentralWidget(OpenGLWidget(dat_manager))
     main_window.resize(640, 480)
     main_window.show()
-
-    model = Model('chara/monster/m0104/obj/body/b0001/model/m0104b0001.mdl', dat_manager.get_file('chara/monster/m0104/obj/body/b0001/model/m0104b0001.mdl'))
     
     sys.exit(app.exec_())
 

@@ -41,7 +41,7 @@ struct Header
     uint32 zeros5[4];
 };
 
-struct BufferObject
+struct LodModel
 {
     uint16 first_mesh_index;
     uint16 mesh_nb;
@@ -119,7 +119,7 @@ MeshHeader mesh_headers[file_header.mesh_nb];
 StringBlock string_block;
 
 Header header;
-BufferObject buffer_objects[3];
+LodModel lod_models[3];
 Mesh meshes[header.mesh_nb];
 
 uint32 unknown_type_string_offsets[header.unknown_type_nb];

@@ -1,6 +1,6 @@
 #include "model.bt"
 
-local uint32 buffer_object_index = 0;
+local uint32 lod = 0;
 local uint32 face_index;
 local uint32 mesh_index;
 
@@ -11,60 +11,55 @@ local uint32 vertex_index;
 local uint32 vertex_offset = 1;
 local uint32 triangle_index;
 
-buffer_object_index = 0;
+lod = 0;
 
-//while (exists(buffer_objects[buffer_object_index]))
-//{
-    struct
+struct
+{
+    for (mesh_index = lod_models[lod].first_mesh_index; 
+         mesh_index < lod_models[lod].first_mesh_index + lod_models[lod].mesh_nb;
+         mesh_index++)
     {
-        for (mesh_index = buffer_objects[buffer_object_index].first_mesh_index; 
-             mesh_index < buffer_objects[buffer_object_index].first_mesh_index + buffer_objects[buffer_object_index].mesh_nb;
-             mesh_index++)
+        struct
         {
+            FSeek(lod_models[lod].vertex_buffer_offset
+                  + meshes[mesh_index].vertex_buffer_start_offset);
             struct
             {
-                FSeek(buffer_objects[buffer_object_index].vertex_buffer_offset
-                      + meshes[mesh_index].vertex_buffer_start_offset);
-                struct
-                {
-                    hfloat x;
-                    hfloat y;
-                    hfloat z;
-                    hfloat w;
-                    hfloat padding[(meshes[mesh_index].vertex_size - 8)/2]; 
-                } vertices[meshes[mesh_index].vertex_buffer_number_index];
-                
-                for(vertex_index = 0; vertex_index < meshes[mesh_index].vertex_buffer_number_index; vertex_index++)
-                {
-                    FPrintf(vertices_file, "v %s %s %s %s\n",
-                            hfloatRead(vertices[vertex_index].x),
-                            hfloatRead(vertices[vertex_index].y),
-                            hfloatRead(vertices[vertex_index].z),
-                            hfloatRead(vertices[vertex_index].w));                            
-                }
+                hfloat x;
+                hfloat y;
+                hfloat z;
+                hfloat w;
+                hfloat padding[(meshes[mesh_index].vertex_size - 8)/2]; 
+            } vertices[meshes[mesh_index].vertex_buffer_number_index];
+            
+            for(vertex_index = 0; vertex_index < meshes[mesh_index].vertex_buffer_number_index; vertex_index++)
+            {
+                FPrintf(vertices_file, "v %s %s %s %s\n",
+                        hfloatRead(vertices[vertex_index].x),
+                        hfloatRead(vertices[vertex_index].y),
+                        hfloatRead(vertices[vertex_index].z),
+                        hfloatRead(vertices[vertex_index].w));                            
+            }
 
-                FSeek(buffer_objects[buffer_object_index].index_buffer_offset
-                      + (meshes[mesh_index].index_buffer_start_index * 2));
+            FSeek(lod_models[lod].index_buffer_offset
+                  + (meshes[mesh_index].index_buffer_start_index * 2));
 
-                struct
-                {
-                    uint16 i1;
-                    uint16 i2;
-                    uint16 i3;
-                } triangles[meshes[mesh_index].index_buffer_number_index / 3];
-                
-                for(triangle_index = 0; triangle_index < meshes[mesh_index].index_buffer_number_index / 3; triangle_index++)
-                {
-                    FPrintf(faces_file, "f %d %d %d\n",
-                            triangles[triangle_index].i1 + vertex_offset,
-                            triangles[triangle_index].i2 + vertex_offset,
-                            triangles[triangle_index].i3 + vertex_offset);                            
-                }
+            struct
+            {
+                uint16 i1;
+                uint16 i2;
+                uint16 i3;
+            } triangles[meshes[mesh_index].index_buffer_number_index / 3];
+            
+            for(triangle_index = 0; triangle_index < meshes[mesh_index].index_buffer_number_index / 3; triangle_index++)
+            {
+                FPrintf(faces_file, "f %d %d %d\n",
+                        triangles[triangle_index].i1 + vertex_offset,
+                        triangles[triangle_index].i2 + vertex_offset,
+                        triangles[triangle_index].i3 + vertex_offset);                            
+            }
 
-                vertex_offset += meshes[mesh_index].vertex_buffer_number_index;
-            } meshes_data;
-        }  
-    } data;  
-
-//    buffer_object_index++;
-//}
+            vertex_offset += meshes[mesh_index].vertex_buffer_number_index;
+        } meshes_data;
+    }  
+} data;  
