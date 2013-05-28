@@ -1,6 +1,8 @@
 import logging
 import struct
 
+import numpy
+
 class Mesh:
     def __init__(self, file_handle):
         self._vertex_buffer_offset = None
@@ -66,16 +68,29 @@ class Model:
 
         (vertex_buffer_size, index_buffer_size, vertex_buffer_offset, index_buffer_offset) = struct.unpack("<IIII", file_handle.read(16))
 
+        logging.info(lod_0_mesh_nb)
+        logging.info(vertex_buffer_size)
+        logging.info(index_buffer_size)
+        logging.info(vertex_buffer_offset)
+        logging.info(index_buffer_offset)
+
         pos = file_handle.tell()
 
         file_handle.seek(vertex_buffer_offset)
-        self._vertex_buffer = file_handle.read(vertex_buffer_size)
+        self._vertex_buffer = numpy.frombuffer(file_handle.read(vertex_buffer_size), dtype='float16', count=vertex_buffer_size // 2).astype(numpy.float32)
+        logging.info(len(self._vertex_buffer))
+        logging.info(min(self._vertex_buffer))
+        logging.info(max(self._vertex_buffer))
+        logging.info(self._vertex_buffer)
         file_handle.seek(index_buffer_offset)
-        self._index_buffer = file_handle.read(index_buffer_size)
-
+        self._index_buffer = numpy.frombuffer(file_handle.read(index_buffer_size), dtype='uint16', count=index_buffer_size // 2)
+        logging.info(len(self._index_buffer))
+        logging.info(self._index_buffer)
         file_handle.seek(pos)
 
-        file_handle.seek(0x3E * 2, 1) # skipping two lower lods
+        file_handle.seek(0x3C * 2, 1) # skipping two lower lods
 
         for j in range(lod_0_mesh_nb):
             self._meshes.append(Mesh(file_handle))
+
+        logging.info(self._meshes)
