@@ -55,7 +55,7 @@ opener.addheaders = [
 r = opener.open('https://secure.square-enix.com/account/app',
                 data=bytes(urlencode([
                     ('_pr_confData_sqexid', 'Shouu'),
-                    ('_pr_confData_passwd', 'Felix.2013'),
+                    ('_pr_confData_passwd', 'XXXXXXXX'),
                     ('_event', 'Submit'),
                     ('_url', data_dict['_url']),
                     ('_seq', data_dict['_seq']),
@@ -65,6 +65,7 @@ r = opener.open('https://secure.square-enix.com/account/app',
 
 bytes_to_find = b'window.external.user("login=auth,ok,sid,'
 data = r.read()
+print(data)
 index = data.find(b'window.external.user("login=auth,ok,sid,') + len(bytes_to_find)
 
 sid = data[index:index + 56].decode('ascii')

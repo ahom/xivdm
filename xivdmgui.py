@@ -18,6 +18,8 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 from OpenGL.GL import shaders
 
+from OpenGL.GL.ARB import half_float_vertex
+
 import ctypes
 
 import numpy
@@ -32,7 +34,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self._index_vbo = None
 
     def initializeGL(self):
-        file_path = 'bg/ffxiv/fst_f1/fld/f1f1/bgparts/f1f1_b1_gat01.mdl'
+        file_path = 'bg/ffxiv/fst_f1/fld/f1f1/bgparts/f1f1_a1_noko3.mdl'
         self._model = Model(file_path, self._dat_manager.get_file(file_path))
 
         gl.glClearColor(0,0,0,0)
@@ -48,17 +50,19 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self._fragment_shader = shaders.compileShader("""#version 120
             void main() 
             {
-                gl_FragColor = vec4( 0, 1, 0, 1 );
+                gl_FragColor = vec4( 0, 1, 1, 1 );
             }""", gl.GL_FRAGMENT_SHADER)
 
         self._shader = shaders.compileProgram(self._vertex_shader, self._fragment_shader)
+        gl.glBindAttribLocation(self._shader, 0, b"vPosition")
 
         # self._vertex_vbo = vbo.VBO(self._model._vertex_buffer, target=gl.GL_ARRAY_BUFFER)
 
         self._vertex_vbo = gl.glGenBuffers(1)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
-        #gl.glBufferData(gl.GL_ARRAY_BUFFER, self._model._vertex_buffer, gl.GL_STATIC_DRAW)
+        #l.glBufferData(gl.GL_ARRAY_BUFFER, self._model._vertex_buffer, gl.GL_STATIC_DRAW)
         gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self._model._vertex_buffer), self._model._vertex_buffer, gl.GL_STATIC_DRAW)
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
 
 
         # self._index_vbo = vbo.VBO(self._model._index_buffer, target=gl.GL_ELEMENT_ARRAY_BUFFER)
@@ -67,8 +71,8 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
         #gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, self._model._index_buffer, gl.GL_STATIC_DRAW)
         gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, len(self._model._index_buffer), self._model._index_buffer, gl.GL_STATIC_DRAW)
+        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0)
         
-
     def resizeGL(self, w, h):
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
@@ -84,19 +88,22 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        glu.gluPerspective(30.0, 1.0, 10.0, 200.0)
+        viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
+        glu.gluPerspective(60.0, float(viewport[2])/float(viewport[3]), 0.1, 1000.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
-        glu.gluLookAt(40.0, 40.0, 40.0,
+        glu.gluLookAt(2.0, 2.0, 2.0,
           0.0, 0.0, 0.0,
           0.0, 1.0, 0.0)
 
+        self.drawGrid(100)
+        self.drawAxes()
+
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
         gl.glEnableClientState(gl.GL_INDEX_ARRAY)
-        gl.glEnableVertexAttribArray(0)
 
         shaders.glUseProgram(self._shader)
-        gl.glBindAttribLocation(self._shader, 0, b"vPosition")
+        
 
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
@@ -104,22 +111,27 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         # self._vertex_vbo.bind()
         # self._index_vbo.bind()
 
-        gl.glPolygonMode(gl.GL_FRONT, gl.GL_LINE);
-        gl.glPolygonMode(gl.GL_BACK, gl.GL_LINE);
+        gl.glPolygonMode(gl.GL_FRONT, gl.GL_LINE)
+        gl.glPolygonMode(gl.GL_BACK, gl.GL_LINE)
 
         for mesh in self._model._meshes:
         
             #mesh = self._model._meshes[0]
 
             #gl.glVertexAttribPointer(0, 4, gl.GL_FLOAT, False, 0, None)
-            #gl.glVertexPointer(3, gl.GL_FLOAT, False, None)
-            gl.glVertexAttribPointer(0, 4, gl.GL_HALF_NV, False, mesh._vertex_size, None if mesh._vertex_buffer_offset == 0 else ctypes.c_void_p(mesh._vertex_buffer_offset))
+            #gl.glVertexPointer(3, gl.GL_HALF_NV, False, None)
+            gl.glVertexAttribPointer(0, 4, half_float_vertex.GL_HALF_FLOAT, False, mesh._vertex_size, ctypes.c_void_p(mesh._vertex_buffer_offset))
+            gl.glEnableVertexAttribArray(0)
             
-            #gl.glDrawElements(gl.GL_TRIANGLES, 18, gl.GL_UNSIGNED_SHORT, None)
-            gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, None if mesh._index_buffer_offset == 0 else mesh._index_buffer_offset * 2)
+            #gl.glDrawElements(gl.GL_TRIANGLES, 18, gl.GL_UNSIGNED_SHORT, None)  mesh._index_count
+            gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, ctypes.c_void_p(mesh._index_buffer_offset * 2))
+            gl.glDisableVertexAttribArray(0)
 
-        gl.glDisableVertexAttribArray(0)
         shaders.glUseProgram(0)
+
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
+        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0)
+
         gl.glDisableClientState(gl.GL_INDEX_ARRAY)
         gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
@@ -128,30 +140,24 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         # gl.glVertexPointer(4, gl.GL_FLOAT, 0, None)
         # gl.glColor3f(1.0, 0.0, 0.0)
         # gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 3)
-        #gl.glDisableVertexAttribArray(0)
+        # gl.glDisableVertexAttribArray(0)
 
-        #shaders.glUseProgram(0)
-        
-        #self.drawGrid(100)
-        #self.drawAxes()
+        #shaders.glUseProgram(0)        
 
     def drawGrid(self, grid_size):
-        gl.glLineWidth (1.0)
         grid_half_size = grid_size / 2
         gl.glBegin(gl.GL_LINES)
-        gl.glColor3f(0.75, 0.75, 0.75)
+        gl.glColor3f(0.20, 0.20, 0.20)
         for i in range(grid_size):
-            gl.glVertex3f(i - grid_half_size, 0, -grid_half_size)
-            gl.glVertex3f(i - grid_half_size, 0, grid_half_size)
-     
-            gl.glVertex3f(-grid_half_size, 0, i - grid_half_size)
-            gl.glVertex3f(grid_half_size, 0, i - grid_half_size)
-
+            gl.glVertex3f(i - grid_half_size, -grid_half_size, 0)
+            gl.glVertex3f(i - grid_half_size, grid_half_size, 0)
+    
+            gl.glVertex3f(-grid_half_size, i - grid_half_size, 0)
+            gl.glVertex3f(grid_half_size, i - grid_half_size, 0)
         gl.glEnd()
 
     def drawAxes(self):
         gl.glLineWidth (2.0)
-
         gl.glBegin(gl.GL_LINES)
 
         gl.glColor3f(1,0,0)
@@ -167,6 +173,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glVertex3f(0,0,1)   
 
         gl.glEnd()
+        gl.glLineWidth (1.0)
 
 class SimpleTestWidget(QtOpenGL.QGLWidget):
     def __init__(self):

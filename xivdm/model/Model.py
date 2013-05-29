@@ -30,6 +30,8 @@ class Mesh:
     def __repr__(self):
         return "<vertex_buffer_offset: %d - vertex_count: %d - vertex_size: %d - index_buffer_offet: %d - index_count: %d>" % (self._vertex_buffer_offset, self._vertex_count, self._vertex_size, self._index_buffer_offset, self._index_count)
 
+
+# Bounding boxes = lod + meshes + bones
 class Model:
     def __init__(self, path, file_handle):
         self._path = path
@@ -68,26 +70,14 @@ class Model:
 
         (vertex_buffer_size, index_buffer_size, vertex_buffer_offset, index_buffer_offset) = struct.unpack("<IIII", file_handle.read(16))
 
-        logging.info(lod_0_mesh_nb)
-        logging.info(vertex_buffer_size)
-        logging.info(index_buffer_size)
-        logging.info(vertex_buffer_offset)
-        logging.info(index_buffer_offset)
-
         pos = file_handle.tell()
 
         file_handle.seek(vertex_buffer_offset)
-        #self._vertex_buffer = numpy.frombuffer(file_handle.read(vertex_buffer_size), dtype='uint8', count=vertex_buffer_size)
+        #self._vertex_buffer = numpy.frombuffer(file_handle.read(vertex_buffer_size), dtype='float16', count=vertex_buffer_size // 2).astype('float32')
         self._vertex_buffer = file_handle.read(vertex_buffer_size)
-        logging.info(len(self._vertex_buffer))
-        logging.info(min(self._vertex_buffer))
-        logging.info(max(self._vertex_buffer))
-        logging.info(self._vertex_buffer)
         file_handle.seek(index_buffer_offset)
         #self._index_buffer = numpy.frombuffer(file_handle.read(index_buffer_size), dtype='uint8', count=index_buffer_size)
         self._index_buffer = file_handle.read(index_buffer_size)
-        logging.info(len(self._index_buffer))
-        logging.info(self._index_buffer)
         file_handle.seek(pos)
 
         file_handle.seek(0x3C * 2, 1) # skipping two lower lods

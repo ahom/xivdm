@@ -68,11 +68,11 @@ struct Mesh
     uint16 type4_number_index;
     int16 group_index;
     uint32 index_buffer_start_index; // *2
-    uint32 vertex_buffer_start_offset;
-    uint32 vertex_buffer_end_offset;
+    uint32 vertex_buffer_start_offset_struct_0;
+    uint32 vertex_buffer_start_offset_struct_1;
     uint32 unknown10;
-    ubyte vertex_size;
-    ubyte unknown11;
+    ubyte vertex_size_struct_0;
+    ubyte vertex_size_struct_1;
     uint16 unknown12; 
 };
 
@@ -112,6 +112,21 @@ struct Type6
     uint32 unknown2;
 };
 
+struct Point
+{
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+struct BoundingBox
+{
+    Point min;
+    Point max;
+};
+
+
 // Read of Data
 
 FileHeader file_header;
@@ -138,3 +153,9 @@ if (header.bone_nb > 0)
     uint32 bone_indexes_size;
     uint16 bone_indexes[bone_indexes_size / 2];
 }
+
+uint32 offset_to_bounding_boxes;
+
+char skip[offset_to_bounding_boxes - 3];
+
+BoundingBox bounding_boxes[3 + header.mesh_nb + header.bone_nb];

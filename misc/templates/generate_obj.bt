@@ -22,7 +22,7 @@ struct
         struct
         {
             FSeek(lod_models[lod].vertex_buffer_offset
-                  + meshes[mesh_index].vertex_buffer_start_offset);
+                  + meshes[mesh_index].vertex_buffer_start_offset_struct_0);
             struct
             {
                 hfloat x;
