@@ -18,6 +18,8 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 from OpenGL.GL import shaders
 
+import ctypes
+
 import numpy
 
 class OpenGLWidget(QtOpenGL.QGLWidget):
@@ -30,7 +32,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self._index_vbo = None
 
     def initializeGL(self):
-        file_path = 'bg/ffxiv/fst_f1/fld/f1f1/bgplate/0056.mdl'
+        file_path = 'bg/ffxiv/fst_f1/fld/f1f1/bgparts/f1f1_b1_gat01.mdl'
         self._model = Model(file_path, self._dat_manager.get_file(file_path))
 
         gl.glClearColor(0,0,0,0)
@@ -51,23 +53,20 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
         self._shader = shaders.compileProgram(self._vertex_shader, self._fragment_shader)
 
+        # self._vertex_vbo = vbo.VBO(self._model._vertex_buffer, target=gl.GL_ARRAY_BUFFER)
+
         self._vertex_vbo = gl.glGenBuffers(1)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
-  #       gl.glBufferData(gl.GL_ARRAY_BUFFER, numpy.array([ -6.40000000e+01,   7.01250000e+01,   4.93437500e+01,   1.0,
-  # -5.89375000e+01,   7.17500000e+01,   4.14687500e+01,   1.0,
-  # -6.40000000e+01,   7.27500000e+01,   4.44687500e+01,   1.0,
-  # -6.09375000e+01,   7.30625000e+01,   3.74687500e+01,   1.0,
-  # -5.83437500e+01,   7.17500000e+01,   3.74687500e+01,   1.0,
-  # -6.40000000e+01,   7.30625000e+01,   4.26562500e+01,   1.0,
-  # -6.40000000e+01,   7.27500000e+01,   4.44687500e+01,   1.0,
-  # -6.40000000e+01,   7.30625000e+01,   3.95000000e+01,   1.0,
-  # -6.40000000e+01,   7.30625000e+01,   3.74687500e+01,   1.0], dtype='float32'), gl.GL_STATIC_DRAW)
-        gl.glBufferData(gl.GL_ARRAY_BUFFER, self._model._vertex_buffer, gl.GL_STATIC_DRAW)
+        #gl.glBufferData(gl.GL_ARRAY_BUFFER, self._model._vertex_buffer, gl.GL_STATIC_DRAW)
+        gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self._model._vertex_buffer), self._model._vertex_buffer, gl.GL_STATIC_DRAW)
+
+
+        # self._index_vbo = vbo.VBO(self._model._index_buffer, target=gl.GL_ELEMENT_ARRAY_BUFFER)
 
         self._index_vbo = gl.glGenBuffers(1)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
-        #gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, numpy.array([ 0,  1,  2,  3,  1,  4,  5,  1,  3,  6,  1,  5,  7,  5,  3,  8,  7,  3], dtype='uint16'), gl.GL_STATIC_DRAW)
-        gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, self._model._index_buffer, gl.GL_STATIC_DRAW)
+        #gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, self._model._index_buffer, gl.GL_STATIC_DRAW)
+        gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, len(self._model._index_buffer), self._model._index_buffer, gl.GL_STATIC_DRAW)
         
 
     def resizeGL(self, w, h):
@@ -85,10 +84,10 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        glu.gluPerspective(30.0, 1.0, 10.0, 2000.0)
+        glu.gluPerspective(30.0, 1.0, 10.0, 200.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
-        glu.gluLookAt(100.0, 100.0, 100.0,
+        glu.gluLookAt(40.0, 40.0, 40.0,
           0.0, 0.0, 0.0,
           0.0, 1.0, 0.0)
 
@@ -102,14 +101,19 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
 
+        # self._vertex_vbo.bind()
+        # self._index_vbo.bind()
+
         gl.glPolygonMode(gl.GL_FRONT, gl.GL_LINE);
         gl.glPolygonMode(gl.GL_BACK, gl.GL_LINE);
 
         for mesh in self._model._meshes:
-            
+        
+            #mesh = self._model._meshes[0]
+
             #gl.glVertexAttribPointer(0, 4, gl.GL_FLOAT, False, 0, None)
             #gl.glVertexPointer(3, gl.GL_FLOAT, False, None)
-            gl.glVertexAttribPointer(0, 4, gl.GL_FLOAT, False, mesh._vertex_size - 8, None if mesh._vertex_buffer_offset == 0 else mesh._vertex_buffer_offset)
+            gl.glVertexAttribPointer(0, 4, gl.GL_HALF_NV, False, mesh._vertex_size, None if mesh._vertex_buffer_offset == 0 else ctypes.c_void_p(mesh._vertex_buffer_offset))
             
             #gl.glDrawElements(gl.GL_TRIANGLES, 18, gl.GL_UNSIGNED_SHORT, None)
             gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, None if mesh._index_buffer_offset == 0 else mesh._index_buffer_offset * 2)
