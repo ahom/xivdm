@@ -3,8 +3,8 @@
 struct FileHeader
 {
     char unknown[0x40];
-    uint16 mesh_nb;
-    uint16 material_nb;
+    uint16 mesh_count;
+    uint16 material_count;
 };
 
 struct MeshHeader
@@ -14,7 +14,7 @@ struct MeshHeader
 
 struct StringBlock
 {
-    uint32 nb;
+    uint32 count;
     uint32 block_size;
     char strings[block_size];
 };
@@ -22,36 +22,36 @@ struct StringBlock
 struct Header
 {
     float unknown1;
-    uint16 mesh_nb;
-    uint16 unknown_type_nb;
-    uint16 type4_nb;
-    uint16 material_nb;
-    uint16 bone_nb;
-    uint16 unknown3;
+    uint16 mesh_count;
+    uint16 type1_count;
+    uint16 faces_to_bones_count;
+    uint16 material_count;
+    uint16 bone_count;
+    uint16 type6_count;
     uint16 unknown4;
     uint16 unknown5;
     uint16 zero2;
     ubyte unknown7;
-    ubyte unknown6;
+    ubyte unknown8;
     uint16 zero3;
-    uint16 type3_nb;
+    uint16 type3_count;
     uint32 zeros4[2];
     uint16 unknown8;
-    uint16 type5_nb;
+    uint16 face_count;
     uint32 zeros5[4];
 };
 
 struct LodModel
 {
-    uint16 first_mesh_index;
-    uint16 mesh_nb;
+    uint16 mesh_index;
+    uint16 mesh_count;
     float unknown1;
     float unknown2;
-    uint16 next_mesh_index;
-    uint16 additional_mesh_nb;
-    uint32 next_next_mesh_index;
+    uint16 mesh_index_2;
+    uint16 mesh_count_2;
+    uint32 next_mesh_index;
     uint16 index;
-    uint16 has_next_buffer_infos;
+    uint16 unknown3;
     uint32 zeros[5];
     uint32 vertex_buffer_size;
     uint32 index_buffer_size;
@@ -61,48 +61,48 @@ struct LodModel
 
 struct Mesh
 {
-    uint32 vertex_buffer_number_index;
-    uint32 index_buffer_number_index; // *2
+    uint32 vert_buf_count;
+    uint32 indices_count; // *2
     uint16 index;
-    uint16 type4_start_index;
-    uint16 type4_number_index;
+    uint16 faces_to_bones_index;
+    uint16 faces_to_bones_count;
     int16 group_index;
-    uint32 index_buffer_start_index; // *2
-    uint32 vertex_buffer_start_offset_struct_0;
-    uint32 vertex_buffer_start_offset_struct_1;
+    uint32 indices_index; // *2
+    uint32 vert_buf_offset_0;
+    uint32 vert_buf_offset_1;
     uint32 unknown10;
-    ubyte vertex_size_struct_0;
-    ubyte vertex_size_struct_1;
+    ubyte vert_buf_size_0;
+    ubyte vert_buf_size_1;
     uint16 unknown12; 
 };
 
 struct Type3
 {
-    uint16 index_buffer_number_index;  // *2
+    uint16 indices_count;  // *2
     uint16 unknown1;
-    uint16 index_buffer_start_index;  // *2
+    uint16 indices_index;  // *2
     uint16 unknown3;
-    uint16 vertex_buffer_start_offset;
+    uint16 vert_buf_offset;
     uint16 unknown5;
-    uint16 vertex_buffer_number_index;
-    uint16 type5_start_index;
-    uint16 type5_number_index;
-    uint16 vertex_size;
+    uint16 vert_buf_count;
+    uint16 face_index;
+    uint16 face_count;
+    uint16 unknown7;
 };
 
-struct Type4
+struct FacesToBones
 {
-    uint32 index_buffer_start_index; // *2
-    uint32 index_buffer_number_index; // *2
+    uint32 indices_index; // *2
+    uint32 indices_count; // *2
     uint32 index;
-    int16 bone_start_index;
-    uint16 bone_number_index;
+    int16 bone_index;
+    uint16 bone_count;
 };
 
-struct Type5
+struct Faces
 {
-    uint32 index_buffer_start_index; // *2
-    uint32 index_buffer_number_index; // *2
+    uint32 indices_index; // *2
+    uint32 indices_count; // *2
     uint32 index;
 };
 
@@ -130,25 +130,25 @@ struct BoundingBox
 // Read of Data
 
 FileHeader file_header;
-MeshHeader mesh_headers[file_header.mesh_nb];
+MeshHeader mesh_headers[file_header.mesh_count];
 StringBlock string_block;
 
 Header header;
 LodModel lod_models[3];
-Mesh meshes[header.mesh_nb];
+Mesh meshes[header.mesh_count];
 
-uint32 unknown_type_string_offsets[header.unknown_type_nb];
+uint32 type1_string_offsets[header.type1_count];
 
-Type3 type3[header.type3_nb];
-Type4 type4[header.type4_nb];
-Type5 type5[header.type5_nb];
+Type3 type3[header.type3_count];
+FacesToBones faces_to_bones[header.faces_to_bones_count];
+Faces faces[header.face_count];
 
-uint32 materials_string_offsets[header.material_nb];
-uint32 bones_string_offsets[header.bone_nb];
+uint32 materials_string_offsets[header.material_count];
+uint32 bones_string_offsets[header.bone_count];
 
-Type6 type6[header.unknown3];
+Type6 type6[header.type6_count];
 
-if (header.bone_nb > 0)
+if (header.bone_count > 0)
 {
     uint32 bone_indexes_size;
     uint16 bone_indexes[bone_indexes_size / 2];
@@ -158,4 +158,4 @@ uint32 offset_to_bounding_boxes;
 
 char skip[offset_to_bounding_boxes - 3];
 
-BoundingBox bounding_boxes[3 + header.mesh_nb + header.bone_nb];
+BoundingBox bounding_boxes[3 + header.mesh_count + header.bone_count];
