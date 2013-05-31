@@ -52,17 +52,9 @@ def maps_icons(dat_manager):
                                         maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
     return maps_icons_result_tree
 
-def find_filename_hash(hash_table, filename):
-    results = []
-    input_file_hash = get_hash(filename)
-    for dir_hash, dir_hash_table in hash_table.items():
-        if input_file_hash in dir_hash_table:
-            results.append(dir_hash)
-    return results
-
 def get_rev_digits_values_matches(prefix_value, suffix_value, hash_dict):
     results = {}
-    prefix_crc = crc_32(bytes(prefix_value, encoding='ascii'), 0xFFFFFFFF)
+    prefix_crc = get_hash(prefix_value)
     for dir_hash, file_hash_list in hash_dict.items():
         for file_hash in file_hash_list:
             value = get_rev_digits_values(prefix_crc, suffix_value, file_hash)
@@ -87,10 +79,12 @@ def models(dat_manager):
     # Data hash table for chara dat
     chara_cat_hash_table = dat_manager.get_category('chara').get_hash_table()
 
-    # Humans
-    # Search for chara/xls/attachOffset/c%04d.atch
     attach_offset_search_folder_hash = get_hash('chara/xls/attachoffset')
     if attach_offset_search_folder_hash in chara_cat_hash_table:
+
+        # Humans
+        # Search for chara/xls/attachOffset/c%04d.atch
+
         prefix_crc = get_hash('c')
         for file_hash in chara_cat_hash_table[attach_offset_search_folder_hash].keys():
             c_value = get_rev_digits_values(prefix_crc, '.atch', file_hash)
@@ -103,12 +97,20 @@ def models(dat_manager):
                         if dat_manager.check_file_existence(file_path):
                             models_result_tree.setdefault('human', {}).setdefault(c_value, {}).setdefault(part, {})[p_value] = file_path
 
-    # demihumans sho dwn glv top met
-    # for file_hash in chara_cat_hash_table[human_search_folder_hash].keys():
-    #     for letter in ['c', 'd', 'm']:
-    #         value = get_rev_digits_values(get_hash(letter), '.atch', file_hash)
-    #         if value:
-    #             logging.info('Found: chara/xls/attachOffset/%s%s.atch' % (letter, value))
+        # Demihumans
+        # Search for chara/xls/attachOffset/d%04d.atch
+
+        prefix_crc = get_hash('d')
+        for file_hash in chara_cat_hash_table[attach_offset_search_folder_hash].keys():
+            d_value = get_rev_digits_values(prefix_crc, '.atch', file_hash)
+            if d_value:
+                for suffix in ['sho', 'dwn', 'glv', 'top', 'met']:
+                    for e in range(10000):
+                        e_value = '%0.4d' % e
+                        e_name = 'e%s' % e_value
+                        file_path = 'chara/demihuman/d%s/obj/equipment/%s/model/d%s%s_%s.mdl' % (d_value, e_name, d_value, e_name, suffix)
+                        if dat_manager.check_file_existence(file_path):
+                            models_result_tree.setdefault('demihuman', {}).setdefault(d_value, {})[e_value] = file_path
 
     # Search for .imc
     single_file_dirs = {}
@@ -124,7 +126,7 @@ def models(dat_manager):
 
     # Monster/Weapon
     for cat_type in ['weapon', 'monster']:
-        prefix_crc = crc_32(bytes('chara/%s/%s' % (cat_type, cat_type[0]), encoding='ascii'), 0xFFFFFFFF)
+        prefix_crc = get_hash('chara/%s/%s' % (cat_type, cat_type[0]))
         for dir_hash, dir_hash_table in file_matches['b'].items():
             for file_hash, b_name in dir_hash_table.items():
                 cat_name = get_rev_digits_values(prefix_crc, '/obj/body/b%s' % b_name, dir_hash)
@@ -133,81 +135,19 @@ def models(dat_manager):
                     if dat_manager.check_file_existence(file_path):
                         models_result_tree.setdefault(cat_type, {}).setdefault(cat_name, {})[b_name] = file_path
 
-    # # Equipment/Accessory
-    # for cat_type in ['equipment', 'accessory']:
-    #     prefix_crc = crc_32(bytes('chara/%s/%s' % (cat_type, cat_type[0]), encoding='ascii'), 0xFFFFFFFF)
-    #     for dir_hash, dir_hash_table in file_matches[cat_type[0]].items():
-    #         for file_hash, b_name in dir_hash_table.items():
-    #             values = get_rev_digits_values(prefix_crc, '', dir_hash)
-    #             if values:
-    #                 cat_name = ''.join(chr(c) for c in values)
-    #                 file_path = 'chara/%s/%s%s/model/m%sb%s.mdl' % (cat_type, cat_type[0], cat_name, cat_name, b_name)
-    #                 if dat_manager.check_file_existence(file_path):
-    #                     models_result_tree.setdefault(cat_type, {}).setdefault(cat_name, {})[b_name] = file_path
+    # Equipment/Accessory
+    for cat_type in ['equipment', 'accessory']:
+        prefix_crc = get_hash('chara/%s/%s' % (cat_type, cat_type[0]))
+        for dir_hash, dir_hash_table in file_matches[cat_type[0]].items():
+            for file_hash, b_name in dir_hash_table.items():
+                value = get_rev_digits_values(prefix_crc, '', dir_hash)
+                if value:
+                    for suffix in ['ril', 'rir', 'wrs', 'nek', 'ear', 'sho', 'dwn', 'glv', 'top', 'met']:
+                        for c in range(10000):
+                            c_value = '%0.4d' % c
+                            c_name = 'c%s' % c_value
+                            file_path = 'chara/%s/%s%s/model/%s%s%s_%s.mdl' % (cat_type, cat_type[0], value, c_name, cat_type[0], value, suffix)
+                            if dat_manager.check_file_existence(file_path):
+                                models_result_tree.setdefault(cat_type, {}).setdefault(value, {})[c_value] = file_path
 
-
-
-        # for i in range(10000):
-        #     i_value = '%0.4d' % i
-        #     i_name = '%s%s' % (s[0], i_value)
-        #     folder_path = 'chara/%s/%s/model/' % (s, i_name)
-        #     if dat_manager.check_dir_existence(folder_path):
-        #         for c in range(10000):
-        #             c_value = '%0.4d' % c
-        #             c_name = 'c%s' % c_value
-        #             for s2 in ['ril', 'rir', 'wrs', 'nek', 'ear', 'sho', 'dwn', 'glv', 'top', 'met']:
-        #                 file_path = '%s%s%s_%s.mdl' % (folder_path, c_name, i_name, s2)
-        #                 if dat_manager.check_file_existence(file_path):
-        #                     models_result_tree.setdefault(s, {}).setdefault(i_value, {}).setdefault(s2, {})[c_value] = file_path
-
-    # for c in range(10000):
-    #     c_value = '%0.4d' % c
-    #     c_name = 'c%s' % c_value
-    #     base_folder_path = 'chara/human/%s/obj/' % c_name
-    #     for part, postfix in [('face', 'fac'), ('hair', 'hir'), ('tail', 'til'), ('body', 'top')]:
-    #         for j in range(10000):
-    #             p_value = '%0.4d' % j
-    #             p_name = '%s%s' % (part[0], p_value)
-    #             file_path = '%s%s/%s/model/%s%s_%s.mdl' % (base_folder_path, part, p_name, c_name, p_name, postfix)
-    #             if dat_manager.check_file_existence(file_path):
-    #                 models_result_tree.setdefault('human', {}).setdefault(c_value, {}).setdefault(part, {})[p_value] = file_path
-
-    # for s in ['equipment', 'accessory']:
-    #     for i in range(10000):
-    #         i_value = '%0.4d' % i
-    #         i_name = '%s%s' % (s[0], i_value)
-    #         folder_path = 'chara/%s/%s/model/' % (s, i_name)
-    #         if dat_manager.check_dir_existence(folder_path):
-    #             for c in range(10000):
-    #                 c_value = '%0.4d' % c
-    #                 c_name = 'c%s' % c_value
-    #                 for s2 in ['ril', 'rir', 'wrs', 'nek', 'ear', 'sho', 'dwn', 'glv', 'top', 'met']:
-    #                     file_path = '%s%s%s_%s.mdl' % (folder_path, c_name, i_name, s2)
-    #                     if dat_manager.check_file_existence(file_path):
-    #                         models_result_tree.setdefault(s, {}).setdefault(i_value, {}).setdefault(s2, {})[c_value] = file_path
-
-    # for d in range(10000):
-    #     d_value = '%0.4d' % d
-    #     d_name = 'd%s' % d_value
-    #     for e in range(10000):
-    #         e_value = '%0.4d' % e
-    #         e_name = 'e%s' % e_value
-    #         folder_path = 'chara/demihuman/%s/obj/equipment/%s/model/' % (d_name, e_name)
-    #         if dat_manager.check_dir_existence(folder_path):
-    #             for s in ['sho', 'dwn', 'glv', 'top', 'met']:
-    #                 file_path = '%s%s%s_%s.mdl'% (folder_path, d_name, e_name, s)
-    #                 if dat_manager.check_file_existence(file_path):
-    #                     models_result_tree.setdefault('demihuman', {}).setdefault(d_value, {}).setdefault(e_value, {})[s] = file_path
-
-    # for s in ['weapon', 'monster']:
-    #     for i in range(10000):
-    #         i_value = '%0.4d' % i
-    #         i_name = '%s%s' % (s[0], i_value)
-    #         for b in range(10000):
-    #             b_value = '%0.4d' % b
-    #             b_name = 'b%s' % b_value
-    #             file_path = 'chara/%s/%s/obj/body/%s/model/%s%s.mdl' % (s, i_name, b_name, i_name, b_name)
-    #             if dat_manager.check_file_existence(file_path):
-    #                 models_result_tree.setdefault(s, {}).setdefault(i_value, {})[b_value] = file_path
-    logging.info(models_result_tree)
     return models_result_tree
