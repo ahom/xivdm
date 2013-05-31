@@ -9,6 +9,7 @@ from configparser import SafeConfigParser
 import json
 
 from xivdm.logging_utils import set_logging
+from xivdm.crc32_utils import crc_32, rev_crc_32
 from xivdm.language import get_language_name
 from xivdm.dat.Manager import Manager as DatManager, get_hashes
 from xivdm.exd.Manager import Manager as ExdManager
@@ -188,6 +189,94 @@ def extract_music(args, conf):
         with open(output_file_path, 'wb') as file_handle:
             file_handle.write(file_data.getvalue())
 
+def crc_gen(args, conf):
+    crc = crc_32(bytes(args.name, encoding='ascii'), 0xFFFFFFFF)
+    print('crc_32: %0.8X' % crc)
+
+def crc_rev(args, conf):
+    start = bytes(args.start, encoding='ascii')
+    end = bytes(args.end, encoding='ascii')
+
+    crc0 = crc_32(start, 0xFFFFFFFF)
+    crc1 = rev_crc_32(end, int(args.crc, 0))
+
+    rev_crc = crc0 ^ crc1
+
+    print('reverse: %0.8X - %s' % (rev_crc, [chr((rev_crc & (0xFF << (i * 8))) >> (i * 8)) for i in range(4)]))
+
+def crc_find(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+
+    cat = dat_manager.get_category('chara')
+
+    hash_table = cat.get_hash_table()
+
+    single_file_dirs = []
+    for dir_hash, dir_hash_table in hash_table.items():
+        if len(dir_hash_table) == 1:
+            for file_hash in dir_hash_table.keys():
+                single_file_dirs.append((dir_hash, file_hash))
+
+    logging.info('Number of sinle_file_dirs: %d' % len(single_file_dirs))
+
+    crc_list = []
+    for c in map(chr, range(ord(b'a'), ord(b'z') + 1)):
+        crc_list.append((crc_32(bytes(c, encoding='ascii'), 0xFFFFFFFF), c))
+
+    imc = b'.imc'
+
+    for dir_hash, dir_hash_table in hash_table.items():
+        for file_hash in dir_hash_table.keys():
+            logging.info('dir_hash: %0.8X - file_hash: %0.8X' % (dir_hash, file_hash))
+            for (crc0, letter) in crc_list:
+                crc1 = rev_crc_32(imc, file_hash)
+                crc = crc0 ^ crc1
+
+                match = True
+
+                for i in range(4):
+                    if not (0x30 <= ((crc & (0xFF << (i * 8))) >> (i * 8)) < 0x40):
+                        match = False
+                        break
+
+                if match:
+                    logging.info('name: %s' % ('%s%s.imc' % (letter, [chr((crc & (0xFF << (i * 8))) >> (i * 8)) for i in range(4)])))
+
+    # for dir_hash, file_hash in single_file_dirs:
+    #     logging.info('dir_hash: %0.8X - file_hash: %0.8X' % (dir_hash, file_hash))
+    #     for (crc0, letter) in crc_list:
+    #         crc1 = rev_crc_32(imc, file_hash)
+    #         crc = crc0 ^ crc1
+
+    #         match = True
+
+    #         for i in range(4):
+    #             if not (0x30 <= ((crc & (0xFF << (i * 8))) >> (i * 8)) < 0x40):
+    #                 match = False
+    #                 break
+
+    #         if match:
+    #             logging.info('name: %s' % ('%s%s.imc' % (letter, [chr((crc & (0xFF << (i * 8))) >> (i * 8)) for i in range(4)])))
+
+    def check_dir_existence(self, dir_hash):
+        return dir_hash in self._hash_table
+
+    def check_file_existence(self, dir_hash, file_hash):
+        return self.check_dir_existence(dir_hash) and file_hash in self.get_dir_hash_table(dir_hash)
+
+    def get_file(self, dir_hash, file_hash):
+        logging.info('%0.8X/%0.8X', dir_hash, file_hash)
+        file_infos = self.get_dir_hash_table(dir_hash)[file_hash]
+        logging.info('%s', file_infos)
+        dat_file_handle = self._get_dat_file_handle(file_infos.dat_nb)
+        return extract_file(dat_file_handle, file_infos.dat_offset)
+
+    def get_hash_table(self):
+        return self._hash_table
+
+    def get_dir_hash_table(self, dir_hash):
+        return self._hash_table[dir_hash]
+
 
 def patch_version(args, conf):
     patch_manager = PatchManager(conf.get('game', 'path'))
@@ -259,6 +348,29 @@ if __name__ == '__main__':
     # Analyze exd_links category
     analyze_exd_links_parser = analyze_subparsers.add_parser('exd_links', help='analyze exd_links')
     analyze_exd_links_parser.set_defaults(callback=analyze_exd_links)
+
+
+    ######################
+    # Crc sub module   #
+    ######################
+    crc_parser = subparsers.add_parser('crc', help='crc utils')
+    crc_subparsers = crc_parser.add_subparsers(title='type')
+
+    # Generate crc
+    crc_gen_parser = crc_subparsers.add_parser('gen', help='generate crc32 of string')
+    crc_gen_parser.add_argument('-n', '--name', required=True)
+    crc_gen_parser.set_defaults(callback=crc_gen)
+
+    # Reverse crc
+    crc_rev_parser = crc_subparsers.add_parser('rev', help='reverse crc32 of string')
+    crc_rev_parser.add_argument('-c', '--crc', required=True)
+    crc_rev_parser.add_argument('-s', '--start', required=True)
+    crc_rev_parser.add_argument('-e', '--end', required=True)
+    crc_rev_parser.set_defaults(callback=crc_rev)
+
+    # Find files crc
+    crc_find_parser = crc_subparsers.add_parser('find', help='find models.imc')
+    crc_find_parser.set_defaults(callback=crc_find)
 
     ######################
     # Patch sub module   #

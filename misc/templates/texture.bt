@@ -1,0 +1,16 @@
+
+struct Header
+{
+    uint32 unknown1;
+    uint32 unknown2;
+    uint16 width;
+    uint16 height;
+    uint16 unknown3;
+    uint16 unknown4;
+    uint32 unknown5;
+    uint32 unknown6;
+    uint32 unknown7;
+    uint32 header_size;
+};
+
+Header header;
