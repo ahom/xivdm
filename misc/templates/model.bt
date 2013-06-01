@@ -9,7 +9,7 @@ struct FileHeader
 
 struct MeshHeader
 {
-    uint16 unknown[0x44];
+    ubyte unknown[0x88];
 };
 
 struct StringBlock

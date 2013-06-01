@@ -1,34 +1,63 @@
 import logging
 
-from xivdm.crc32_utils import crc_32, rev_crc_32
+from xivdm.crc32_utils import rev_crc_32
 from xivdm.dat.Manager import get_hash
+
+def get_rev_digits_values_matches(prefix_value, suffix_value, hash_dict):
+    results = {}
+    prefix_crc = get_hash(prefix_value)
+    for dir_hash, file_hash_list in hash_dict.items():
+        for file_hash in file_hash_list:
+            value = get_rev_digits_values(prefix_crc, suffix_value, file_hash)
+            if value:
+                results.setdefault(dir_hash, {})[file_hash] = value
+    return results
+
+def get_rev_digits_values(prefix_crc, suffix_value, final_crc):
+    rev_patched_crc = rev_crc_32(bytes(suffix_value, encoding='ascii'), final_crc)
+    rev_crc = prefix_crc ^ rev_patched_crc
+
+    values = [(rev_crc & (0xFF << (i * 8))) >> (i * 8) for i in range(4)]
+
+    for value in values:
+        if not(0x30 <= value < 0x40):
+            return None
+    return ''.join(chr(c) for c in values)
 
 def icons(dat_manager):
     icons_result_tree = {}
-    for i in range(1000):
-        folder = i * 1000
-        key = '%0.6d' % folder
-        folder_path = 'ui/icon/%s/' % key
 
-        children = {}
-        if dat_manager.check_dir_existence(folder_path):
-            for j in range(1000):
-                file_key = '%0.6d' % (folder + j)
-                file_path = '%s%s.dds' % (folder_path, file_key)
-                if dat_manager.check_file_existence(file_path):
-                    children[file_key] = file_path
+    # Data hash table for chara dat
+    icon_cat_hash_table = dat_manager.get_category('ui').get_hash_table()
 
-        for ln in ['en', 'fr', 'de', 'ja']:
-            ln_folder_path = '%s%s/' % (folder_path, ln)
-            if dat_manager.check_dir_existence(ln_folder_path):
-                for j in range(1000):
-                    file_key = '%0.6d' % (folder + j)
-                    file_path = '%s%s.dds' % (ln_folder_path, file_key)
-                    if dat_manager.check_file_existence(file_path):
-                        children.setdefault(ln, {})[file_key] = file_path
-
-        if children:
-            icons_result_tree[key] = children
+    icon_folder_prefix_crc = get_hash('ui/icon/')
+    for dir_hash, dir_hash_table in icon_cat_hash_table.items():
+        folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00', dir_hash)
+        if folder_value:
+            logging.info('Found folder: %s' % folder_value)
+            folder_value = folder_value[0:3]
+            dir_path = 'ui/icon/%s000' % folder_value
+            file_prefix_crc = get_hash(folder_value[0:2])
+            for file_hash in dir_hash_table.keys():
+                file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
+                if file_value:
+                    logging.info('Found file: %s' % file_value)
+                    file_value = file_value[1:4]
+                    icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
+        else:
+            for ln in ['en', 'fr', 'de', 'ja']:
+                folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % ln, dir_hash)
+                if folder_value:
+                    logging.info('Found folder: %s - %s' % (ln, folder_value))
+                    folder_value = folder_value[0:3]
+                    dir_path = 'ui/icon/%s000/%s' % (folder_value, ln)
+                    file_prefix_crc = get_hash(folder_value[0:2])
+                    for file_hash in dir_hash_table.keys():
+                        file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
+                        if file_value:
+                            logging.info('Found file: %s' % file_value)
+                            file_value = file_value[1:4]
+                            icons_result_tree.setdefault(folder_value, {}).setdefault(ln, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
     return icons_result_tree
 
 def maps_icons(dat_manager):
@@ -51,27 +80,6 @@ def maps_icons(dat_manager):
                                     if dat_manager.check_file_existence(file_path):
                                         maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
     return maps_icons_result_tree
-
-def get_rev_digits_values_matches(prefix_value, suffix_value, hash_dict):
-    results = {}
-    prefix_crc = get_hash(prefix_value)
-    for dir_hash, file_hash_list in hash_dict.items():
-        for file_hash in file_hash_list:
-            value = get_rev_digits_values(prefix_crc, suffix_value, file_hash)
-            if value:
-                results.setdefault(dir_hash, {})[file_hash] = value
-    return results
-
-def get_rev_digits_values(prefix_crc, suffix_value, final_crc):
-    rev_patched_crc = rev_crc_32(bytes(suffix_value, encoding='ascii'), final_crc)
-    rev_crc = prefix_crc ^ rev_patched_crc
-
-    values = [(rev_crc & (0xFF << (i * 8))) >> (i * 8) for i in range(4)]
-
-    for value in values:
-        if not(0x30 <= value < 0x40):
-            return None
-    return ''.join(chr(c) for c in values)
 
 def models(dat_manager):
     models_result_tree = {}
