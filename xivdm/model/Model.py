@@ -38,11 +38,11 @@ class Model:
 
         self._vertex_buffer = None
         self._index_buffer = None
+        self._vertex_type = None
 
         self._meshes = []
 
         self._read(file_handle)
-
 
     def get_path(self):
         return self._path
@@ -53,6 +53,11 @@ class Model:
         file_handle.seek(0x40)
 
         (mesh_nb, material_nb) = struct.unpack("<HH", file_handle.read(4))
+
+        pos = file_handle.tell()
+        file_handle.seek(2, 1)
+        self._vertex_type = file_handle.read(1)
+        file_handle.seek(pos)
 
         file_handle.seek(0x88 * mesh_nb, 1) # Skipping mesh headers
 

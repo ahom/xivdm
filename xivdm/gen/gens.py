@@ -34,28 +34,24 @@ def icons(dat_manager):
     for dir_hash, dir_hash_table in icon_cat_hash_table.items():
         folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00', dir_hash)
         if folder_value:
-            logging.info('Found folder: %s' % folder_value)
             folder_value = folder_value[0:3]
             dir_path = 'ui/icon/%s000' % folder_value
             file_prefix_crc = get_hash(folder_value[0:2])
             for file_hash in dir_hash_table.keys():
                 file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
                 if file_value:
-                    logging.info('Found file: %s' % file_value)
                     file_value = file_value[1:4]
                     icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
         else:
             for ln in ['en', 'fr', 'de', 'ja']:
                 folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % ln, dir_hash)
                 if folder_value:
-                    logging.info('Found folder: %s - %s' % (ln, folder_value))
                     folder_value = folder_value[0:3]
                     dir_path = 'ui/icon/%s000/%s' % (folder_value, ln)
                     file_prefix_crc = get_hash(folder_value[0:2])
                     for file_hash in dir_hash_table.keys():
                         file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
                         if file_value:
-                            logging.info('Found file: %s' % file_value)
                             file_value = file_value[1:4]
                             icons_result_tree.setdefault(folder_value, {}).setdefault(ln, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
     return icons_result_tree

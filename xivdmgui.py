@@ -4,11 +4,12 @@ import sys
 import logging
 from configparser import SafeConfigParser
 
-from PyQt4 import QtGui, QtOpenGL
+from PyQt4 import QtGui, QtOpenGL, QtCore
 
 from xivdm.dat.Manager import Manager as DatManager
+from xivdm.gen.Manager import Manager as GenManager
 from xivdm.logging_utils import set_logging
-
+from xivdm.matrix_utils import concatenate_matrices, rotation_matrix, scale_matrix
 from xivdm.model.Model import Model
 
 import OpenGL
@@ -24,108 +25,78 @@ import ctypes
 
 import numpy
 
-class OpenGLWidget(QtOpenGL.QGLWidget):
-    def __init__(self, dat_manager):
-        QtOpenGL.QGLWidget.__init__(self)
+class ModelPainter:
+    def __init__(self, dat_manager, file_path):
         self._dat_manager = dat_manager
-        self._model = None
+        self._model = Model(file_path, self._dat_manager.get_file(file_path))
 
         self._vertex_vbo = None
         self._index_vbo = None
 
-    def initializeGL(self):
-        file_path = 'bg/ffxiv/fst_f1/fld/f1f1/bgparts/f1f1_a1_noko3.mdl'
-        self._model = Model(file_path, self._dat_manager.get_file(file_path))
+        self._shader = None
+        self._mvp_handle = None
+        self._position_handle = None
 
-        gl.glClearColor(0,0,0,0)
+        self._is_initialized = False
 
-        self._vertex_shader = shaders.compileShader("""#version 120
-            in vec4 vPosition;
+    def initialize(self):
+        vertex_shader = shaders.compileShader("""#version 330
+            in vec3 vPosition;
+            uniform mat4 MVP;
 
             void main()
             {
-                gl_Position = gl_ModelViewProjectionMatrix * vPosition;
+                gl_Position = MVP * vec4(vPosition, 1.0);
             }""", gl.GL_VERTEX_SHADER)
 
-        self._fragment_shader = shaders.compileShader("""#version 120
+        fragment_shader = shaders.compileShader("""#version 330
             void main() 
             {
                 gl_FragColor = vec4( 0, 1, 1, 1 );
             }""", gl.GL_FRAGMENT_SHADER)
 
-        self._shader = shaders.compileProgram(self._vertex_shader, self._fragment_shader)
-        gl.glBindAttribLocation(self._shader, 0, b"vPosition")
-
-        # self._vertex_vbo = vbo.VBO(self._model._vertex_buffer, target=gl.GL_ARRAY_BUFFER)
+        self._shader = shaders.compileProgram(vertex_shader, fragment_shader)
+        self._position_handle = 0
+        gl.glBindAttribLocation(self._shader, self._position_handle, b"vPosition")
+        self._mvp_handle = gl.glGetUniformLocation(self._shader, b"MVP")
 
         self._vertex_vbo = gl.glGenBuffers(1)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
-        #l.glBufferData(gl.GL_ARRAY_BUFFER, self._model._vertex_buffer, gl.GL_STATIC_DRAW)
         gl.glBufferData(gl.GL_ARRAY_BUFFER, len(self._model._vertex_buffer), self._model._vertex_buffer, gl.GL_STATIC_DRAW)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
 
-
-        # self._index_vbo = vbo.VBO(self._model._index_buffer, target=gl.GL_ELEMENT_ARRAY_BUFFER)
-
         self._index_vbo = gl.glGenBuffers(1)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
-        #gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, self._model._index_buffer, gl.GL_STATIC_DRAW)
         gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, len(self._model._index_buffer), self._model._index_buffer, gl.GL_STATIC_DRAW)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0)
-        
-    def resizeGL(self, w, h):
-        gl.glMatrixMode(gl.GL_PROJECTION)
-        gl.glLoadIdentity()
-        #gl.glOrtho(-10, 10, -10, 10, -10, 10)
-        gl.glOrtho(-1, 1, -1, 1, -1, 1)
-        gl.glViewport(0, 0, w, h)
 
-    def paintGL(self):
-        # gl.glViewport(0, 0, self.width(), self.height())
-        # gl.glClearColor(0.0, 1.0, 0.0, 1.0)
-        # gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-        # gl.glColor3f(1.0, 0.0, 0.0)
-
-        gl.glMatrixMode(gl.GL_PROJECTION)
-        gl.glLoadIdentity()
-        viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
-        glu.gluPerspective(60.0, float(viewport[2])/float(viewport[3]), 0.1, 1000.0)
-        gl.glMatrixMode(gl.GL_MODELVIEW)
-        gl.glLoadIdentity()
-        glu.gluLookAt(2.0, 2.0, 2.0,
-          0.0, 0.0, 0.0,
-          0.0, 1.0, 0.0)
-
-        self.drawGrid(100)
-        self.drawAxes()
+    def paint(self, mvp_matrix):
+        if not self._is_initialized:
+            self.initialize()
+            self._is_initialized = True
 
         gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
         gl.glEnableClientState(gl.GL_INDEX_ARRAY)
 
         shaders.glUseProgram(self._shader)
-        
 
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._index_vbo)
 
-        # self._vertex_vbo.bind()
-        # self._index_vbo.bind()
-
         gl.glPolygonMode(gl.GL_FRONT, gl.GL_LINE)
         gl.glPolygonMode(gl.GL_BACK, gl.GL_LINE)
 
+        gl.glUniformMatrix4dv(self._mvp_handle, 1, gl.GL_FALSE, mvp_matrix);
+        gl.glEnableVertexAttribArray(self._position_handle)
         for mesh in self._model._meshes:
-        
-            #mesh = self._model._meshes[0]
-
-            #gl.glVertexAttribPointer(0, 4, gl.GL_FLOAT, False, 0, None)
-            #gl.glVertexPointer(3, gl.GL_HALF_NV, False, None)
-            gl.glVertexAttribPointer(0, 4, half_float_vertex.GL_HALF_FLOAT, False, mesh._vertex_size, ctypes.c_void_p(mesh._vertex_buffer_offset))
-            gl.glEnableVertexAttribArray(0)
-            
-            #gl.glDrawElements(gl.GL_TRIANGLES, 18, gl.GL_UNSIGNED_SHORT, None)  mesh._index_count
+            if self._model._vertex_type == b'\x02':
+                gl.glVertexAttribPointer(0, 3, gl.GL_FLOAT, False, mesh._vertex_size, ctypes.c_void_p(mesh._vertex_buffer_offset))
+            elif self._model._vertex_type == b'\x0E':
+                gl.glVertexAttribPointer(0, 3, half_float_vertex.GL_HALF_FLOAT, False, mesh._vertex_size, ctypes.c_void_p(mesh._vertex_buffer_offset))
+            else:
+                raise Exception('Unknown vertex_type: %s' % self._model._vertex_type)
             gl.glDrawElements(gl.GL_TRIANGLES, mesh._index_count, gl.GL_UNSIGNED_SHORT, ctypes.c_void_p(mesh._index_buffer_offset * 2))
-            gl.glDisableVertexAttribArray(0)
+        gl.glDisableVertexAttribArray(self._position_handle)
 
         shaders.glUseProgram(0)
 
@@ -135,78 +106,98 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glDisableClientState(gl.GL_INDEX_ARRAY)
         gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
-        # gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
-        # gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertex_vbo)
-        # gl.glVertexPointer(4, gl.GL_FLOAT, 0, None)
-        # gl.glColor3f(1.0, 0.0, 0.0)
-        # gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 3)
-        # gl.glDisableVertexAttribArray(0)
 
-        #shaders.glUseProgram(0)        
-
-    def drawGrid(self, grid_size):
-        grid_half_size = grid_size / 2
-        gl.glBegin(gl.GL_LINES)
-        gl.glColor3f(0.20, 0.20, 0.20)
-        for i in range(grid_size):
-            gl.glVertex3f(i - grid_half_size, -grid_half_size, 0)
-            gl.glVertex3f(i - grid_half_size, grid_half_size, 0)
-    
-            gl.glVertex3f(-grid_half_size, i - grid_half_size, 0)
-            gl.glVertex3f(grid_half_size, i - grid_half_size, 0)
-        gl.glEnd()
-
-    def drawAxes(self):
-        gl.glLineWidth (2.0)
-        gl.glBegin(gl.GL_LINES)
-
-        gl.glColor3f(1,0,0)
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(1,0,0)
-
-        gl.glColor3f(0,1,0)
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(0,1,0)
-
-        gl.glColor3f(0,0,1)
-        gl.glVertex3f(0,0,0)
-        gl.glVertex3f(0,0,1)   
-
-        gl.glEnd()
-        gl.glLineWidth (1.0)
-
-class SimpleTestWidget(QtOpenGL.QGLWidget):
+class Camera:
     def __init__(self):
+        self.reset()
+
+    def get_mvp_matrix(self):
+        y_rot_mat = rotation_matrix(self.y_rot, [0, 1, 0])
+        x_rot_mat = rotation_matrix(self.x_rot, [1, 0, 0])
+
+        scale_mat = scale_matrix(self.scale)
+
+        return concatenate_matrices(x_rot_mat, y_rot_mat, scale_mat)
+
+    def reset(self):
+        self.y_rot = 0
+        self.x_rot = 0
+        self.scale = 1
+
+class OpenGLWidget(QtOpenGL.QGLWidget):
+    def __init__(self, dat_manager):
         QtOpenGL.QGLWidget.__init__(self)
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self._dat_manager = dat_manager
+
+        self._model_painter = None
+        self._current_model = None
+
+        self._camera = Camera()
+
+    def load_model(self, file_path):
+        if file_path != self._current_model:
+            self._model_painter = ModelPainter(self._dat_manager, file_path)
+            self._current_model = file_path
+            self._camera.reset()
+            self.update()
 
     def initializeGL(self):
-        self._vertexBuffer = gl.glGenBuffers(1)
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertexBuffer)
-        vertices = numpy.array([0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5], dtype='float32')
-        gl.glBufferData(gl.GL_ARRAY_BUFFER, vertices, gl.GL_STATIC_DRAW)    # Error
+        pass
 
-        self._indexBuffer = gl.glGenBuffers(1)
-        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._indexBuffer)
-        indices = numpy.array([0, 1, 2, 2, 0, 3], dtype='uint32')
-        gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indices, gl.GL_STATIC_DRAW)    # Error
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Q:
+            self._camera.y_rot += 0.1
+        elif event.key() == QtCore.Qt.Key_D:
+            self._camera.y_rot -= 0.1
+        elif event.key() == QtCore.Qt.Key_Z:
+            self._camera.x_rot -= 0.1
+        elif event.key() == QtCore.Qt.Key_S:
+            self._camera.x_rot += 0.1
+        else:
+            QtOpenGL.QGLWidget.keyPressEvent(self, event)
+        self.update()
+
+    def wheelEvent(self, event):
+        if event.delta() > 0:
+            self._camera.scale *= 1.25
+        else:
+            self._camera.scale /= 1.25
+        self.update()
+        
+    def resizeGL(self, w, h):
+        gl.glViewport(0, 0, w, h)
 
     def paintGL(self):
-        gl.glViewport(0, 0, self.width(), self.height())
-        gl.glClearColor(0.0, 1.0, 0.0, 1.0)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-        gl.glColor3f(1.0, 0.0, 0.0)
+        gl.glClearColor(0.0, 0.0, 0.0, 1.0)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
-        gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
-        gl.glEnableClientState(gl.GL_INDEX_ARRAY)
+        if self._model_painter:
+            self._model_painter.paint(self._camera.get_mvp_matrix())
 
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self._vertexBuffer)
-        gl.glVertexPointer(2, gl.GL_FLOAT, 0, None)
-        
-        gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self._indexBuffer)
-        gl.glDrawElements(gl.GL_TRIANGLES, 6, gl.GL_UNSIGNED_INT, None)
+class ListWidget(QtGui.QListWidget):
+    def __init__(self, item_list, gl_widget):
+        QtGui.QListWidget.__init__(self)
+        self.addItems(item_list)
 
-        gl.glDisableClientState(gl.GL_INDEX_ARRAY)
-        gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
+        self._gl_widget = gl_widget
+
+        self.itemDoubleClicked.connect(self.processItem) 
+
+    def processItem(self, item):
+        self._gl_widget.load_model(item.text()) 
+
+def walk_dict(node):
+    results = []
+    if type(node) == dict:
+        for value in node.values():
+            results.extend(walk_dict(value))
+    elif type(node) == list:
+        for value in node:
+            results.extend(walk_dict(value))
+    else:
+        results = [node]
+    return results
 
 def main():
     config = SafeConfigParser()
@@ -215,14 +206,22 @@ def main():
     set_logging(config.get('logs', 'path'), 'xivdmgui')
 
     dat_manager = DatManager(config.get('game', 'path'))
+    gen_manager = GenManager(dat_manager)
 
     app = QtGui.QApplication(sys.argv)
 
     main_window = QtGui.QMainWindow()
     main_window.setWindowTitle('Model Viewer')
- 
-    # main_window.setCentralWidget(SimpleTestWidget())
-    main_window.setCentralWidget(OpenGLWidget(dat_manager))
+    
+    gl_widget = OpenGLWidget(dat_manager)
+
+    list_view = ListWidget(walk_dict(gen_manager.get_category('models')), gl_widget)
+
+    splitter = QtGui.QSplitter()
+    splitter.addWidget(list_view)
+    splitter.addWidget(gl_widget)
+
+    main_window.setCentralWidget(splitter)
     main_window.resize(640, 480)
     main_window.show()
     
