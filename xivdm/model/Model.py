@@ -67,7 +67,11 @@ class Model:
 
         file_handle.seek(string_block_size, 1) # Skipping string block
 
-        file_handle.seek(0x3A, 1) # Skipping header
+        file_handle.seek(0x18, 1) # Skipping part of header
+        number_of_struct_to_skip = struct.unpack("<H", file_handle.read(2))[0]
+        file_handle.seek(0x20, 1) # Skipping header
+
+        file_handle.seek(0x18 * number_of_struct_to_skip, 1)
 
         lod_0_mesh_nb = struct.unpack("<H", file_handle.read(2))[0]
 
