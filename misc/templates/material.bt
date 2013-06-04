@@ -12,3 +12,34 @@ struct Header
 };
 
 Header header;
+
+uint32 string_offsets[header.tex_count + header.unknown1_count + header.unknown2_count];
+
+char string_block[header.string_block_size];
+
+uint32 zero;
+uint16 stuff_count;
+uint16 some_struct_count;
+uint16 stuff_struct_count;
+uint16 other_struct_count;
+uint16 unknown4;
+uint16 unknown5;
+
+struct
+{
+    uint32 unknown[2];
+} some_struct[some_struct_count];
+
+struct
+{
+    uint32 unknown;
+    uint16 stuff_index;
+    uint16 stuff_count;
+} stuff_struct[stuff_struct_count];
+
+struct
+{
+    uint32 unknown1;
+    uint32 unknown2;
+    uint32 index;
+} other_struct[other_struct_count];

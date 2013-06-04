@@ -215,7 +215,7 @@ def main():
     
     gl_widget = OpenGLWidget(dat_manager)
 
-    list_view = ListWidget(walk_dict(gen_manager.get_category('models')), gl_widget)
+    list_view = ListWidget(sorted(walk_dict(gen_manager.get_category('models'))), gl_widget)
 
     splitter = QtGui.QSplitter()
     splitter.addWidget(list_view)
