@@ -86,7 +86,7 @@ class ModelPainter:
         gl.glPolygonMode(gl.GL_FRONT, gl.GL_LINE)
         gl.glPolygonMode(gl.GL_BACK, gl.GL_LINE)
 
-        gl.glUniformMatrix4dv(self._mvp_handle, 1, gl.GL_FALSE, mvp_matrix);
+        gl.glUniformMatrix4fv(self._mvp_handle, 1, gl.GL_FALSE, mvp_matrix);
         gl.glEnableVertexAttribArray(self._position_handle)
         for mesh in self._model._meshes:
             if self._model._vertex_type == b'\x02':
@@ -173,7 +173,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
         if self._model_painter:
-            self._model_painter.paint(self._camera.get_mvp_matrix())
+            self._model_painter.paint(self._camera.get_mvp_matrix().astype(dtype='float32'))
 
 class ListWidget(QtGui.QListWidget):
     def __init__(self, item_list, gl_widget):

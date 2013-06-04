@@ -11,5 +11,4 @@ struct Header
     ubyte  unknown3;
 };
 
-
 Header header;
