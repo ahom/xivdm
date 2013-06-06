@@ -162,7 +162,16 @@ def extract_gen(args, conf):
 def analyze_exd_links(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     exd_manager = ExdManager(dat_manager)
-    results = analyze_links(exd_manager)
+
+    source_categories = None
+    destination_categories = None
+
+    if args.source:
+        source_categories = args.source.split(',')
+    if args.destination:
+        destination_categories = args.destination.split(',')
+
+    results = analyze_links(exd_manager, source_categories, destination_categories)
     logging.info(pformat(results))
 
 def extract_music(args, conf):
@@ -258,6 +267,8 @@ if __name__ == '__main__':
 
     # Analyze exd_links category
     analyze_exd_links_parser = analyze_subparsers.add_parser('exd_links', help='analyze exd_links')
+    analyze_exd_links_parser.add_argument('-s', '--source')
+    analyze_exd_links_parser.add_argument('-d', '--destination')
     analyze_exd_links_parser.set_defaults(callback=analyze_exd_links)
 
     ######################
