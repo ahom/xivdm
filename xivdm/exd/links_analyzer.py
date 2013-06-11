@@ -1,7 +1,7 @@
 import logging
 from pprint import pformat
 
-def analyze_links(exd_manager, source_categories=None, destination_categories=None):
+def analyze_links(exd_manager, hits_limit=0, source_categories=None, destination_categories=None):
     # Construct ids maps
 
     if not source_categories:
@@ -32,7 +32,7 @@ def analyze_links(exd_manager, source_categories=None, destination_categories=No
         for index, member in enumerate(data_ln_id):
             if type(member) == int:
                 result_set = set([data_ln[id][index] for id in data_ln.keys()]) - set([-2, -1])
-                if len(result_set) > 1:
+                if len(result_set) > hits_limit:
                     if not category_name in ids_to_analyze:
                         ids_to_analyze[category_name] = {}
                     ids_to_analyze[category_name][index] = result_set 
