@@ -100,7 +100,7 @@ def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
     exd_manager = ExdManager(dat_manager)
 
-    output_path = path.join(conf.get('output', 'path'), 'csv')
+    output_path = path.join(conf.get('output', 'path'), 'exd')
 
     for category_name in exd_manager.get_categories():
         data = exd_manager.get_category(category_name).get_csv()
@@ -116,6 +116,26 @@ def extract_exd(args, conf):
                 for line in csv:
                     file_handle.write(line)
                     file_handle.write('\n')
+
+def extract_exh(args, conf):
+    dat_manager = DatManager(conf.get('game', 'path'))
+    exd_manager = ExdManager(dat_manager)
+
+    output_path = path.join(conf.get('output', 'path'), 'exh')
+
+    for category_name in exd_manager.get_categories():
+        struct_def = exd_manager.get_category(category_name).get_struct_def()
+        output_file_path = path.join(
+            output_path, 
+            'exd/%s.exh' % category_name)
+
+        if not path.exists(path.dirname(output_file_path)):
+            makedirs(path.dirname(output_file_path))
+
+        with open(output_file_path, 'w') as file_handle:
+            for line in struct_def:
+                file_handle.write(line)
+                file_handle.write('\n')
 
 def extract_view(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -246,6 +266,10 @@ if __name__ == '__main__':
     # Extract exd
     extract_exd_parser = extract_subparsers.add_parser('exd', help='extract exd files as csv')
     extract_exd_parser.set_defaults(callback=extract_exd)
+
+    # Extract exh
+    extract_exh_parser = extract_subparsers.add_parser('exh', help='extract exh files as text')
+    extract_exh_parser.set_defaults(callback=extract_exh)
 
     # Extract view
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')

@@ -4,6 +4,21 @@ from xivdm.language import get_language_name, is_language_valid
 from xivdm.exd.exh import extract_header
 from xivdm.exd.exd import extract_data
 
+DATATYPE_NAME = [
+    "string",
+    "bool",
+    "sbyte",
+    "ubyte",
+    "sint16",
+    "uint16",
+    "int32",
+    "uint32",
+    None,
+    "float32",
+    None,
+    "quad"
+]
+
 class Category:
     EXH_NAME = 'exd/%s.exh'
     EXD_NAME = 'exd/%s_%d%s.exd'
@@ -46,6 +61,17 @@ class Category:
                     '%d, %s' % (id, ', '.join([repr(value) for value in values])) for id, values in data[language].items()
                 ]
         return return_dict
+
+    def get_struct_def(self):
+        header = self.get_header()
+        member_dict = {
+            member.offset: member.type for member in header.members
+        }
+        sorted_offsets = sorted(member_dict.keys())
+
+        return [
+            'Offset: %0.4X - Type: %s' % (offset_key, DATATYPE_NAME[member_dict[offset_key]]) for offset_key in sorted_offsets
+        ]
 
     def _extract_header(self):
         self._header = extract_header(self._dat_manager.get_file(Category.EXH_NAME % (self._name)))
