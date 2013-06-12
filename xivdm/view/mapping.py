@@ -38,14 +38,14 @@ def unmapped(index_list, v):
 
 def food_stat(stat_type, percent_value, max_value):
     return {
-        'stat': ref('parameters', stat_type),
+        'stat': ref('base_params', stat_type),
         'percent_value': percent_value,
         'max_value': max_value
     }
 
 def stat(stat_type, stat_value):
     return {
-        'stat': ref('parameters', stat_type),
+        'stat': ref('base_params', stat_type),
         'value': stat_value
     }
 
@@ -467,65 +467,64 @@ def item_ui_categories(data, id, v):
 
 def items(data, id, v):
     return {
-        'noon':                     string(data, id, 0),
+            'noon':                     string(data, id, 0),
 
-        'plural_noon':              string(data, id, 2),
+            'plural_noon':              string(data, id, 2),
 
-        'description':              string(data, id, 8),
-        'name':                     string(data, id, 9),
-        'icon':                     v[10],
-        'item_level':               v[11],
-        'class_job_level':          v[12],
+            'description':              string(data, id, 8),
+            'name':                     string(data, id, 9),
+            'icon':                     v[10],
+            'item_level':               v[11],
+            'class_job_level':          v[12],
 
-        'number_per_stack':         v[14],
-        'item_category':            ref('item_categories',              v[15]),
-        'item_ui_category':         ref('item_ui_categories',           v[16]),
-        'item_search_category':     ref('item_search_categories',       v[17]),
-        'rarity':                   v[18],
+            'number_per_stack':         v[14],
+            'item_category':            ref('item_categories',              v[15]),
 
-        'stats':                    [stat(v[i], v[i+1]) for i in range(31, 43, 2)],
+            'rarity':                   v[19],
 
-        'repair_class_job':         ref('class_jobs',                   v[56]),
-        'repair_material':          ref('items',                        v[57]),
-        'item_search_class_filter': ref('item_search_class_filters',    v[58]),
-    
-        'base_stats': [             stat(12, v[60]),  # physical_damage
-                                    stat(13, v[61]),  # magic_damage
-                                    stat(14, v[62]),  # delay
+            'stats':                    [stat(v[i], v[i+1]) for i in range(32, 44, 2)],
 
-                                    stat(18, v[64]),  # block
-                                    stat(17, v[65]),  # block_rate
-                                    stat(21, v[66]),  # defense
-                                    stat(24, v[67])], # magic_defense
+            'repair_class_job':         ref('class_jobs',                   v[57]),
+            'repair_material':          ref('items',                        v[58]),
+            'item_search_class_filter': ref('item_search_class_filters',    v[59]),
+        
+            'base_stats': [             stat(12, v[61]),  # physical_damage
+                                        stat(13, v[62]),  # magic_damage
+                                        stat(14, v[63]),  # delay
 
-        'item_food':                full_ref('item_foods',                   v[71]),
-        'effet_duration':           v[72],
+                                        stat(18, v[65]),  # block
+                                        stat(17, v[66]),  # block_rate
+                                        stat(21, v[67]),  # defense
+                                        stat(24, v[68])], # magic_defense
 
-        'is_unique':                v[74],
-        'is_untradable':            v[75],
+            'item_food':                full_ref('item_foods',                   v[71]),
+            #'effet_duration':           v[72],
 
-        'buy_price':                v[78],
+            'is_unique':                v[73],
+            'is_untradable':            v[74],
 
-        'race_restrictions':        [v[i] for i in range(82, 87)],
-        'gender_restrictions':      [v[i] for i in range(87, 89)],
-        'class_job_category':       ref('class_job_categories',         v[89]),
+            'buy_price':                v[76],
 
-        'grand_company':            ref('grand_companies',              v[91]),
+            'race_restrictions':        [v[i] for i in range(81, 86)],
+            'gender_restrictions':      [v[i] for i in range(86, 88)],
+            'class_job_category':       ref('class_job_categories',         v[88]),
 
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 8))
-            + list(range(13, 14))
-            + list(range(19, 31))
-            + list(range(43, 56))
-            + list(range(59, 60))
-            + list(range(63, 64))
-            + list(range(68, 71))
-            + list(range(73, 74))
-            + list(range(76, 78))
-            + list(range(79, 82))
-            + list(range(90, 91))
-            + list(range(92, 93)), v)
+            'grand_company':            ref('grand_companies',              v[90]),
+
+            'unmapped_values':          unmapped(
+                list(range(1, 2))
+                + list(range(3, 8))
+                + list(range(13, 14))
+                + list(range(19, 31))
+                + list(range(43, 56))
+                + list(range(59, 60))
+                + list(range(63, 64))
+                + list(range(68, 71))
+                + list(range(73, 74))
+                + list(range(76, 78))
+                + list(range(79, 82))
+                + list(range(90, 91))
+                + list(range(92, 93)), v)
     }
 
 def leves(data, id, v):
@@ -595,7 +594,7 @@ def online_statuses(data, id, v):
         'icon':                 v[1]
     }
 
-def parameters(data, id, v):
+def base_params(data, id, v):
     return {
         'name': string(data, id, 1),
 
