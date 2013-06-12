@@ -1,3 +1,5 @@
+import logging
+
 from xivdm.language import get_language_name, is_language_valid
 from xivdm.exd.exh import extract_header
 from xivdm.exd.exd import extract_data
@@ -56,6 +58,11 @@ class Category:
                 language_name = get_language_name(language)
                 if language_name != '':
                     language_name = '_%s' % language_name
-                self._data[language] = extract_data(
-                        self._dat_manager.get_file(Category.EXD_NAME % (self._name, header.start_id, language_name)),
-                        header)
+                self._data[language] = {}
+                for exd_file in header.exds:
+                    language_name = get_language_name(language)
+                    if language_name != '':
+                        language_name = '_%s' % language_name
+                    self._data[language].update(extract_data(
+                            self._dat_manager.get_file(Category.EXD_NAME % (self._name, exd_file, language_name)),
+                            header))

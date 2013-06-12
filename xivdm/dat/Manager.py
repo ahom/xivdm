@@ -21,14 +21,15 @@ class Manager:
         'music': 0x0C
     }
 
-    def __init__(self, game_path):        
-        self._categories = {
-            category_name: Category(
-                category_name,
-                path.join(game_path, 'game/sqpack/ffxiv'),
-                '%0.6x.win32' % (index << 0x10)
-            ) for category_name, index in Manager.CATEGORIES.items()
-        }
+    def __init__(self, game_path):   
+        base_path = path.join(game_path, 'game/sqpack/ffxiv')
+        self._categories = {}
+        for category_name, index in Manager.CATEGORIES.items():
+            try:
+                category = Category(category_name, base_path, '%0.6x.win32' % (index << 0x10))
+                self._categories[category_name] = category
+            except Exception as e:
+                logging.error("Couldn't process category[%s]: %s", category_name, e)
 
     def get_categories(self):
         return self._categories.keys()
