@@ -280,7 +280,7 @@ if __name__ == '__main__':
 
     # Extract view
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
-    extract_view_parser.add_argument('-n', '--name', required=True)
+    extract_view_parser.add_argument('-n', '--name')
     extract_view_parser.set_defaults(callback=extract_view)
 
     # Extract music

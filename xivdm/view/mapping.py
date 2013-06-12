@@ -101,29 +101,20 @@ def actions(data, id, v):
 
         'class_job':            ref('class_jobs', v[9]),
         'level':                v[10],
-        'range':                v[11],
+        #'range':                v[11],
 
-        'radius':               v[23],
+        #'radius':               v[23],
 
-        'resource_type':        v[32],
-        'resource_value':       v[33],
+        'resource_type':        v[24],
+        'resource_value':       v[25],
 
-        'cast':                 v[44],
+        #'cast':                 v[44],
 
-        'recast':               v[46],
+        'recast':               v[31],
 
-        'attack_type':          ref('attack_types', v[49]),
+        'attack_type':          ref('attack_types', v[33]),
 
-        'class_job_category':   ref('class_job_categories', v[58]),
-
-        'unmapped_values':      unmapped(
-            list(range(4, 9))
-            + list(range(12, 23))
-            + list(range(24, 32))
-            + list(range(34, 44))
-            + list(range(45, 46))
-            + list(range(47, 49))
-            + list(range(50, 58)), v)
+        'class_job_category':   ref('class_job_categories', v[41])
     }
 
 def addons(data, id, v):

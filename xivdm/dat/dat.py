@@ -53,13 +53,12 @@ def extract_file(file_handle, offset):
 
     elif entry_type == 0x03:
         # skipping bytes
-        file_handle.seek(64, 1)
+        file_handle.seek(112, 1)
         output.write(file_handle.read(0x44))
-        file_handle.seek(2, 1)
+        file_handle.seek(4, 1)
         
-        read_size = 134 + FILE_HEADER_STRUCT.size
         blocks_effective_size = list()
-        while read_size < header_size:
+        while True:
             block_effective_size = BLOCK_EFFECTIVE_SIZE.unpack(file_handle.read(BLOCK_EFFECTIVE_SIZE.size))[0]
             if block_effective_size == 0x00:
                 break
