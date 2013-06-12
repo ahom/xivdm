@@ -144,7 +144,14 @@ def extract_view(args, conf):
 
     output_path = path.join(conf.get('output', 'path'), 'json')
 
-    for view_name in view_manager.get_mappings():
+    view_names = None
+    if args.name:
+        view_names = args.name.split(',')
+    
+    if not view_names:
+        view_names = view_manager.get_mappings()
+
+    for view_name in view_names:
         output_file_path = path.join(output_path, '%s.json' % (view_name))
 
         if not path.exists(path.dirname(output_file_path)):
@@ -260,7 +267,7 @@ if __name__ == '__main__':
 
     # Extract file
     extract_file_parser = extract_subparsers.add_parser('file', help='extract a single file')
-    extract_file_parser.add_argument('-n', '--name', required=True)
+    extract_file_parser.add_argument('-n', '--name')
     extract_file_parser.set_defaults(callback=extract_file)
 
     # Extract exd
@@ -273,6 +280,7 @@ if __name__ == '__main__':
 
     # Extract view
     extract_view_parser = extract_subparsers.add_parser('view', help='extract view files as json')
+    extract_view_parser.add_argument('-n', '--name', required=True)
     extract_view_parser.set_defaults(callback=extract_view)
 
     # Extract music
