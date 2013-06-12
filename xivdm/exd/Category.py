@@ -64,13 +64,8 @@ class Category:
 
     def get_struct_def(self):
         header = self.get_header()
-        member_dict = {
-            member.offset: member.type for member in header.members
-        }
-        sorted_offsets = sorted(member_dict.keys())
-
         return [
-            'Offset: %0.4X - Type: %s' % (offset_key, DATATYPE_NAME[member_dict[offset_key]]) for offset_key in sorted_offsets
+            'Offset: %0.4X - Type: %s' % (member.offset, DATATYPE_NAME[member.type]) for member in header.members
         ]
 
     def _extract_header(self):
