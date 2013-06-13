@@ -108,7 +108,7 @@ def actions(data, id, v):
         'resource_type':        v[24],
         'resource_value':       v[25],
 
-        'cast':                 v[30]
+        'cast':                 v[30],
         'recast':               v[31],
 
         'attack_type':          ref('attack_types', v[33]),
