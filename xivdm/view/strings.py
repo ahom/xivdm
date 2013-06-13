@@ -276,7 +276,7 @@ class StringConverter:
             else:
                 logging.debug('Unknown control types: 0x%0.2X - %s', ascii_control_type, repr(ascii_control_mem_view.tobytes()))
         except Exception as exc:
-            logging.warning('Exception caught in string_parsing F***ing SE: %s', exc)
+            logging.info('Exception caught in string_parsing F***ing SE: %s', exc)
         
         return remainder, result
 

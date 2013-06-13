@@ -168,8 +168,7 @@ def chocobo_taxi_stands(data, id, v):
         'name':                 string(data, id, 8),
 
         'unmapped_values':      unmapped(
-            list(range(0, 8))
-            + list(range(9, 10)), v)
+            list(range(0, 8)), v)
     }
 
 def class_job_categories(data, id, v):
@@ -257,32 +256,35 @@ def default_talks(data, id, v):
 
 def emotes(data, id, v):
     return {
-        'name':                 string(data, id, 13),
-        'icon':                 v[14],
+        'icon':         v[0],
+        'name':         string(data, id, 14),
 
         'unmapped_values':      unmapped(
-            list(range(0, 13))
-            + list(range(15, 17)), v)
+            list(range(1, 14))
+            + list(range(15, 19)), v)
     }
 
-def enpc_bases(data, id, v):
-    return_dict = {
+def enpc_residents(data, id, v):
+    return {
         'name':                 string(data, id, 0),
 
         'name_bis':             string(data, id, 2),
 
         'title':                string(data, id, 8),
-        
-        'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 8))
-            + list(range(9, 12))
-            + list(range(41, 102)), v)
     }
 
-    for i in range(12, 42):
-        npc_stuff_range(return_dict, v[i])
-    return return_dict
+# def enpc_bases(data, id, v):
+#     return_dict = {
+#         'name':                 string(data, id, 0),
+
+#         'name_bis':             string(data, id, 2),
+
+#         'title':                string(data, id, 8),
+#     }
+
+#     for i in range(12, 42):
+#         npc_stuff_range(return_dict, v[i])
+#     return return_dict
 
 def eobjs(data, id, v):
     return {
@@ -292,7 +294,7 @@ def eobjs(data, id, v):
 
         'unmapped_values':          unmapped(
             list(range(1, 2))
-            + list(range(3, 16)), v)
+            + list(range(3, 14)), v)
     }
 
 def errors(data, id, v):
@@ -320,19 +322,18 @@ def event_items(data, id, v):
 
 def fates(data, id, v):
     return {
-        'level':                v[7],
-		'icon':                	v[18],
+        #'level':                v[7],
+		#'icon':                	v[18],
 		
-        'name':                 string(data, id, 8),
-        'description':          string(data, id, 9),
-        'special_text_1':       string(data, id, 10),
-        'special_text_2':       string(data, id, 11),
-        'special_text_3':       string(data, id, 12),
-        'special_text_4':       string(data, id, 13),
+        'name':                 string(data, id, 17),
+        'description':          string(data, id, 18),
+        'special_text_1':       string(data, id, 19),
+        'special_text_2':       string(data, id, 20),
+        'special_text_3':       string(data, id, 21),
+        'special_text_4':       string(data, id, 22),
 
         'unmapped_values':          unmapped(
-            list(range(0, 7))
-            + list(range(15, 17)), v)
+            list(range(0, 17)), v)
     }
 
 def gcrank(data, id, v):
@@ -389,7 +390,6 @@ def grand_company_seal_shop_items(data, id, v):
         
         'seal_cost':            v[3],
         'category':             ref('gcshop_item_categories', v[4]),
-        'name':                 string(data, id, 5),
 
         'unmapped_values':      unmapped(
             list(range(1, 3)), v)
@@ -408,11 +408,11 @@ def guildleve_assignments(data, id, v):
             list(range(0, 3)), v)
     }
 
-def guildleve_offers(data, id, v):
-    return {
-        'unmapped_values':      unmapped(
-            list(range(0, 2)), v)
-    }
+#def guildleve_offers(data, id, v):
+#    return {
+#        'unmapped_values':      unmapped(
+#            list(range(0, 2)), v)
+#    }
 
 def instance_contents(data, id, v):
     return {
@@ -497,7 +497,7 @@ def items(data, id, v):
                                         stat(21, v[67]),  # defense
                                         stat(24, v[68])], # magic_defense
 
-            'item_food':                full_ref('item_foods',                   v[71]),
+            #'item_food':                full_ref('item_foods',                   v[71]),
             #'effet_duration':           v[72],
 
             'is_unique':                v[73],
@@ -569,14 +569,10 @@ def monster_notes(data, id, v):
 
         'exp':                  v[8],
         'name':                 string(data, id, 9),
-
-        'icons':                [v[i] for i in range(14, 17)],
         
         'unmapped_values':      unmapped(
             list(range(3, 4))
-            + list(range(7, 8))
-            + list(range(10, 14))
-            + list(range(17, 18)), v)
+            + list(range(7, 8)), v)
     }
 
 def npc_yells(data, id, v):
@@ -633,7 +629,7 @@ def quest_steps(labels, ids):
                     if step_action in actor_dict:
                         result_steps.append({
                             'step': int(step_match_result.group('step_number')),
-                            'value': ref('enpc_bases', actor_dict[step_action])
+                            'value': ref('enpc_residents', actor_dict[step_action])
                         })
     return result_steps
 
@@ -652,27 +648,16 @@ def quests(exd_manager):
 
             'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
-            'npcs':                 [ref('enpc_bases', v[17]),
-                                     ref('enpc_bases', v[18])],    
+            #'npcs':                 [ref('enpc_residents', v[17]),
+            #                         ref('enpc_residents', v[18])],    
 
-            'steps':                quest_steps(v[21:71], v[71:121]),
+            'steps':                quest_steps(v[24:74], v[74:124]),
 
-            'gil_reward':           v[723],
+            'gil_reward':           v[1136],
 
-            'main_reward':          mat(v[728], v[729]),
+            #'main_reward':          mat(v[728], v[729]),
             
-            'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
-
-            'unmapped_values':      unmapped(
-                list(range(2, 3))
-                + list(range(4, 8))
-                + list(range(11, 14))
-                + list(range(15, 17))
-                + list(range(19, 21))
-                + list(range(121, 723))
-                + list(range(724, 728))
-                + list(range(729, 750))
-                + list(range(767, 778)), v)
+            #'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
         }
 
         if v[1] != b'':
@@ -763,10 +748,7 @@ def titles(data, id , v):
 def towns(data, id , v):
     return {
         'name':            string(data, id, 0),
-        'screen':          v[1],
-
-        'unmapped_values':      unmapped(
-            list(range(2, 4)), v)
+        'screen':          v[1]
     }
 
 def traits(data, id, v):
