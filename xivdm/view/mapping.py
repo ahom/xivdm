@@ -510,7 +510,7 @@ def items(data, id, v):
             'class_job_level':          v[12],
 
             'number_per_stack':         v[14],
-            'item_category':            ref('item_categories',              v[15]),
+            'item_ui_category':         ref('item_ui_categories',              v[17]),
 
             'rarity':                   v[19],
 
