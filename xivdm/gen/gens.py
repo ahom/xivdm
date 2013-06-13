@@ -38,10 +38,10 @@ def icons(dat_manager):
             dir_path = 'ui/icon/%s000' % folder_value
             file_prefix_crc = get_hash(folder_value[0:2])
             for file_hash in dir_hash_table.keys():
-                file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
+                file_value = get_rev_digits_values(file_prefix_crc, '.tex', file_hash)
                 if file_value:
                     file_value = file_value[1:4]
-                    icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
+                    icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
         else:
             for ln in ['en', 'fr', 'de', 'ja']:
                 folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % ln, dir_hash)
@@ -50,10 +50,10 @@ def icons(dat_manager):
                     dir_path = 'ui/icon/%s000/%s' % (folder_value, ln)
                     file_prefix_crc = get_hash(folder_value[0:2])
                     for file_hash in dir_hash_table.keys():
-                        file_value = get_rev_digits_values(file_prefix_crc, '.dds', file_hash)
+                        file_value = get_rev_digits_values(file_prefix_crc, '.tex', file_hash)
                         if file_value:
                             file_value = file_value[1:4]
-                            icons_result_tree.setdefault(folder_value, {}).setdefault(ln, {})[file_value] = '%s/%s%s.dds' % (dir_path, folder_value, file_value)
+                            icons_result_tree.setdefault(folder_value, {}).setdefault(ln, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
     return icons_result_tree
 
 def maps_icons(dat_manager):
@@ -66,13 +66,13 @@ def maps_icons(dat_manager):
                         basename = '%s%d%s%d' % (a, i, b, j)
                         num = '%0.2d' % k
                         folder_path = 'ui/map/%s/%s/' % (basename, num)
-                        file_path = '%s%s%sm.dds' % (folder_path, basename, num)
+                        file_path = '%s%s%sm.tex' % (folder_path, basename, num)
                         if dat_manager.check_file_existence(file_path):
                             maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
-                        if dat_manager.check_file_existence('%s%s%s_0_0.dds' % (folder_path, basename, num)):
+                        if dat_manager.check_file_existence('%s%s%s_0_0.tex' % (folder_path, basename, num)):
                             for x in range(32):
                                 for y in range(32):
-                                    file_path = '%s%s%s_%d_%d.dds' % (folder_path, basename, num, x, y)
+                                    file_path = '%s%s%s_%d_%d.tex' % (folder_path, basename, num, x, y)
                                     if dat_manager.check_file_existence(file_path):
                                         maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
     return maps_icons_result_tree

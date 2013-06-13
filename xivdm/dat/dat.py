@@ -77,6 +77,11 @@ def extract_file(file_handle, offset):
     output.flush()
     output.seek(0)
 
+    if entry_type == 0x04:
+        output.seek(4)
+        logging.debug("File[%s] Offset[%d] Type[\\x%0.2X\\x%0.2X]", file_handle, offset, output.read(1)[0], output.read(1)[0])
+        output.seek(0)
+
     return output
 
 
