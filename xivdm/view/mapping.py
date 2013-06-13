@@ -684,7 +684,7 @@ def quests(exd_manager):
 
             'steps':                quest_steps(v[24:74], v[74:124]),
 
-            'gil_reward':           v[1136],
+            'gil_reward':           v[1145],
 
             #'main_reward':          mat(v[728], v[729]),
             
