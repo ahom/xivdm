@@ -101,15 +101,14 @@ def actions(data, id, v):
 
         'class_job':            ref('class_jobs', v[9]),
         'level':                v[10],
-        #'range':                v[11],
+        'range':                v[11],
 
-        #'radius':               v[23],
+        'radius':               v[22],
 
         'resource_type':        v[24],
         'resource_value':       v[25],
 
-        #'cast':                 v[44],
-
+        'cast':                 v[30]
         'recast':               v[31],
 
         'attack_type':          ref('attack_types', v[33]),
