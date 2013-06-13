@@ -108,7 +108,7 @@ def actions(data, id, v):
         'resource_type':        v[24],
         'resource_value':       v[25],
 
-        'cast':                 v[30]
+        'cast':                 v[30],
         'recast':               v[31],
 
         'attack_type':          ref('attack_types', v[33]),
@@ -509,7 +509,6 @@ def items(data, id, v):
                                         stat(24, v[68])], # magic_defense
 
             'item_action':              full_ref('item_actions',                   v[71]),
-            #'effet_duration':           v[72],
 
             'is_unique':                v[73],
             'is_untradable':            v[74],
