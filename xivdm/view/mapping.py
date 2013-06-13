@@ -423,6 +423,18 @@ def instance_contents(data, id, v):
             + list(range(2, 6)), v)
     }
 
+def item_actions(data, id, v):
+    action_type = v[4]
+    if action_type in [48, 49]:
+        return {
+            'item_food':    full_ref('item_foods', v[5]),
+            'duration':     v[6],
+        }
+    else:
+        return {
+            'unmapped_values': unmapped(list(range(0, 22)), v)
+        }
+
 def item_categories(data, id, v):
     return {
         'name': string(data, id, 0)
@@ -497,7 +509,7 @@ def items(data, id, v):
                                         stat(21, v[67]),  # defense
                                         stat(24, v[68])], # magic_defense
 
-            #'item_food':                full_ref('item_foods',                   v[71]),
+            'item_action':              full_ref('item_actions',                   v[71]),
             #'effet_duration':           v[72],
 
             'is_unique':                v[73],

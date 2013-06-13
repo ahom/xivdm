@@ -49,6 +49,7 @@ class Manager:
             'guildleve_assignments': simple_mapping('GuildleveAssignment', guildleve_assignments), 
             #'guildleve_offers': simple_mapping('GuildleveOffer', guildleve_offers), 
             'instance_contents': simple_mapping('InstanceContent', instance_contents), 
+            'item_actions': simple_mapping('ItemAction', item_actions), 
             'item_categories': simple_mapping('ItemCategory', item_categories), 
             'item_foods': simple_mapping('ItemFood', item_foods), 
             'item_search_categories': simple_mapping('ItemSearchCategory', item_search_categories), 
