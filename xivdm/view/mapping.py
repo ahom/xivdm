@@ -57,32 +57,39 @@ def mat(item_id, quantity):
 
 def npc_stuff_range(return_dict, value):
     view_name = None
+
     if value == 0:
         pass
-    elif value < 65536:
+    elif value > 1703937:
         raise Exception('Unmapped id range: %d' % value)
-    elif value < 262144:
-        view_name = 'quests'
-    elif value < 393216:
-        view_name = 'shops'
-    elif value < 458752:
-        view_name = 'guildleve_assignments'
-    elif value < 589824:
-        view_name = 'guildleve_offers'
-    elif value < 720896:
-        view_name = 'default_talks'
-    elif value < 786432:
-        view_name = 'custom_talks'
-    elif value == 786432:
-        logging.warn('Unmapped value: %d', 786432)
-    elif value < 1179648:
-        view_name = 'craft_leves'
-    elif value == 1245184:
-        logging.warn('Unmapped value: %d', 1245184)
-    elif value < 1441792:
-        view_name = 'chocobo_taxi_stands'
-    else:
+    elif value >= 1703936:
+        view_name = 'stories'
+    elif value == 1638401:
+        logging.info('Unmapped id range: %d' % value)
+    elif value >= 1572864:
+        view_name = 'guild_order_officers'
+    elif value >= 1507328:
+        view_name = 'guild_order_guides'
+    elif value >= 1441792:
         view_name = 'gcshops'
+    elif value >= 1179648:
+        view_name = 'chocobo_taxi_stands'
+    elif value >= 917504:
+        view_name = 'craft_leves'
+    elif value >= 720896:
+        view_name = 'custom_talks'
+    elif value >= 589824:
+        view_name = 'default_talks'
+    elif value >= 393216:
+        view_name = 'guildleve_assignments'
+    elif value >= 262144:
+        view_name = 'shops'
+    elif value >= 131072:
+        view_name = 'gathering_leves'
+    elif value >= 65536:
+        view_name = 'quests'
+    elif value > 0:
+        raise Exception('Unmapped id range: %d' % value)
     if view_name:
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
@@ -270,20 +277,15 @@ def enpc_residents(data, id, v):
         'name_bis':             string(data, id, 2),
 
         'title':                string(data, id, 8),
+
+        'infos':                full_ref('enpc_bases', id),
     }
 
-# def enpc_bases(data, id, v):
-#     return_dict = {
-#         'name':                 string(data, id, 0),
-
-#         'name_bis':             string(data, id, 2),
-
-#         'title':                string(data, id, 8),
-#     }
-
-#     for i in range(12, 42):
-#         npc_stuff_range(return_dict, v[i])
-#     return return_dict
+def enpc_bases(data, id, v):
+    return_dict = {}
+    for i in range(2, 32):
+        npc_stuff_range(return_dict, v[i])
+    return return_dict
 
 def eobjs(data, id, v):
     return {
@@ -334,6 +336,12 @@ def fates(data, id, v):
         'unmapped_values':          unmapped(
             list(range(0, 17)), v)
     }
+
+def gathering_leves(data, id, v):
+    return {
+        'unmapped_values':          unmapped(
+            list(range(0, 19)), v)
+    }    
 
 def gcrank(data, id, v):
     return {
@@ -400,6 +408,19 @@ def guardian_deities(data, id, v):
         'description':          string(data, id, 1),
         'icon':                 v[2],
     }
+
+def guild_order_guides(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 6)), v)
+    }
+
+def guild_order_officers(data, id, v):
+    return {
+        'unmapped_values':      unmapped(
+            list(range(0, 6)), v)
+    }
+
 
 def guildleve_assignments(data, id, v):
     return {
@@ -734,6 +755,11 @@ def recipes(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)
+    }
+
+def stories(data, id, v):
+    return {
+        'story_name':                 string(data, id, 0)
     }
 
 def text_commands(data, id , v):
