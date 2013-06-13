@@ -20,7 +20,10 @@ def extract_file(file_handle, offset):
 
     logging.debug('entry_type: %d - total_uncompressed_size: %d - file_handle: %s - offset: %d', 
                     entry_type, total_uncompressed_size, file_handle, offset)
-    if entry_type == 0x02:
+    if entry_type == 0x01:
+        # empty file
+        pass 
+    elif entry_type == 0x02:
         pos = file_handle.tell()
         blocks_infos = list()
         for block_index in range(block_count):
