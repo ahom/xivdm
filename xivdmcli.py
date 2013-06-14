@@ -82,8 +82,11 @@ def extract_folder(args, conf):
 
         file_data = category.get_file(dir_hash, file_hash)
 
-        with open(output_file_path, 'wb') as file_handle:
-            file_handle.write(file_data.getvalue())
+        with open(output_file_path + '.dds', 'wb') as file_handle:
+            file_handle.write(Texture(file_data).get_as_dds().getvalue())
+
+        # with open(output_file_path, 'wb') as file_handle:
+        #     file_handle.write(file_data.getvalue())
 
 def extract_file(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))

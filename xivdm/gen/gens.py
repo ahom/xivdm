@@ -66,15 +66,18 @@ def maps_icons(dat_manager):
                         basename = '%s%d%s%d' % (a, i, b, j)
                         num = '%0.2d' % k
                         folder_path = 'ui/map/%s/%s/' % (basename, num)
-                        file_path = '%s%s%sm.tex' % (folder_path, basename, num)
+                        file_path = '%s%s%s_s.tex' % (folder_path, basename, num)
                         if dat_manager.check_file_existence(file_path):
                             maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
-                        if dat_manager.check_file_existence('%s%s%s_0_0.tex' % (folder_path, basename, num)):
-                            for x in range(32):
-                                for y in range(32):
-                                    file_path = '%s%s%s_%d_%d.tex' % (folder_path, basename, num, x, y)
-                                    if dat_manager.check_file_existence(file_path):
-                                        maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
+                        file_path = '%s%s%s_m.tex' % (folder_path, basename, num)
+                        if dat_manager.check_file_existence(file_path):
+                            maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
+                        file_path = '%s%s%sm_s.tex' % (folder_path, basename, num)
+                        if dat_manager.check_file_existence(file_path):
+                            maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
+                        file_path = '%s%s%sm_m.tex' % (folder_path, basename, num)
+                        if dat_manager.check_file_existence(file_path):
+                            maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
     return maps_icons_result_tree
 
 def models(dat_manager):

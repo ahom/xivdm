@@ -262,7 +262,7 @@ def default_talks(data, id, v):
 
 def emotes(data, id, v):
     return {
-        'icon':         v[0],
+        'icon':         v[15],
         'name':         string(data, id, 14),
 
         'unmapped_values':      unmapped(
@@ -684,7 +684,7 @@ def quests(exd_manager):
 
             'steps':                quest_steps(v[24:74], v[74:124]),
 
-            'gil_reward':           v[1145],
+            'gil_reward':           v[1134],
 
             #'main_reward':          mat(v[728], v[729]),
             
