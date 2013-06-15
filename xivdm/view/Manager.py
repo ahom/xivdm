@@ -8,6 +8,9 @@ class Manager:
     def __init__(self, exd_manager):
         self._exd_manager = exd_manager
         self._mappings = {
+            'achievements': simple_mapping('Achievement', achievements),
+            'achievement_categories': simple_mapping('AchievementCategory', achievement_categories),
+            'achievement_kinds': simple_mapping('AchievementKind', achievement_kinds),
             'action_categories': simple_mapping('ActionCategory', action_categories),
             'actions': simple_mapping('Action', actions),
             'addons': simple_mapping('Addon', addons),

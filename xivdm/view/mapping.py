@@ -94,6 +94,28 @@ def npc_stuff_range(return_dict, value):
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
 #### MAPPINGS ####
+def achievements(data, id, v):
+    return {
+        'category':     ref('achievement_categories', v[0]),
+        'name':         string(data, id, 1),
+        'description':  string(data, id, 2),
+        'points':       v[3],
+
+        'unmapped_values':      unmapped(
+            list(range(4, 8)), v)
+    }
+
+def achievement_categories(data, id, v):
+    return {
+        'name':     string(data, id, 0),
+        'kind':     ref('achievement_kinds', v[1])
+    }
+
+def achievement_kinds(data, id, v):
+    return {
+        'name': string(data, id, 0)
+    }
+
 def action_categories(data, id, v):
     return {
         'name': string(data, id, 0)
