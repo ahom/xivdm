@@ -67,7 +67,7 @@ def maps_icons(dat_manager):
                         num = '%0.2d' % k
                         folder_path = 'ui/map/%s/%s/' % (basename, num)
                         if dat_manager.check_dir_existence(folder_path):
-                            for suffix in ['_s', '_m', 'm_s', 'm_m']:
+                            for suffix in ['_s', '_m', 'm_s', 'm_m', 'd']:
                                 file_path = '%s%s%s%s.tex' % (folder_path, basename, num, suffix)
                                 if dat_manager.check_file_existence(file_path):
                                     maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
@@ -76,7 +76,7 @@ def maps_icons(dat_manager):
             num = '%0.2d' % k
             folder_path = 'ui/map/%s/%s/' % (basename, num)
             if dat_manager.check_dir_existence(folder_path):
-                for suffix in ['_s', '_m']:
+                for suffix in ['_s', '_m', 'd']:
                     file_path = '%s%s%s%s.tex' % (folder_path, basename, num, suffix)
                     if dat_manager.check_file_existence(file_path):
                         maps_icons_result_tree.setdefault(basename, {}).setdefault(num, []).append(file_path)
