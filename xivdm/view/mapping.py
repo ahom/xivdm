@@ -94,6 +94,28 @@ def npc_stuff_range(return_dict, value):
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
 #### MAPPINGS ####
+def achievements(data, id, v):
+    return {
+        'category':     ref('achievement_categories', v[0]),
+        'name':         string(data, id, 1),
+        'description':  string(data, id, 2),
+        'points':       v[3],
+
+        'unmapped_values':      unmapped(
+            list(range(4, 8)), v)
+    }
+
+def achievement_categories(data, id, v):
+    return {
+        'name':     string(data, id, 0),
+        'kind':     ref('achievement_kinds', v[1])
+    }
+
+def achievement_kinds(data, id, v):
+    return {
+        'name': string(data, id, 0)
+    }
+
 def action_categories(data, id, v):
     return {
         'name': string(data, id, 0)
@@ -262,7 +284,7 @@ def default_talks(data, id, v):
 
 def emotes(data, id, v):
     return {
-        'icon':         v[0],
+        'icon':         v[15],
         'name':         string(data, id, 14),
 
         'unmapped_values':      unmapped(
@@ -675,7 +697,7 @@ def quests(exd_manager):
 
             'level':                v[3],
 
-            'class':                v[14],
+            'class':                v[17],
 
             'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
 
@@ -684,7 +706,8 @@ def quests(exd_manager):
 
             'steps':                quest_steps(v[24:74], v[74:124]),
 
-            'gil_reward':           v[1136],
+            'exp_reward':           v[1133],
+            'gil_reward':           v[1134],
 
             #'main_reward':          mat(v[728], v[729]),
             

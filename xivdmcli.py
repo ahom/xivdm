@@ -18,6 +18,7 @@ from xivdm.exd.links_analyzer import analyze_links
 from xivdm.view.Manager import Manager as ViewManager
 from xivdm.gen.Manager import Manager as GenManager
 from xivdm.patch.Manager import Manager as PatchManager
+from xivdm.model.Texture import Texture
 
 def extract_all(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -81,8 +82,11 @@ def extract_folder(args, conf):
 
         file_data = category.get_file(dir_hash, file_hash)
 
-        with open(output_file_path, 'wb') as file_handle:
-            file_handle.write(file_data.getvalue())
+        with open(output_file_path + '.dds', 'wb') as file_handle:
+            file_handle.write(Texture(file_data).get_as_dds().getvalue())
+
+        # with open(output_file_path, 'wb') as file_handle:
+        #     file_handle.write(file_data.getvalue())
 
 def extract_file(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -93,8 +97,12 @@ def extract_file(args, conf):
     if not path.exists(path.dirname(output_file_path)):
         makedirs(path.dirname(output_file_path))
 
-    with open(output_file_path, 'wb') as file_handle:
-        file_handle.write(file_data.getvalue())
+    if output_file_path.endswith('.tex'):
+        with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
+            file_handle.write(Texture(file_data).get_as_dds().getvalue())
+    else:
+        with open(output_file_path, 'wb') as file_handle:
+            file_handle.write(file_data.getvalue())
 
 def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -177,8 +185,12 @@ def walk_gen(dat_manager, node, output_path):
         if not path.exists(path.dirname(output_file_path)):
             makedirs(path.dirname(output_file_path))
         data = dat_manager.get_file(node)
-        with open(output_file_path, 'wb') as file_handle:
-            file_handle.write(data.getvalue())
+        if output_file_path.endswith('.tex'):
+            with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
+                file_handle.write(Texture(data).get_as_dds().getvalue())
+        else:
+            with open(output_file_path, 'wb') as file_handle:
+                file_handle.write(data.getvalue())
 
 def extract_gen(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
