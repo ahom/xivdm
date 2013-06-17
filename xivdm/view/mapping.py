@@ -144,7 +144,7 @@ def actions(data, id, v):
 
         'class_job_category':   ref('class_job_categories', v[41])
     }
-
+	
 def addons(data, id, v):
     return {
         'name': string(data, id, 0)
@@ -513,6 +513,11 @@ def item_search_class_filters(data, id, v):
             list(range(1, 2)), v)
     }
 
+def item_special_bonuses(data, id, v):
+	return {
+		'name': string(data, id, 0),
+	}
+	
 def item_ui_categories(data, id, v):
     return {
         'name': string(data, id, 0),
@@ -550,6 +555,11 @@ def items(data, id, v):
                                         stat(17, v[66]),  # block_rate
                                         stat(21, v[67]),  # defense
                                         stat(24, v[68])], # magic_defense
+										
+			'set_stats': {
+										'name': 	ref('item_special_bonuses', v[44]),
+										'id': 		v[45],
+										'value': 	v[46]},
 
             'item_action':              full_ref('item_actions',                   v[71]),
 
@@ -569,7 +579,8 @@ def items(data, id, v):
                 + list(range(3, 8))
                 + list(range(13, 14))
                 + list(range(19, 31))
-                + list(range(43, 56))
+                + list(range(43, 44))
+				+ list(range(43, 56))
                 + list(range(59, 60))
                 + list(range(63, 64))
                 + list(range(68, 71))
@@ -613,6 +624,12 @@ def markers(data, id, v):
         'icon':                 v[0],
         'name':                 string(data, id, 1)
     }
+	
+def materias(data, id, v):
+	return {
+		'unmapped_values':      unmapped(
+            list(range(0, 20)), v)
+	}
 
 def monster_notes(data, id, v):
     return {
