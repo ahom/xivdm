@@ -558,7 +558,7 @@ def items(data, id, v):
 										
 			'set_stats': {
 										'special_bonus': 	ref('item_special_bonuses', v[44]),
-										'id': 				v[45],
+										'id': 				ref('base_params', v[45]),
 										'value': 			v[46]},
 
             'item_action':              full_ref('item_actions',                   v[71]),
