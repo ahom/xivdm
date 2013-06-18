@@ -100,9 +100,11 @@ def achievements(data, id, v):
         'name':         string(data, id, 1),
         'description':  string(data, id, 2),
         'points':       v[3],
+        'title':        ref('titles', v[4]),
+        'item':         ref('items', v[5]),
 
         'unmapped_values':      unmapped(
-            list(range(4, 8)), v)
+            list(range(6, 8)), v)
     }
 
 def achievement_categories(data, id, v):
