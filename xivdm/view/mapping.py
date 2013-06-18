@@ -476,7 +476,9 @@ def item_actions(data, id, v):
         }
     else:
         return {
-            'unmapped_values': unmapped(list(range(0, 22)), v)
+			'percentage':    v[4],
+            'value_max':     v[5],
+            'unmapped_values': unmapped(list(range(0, 4)) + list(range(6, 22)), v)
         }
 
 def item_categories(data, id, v):
@@ -629,8 +631,23 @@ def markers(data, id, v):
 	
 def materias(data, id, v):
 	return {
+		'mat1':					ref('items', v[0]),
+		'mat2':					ref('items', v[1]),
+		'mat3':					ref('items', v[2]),
+		'mat4':					ref('items', v[3]),
+		'mat5':					ref('items', v[4]),
+		
+		'attribute':			ref('base_params', v[10]),
+		
+		'value1':				v[11],
+		'value2':				v[12],
+		'value3':				v[13],
+		'value4':				v[14],
+		'value5':				v[15],
+		
 		'unmapped_values':      unmapped(
-            list(range(0, 20)), v)
+            list(range(6, 10))
+			+ list(range(16, 20)), v)
 	}
 
 def monster_notes(data, id, v):
