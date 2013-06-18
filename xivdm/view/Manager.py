@@ -111,32 +111,29 @@ class Manager:
         return None
 
     def _parse_view_refs(self, key, value):
-        try:
-            if type(value) == dict:
-                if 'type' in value:
-                    dict_type = value['type']
-                    if dict_type in ['view_ref', 'full_view_ref']:
-                        is_full = dict_type == 'full_view_ref'
-                        view_ref = value.get('view')
-                        id = value.get('id')
-                        if view_ref and id is not None: 
-                            logging.debug('view: %s - id: %d' % (view_ref, id))
-                            raw_json = self.get_json(view_ref)
-                            if not id in raw_json:
-                                if id in [-1, 0]:
-                                    return None
-                                else:
-                                    raise Exception('Id not found for view: %s - id: %d' % (view_ref, id))
-                            id_json = self.get_json(view_ref)[id]
-                            if not is_full:
-                                if 'name' in id_json:
-                                    value['value'] = id_json['name']['en']
-                                    return value
+        if type(value) == dict:
+            if 'type' in value:
+                dict_type = value['type']
+                if dict_type in ['view_ref', 'full_view_ref']:
+                    is_full = dict_type == 'full_view_ref'
+                    view_ref = value.get('view')
+                    id = value.get('id')
+                    if view_ref and id is not None: 
+                        logging.debug('view: %s - id: %d' % (view_ref, id))
+                        raw_json = self.get_json(view_ref)
+                        if not id in raw_json:
+                            if id in [-1, 0]:
+                                return None
                             else:
-                                value['value'] = id_json
+                                raise Exception('Id not found for view: %s - id: %d' % (view_ref, id))
+                        id_json = self.get_json(view_ref)[id]
+                        if not is_full:
+                            if 'name' in id_json:
+                                value['value'] = id_json['name']['en']
                                 return value
-        except Exception as e:
-            logging.error(e)
+                        else:
+                            value['value'] = id_json
+                            return value
         return None
 
     def _walk_json(self, node, process_function):

@@ -100,9 +100,11 @@ def achievements(data, id, v):
         'name':         string(data, id, 1),
         'description':  string(data, id, 2),
         'points':       v[3],
+        'title':        ref('titles', v[4]),
+        'item':         ref('items', v[5]),
 
         'unmapped_values':      unmapped(
-            list(range(4, 8)), v)
+            list(range(6, 8)), v)
     }
 
 def achievement_categories(data, id, v):
@@ -474,7 +476,9 @@ def item_actions(data, id, v):
         }
     else:
         return {
-            'unmapped_values': unmapped(list(range(0, 22)), v)
+			'percentage':    v[4],
+            'value_max':     v[5],
+            'unmapped_values': unmapped(list(range(0, 4)) + list(range(6, 22)), v)
         }
 
 def item_categories(data, id, v):
@@ -627,8 +631,15 @@ def markers(data, id, v):
 	
 def materias(data, id, v):
 	return {
+		'mat': 					[{
+									'item': ref('items', v[i]),
+									'value': v[i+11]
+								} for i in range(5)],
+		'attribute':			ref('base_params', v[10]),
+		
 		'unmapped_values':      unmapped(
-            list(range(0, 20)), v)
+            list(range(6, 10))
+			+ list(range(16, 20)), v)
 	}
 
 def monster_notes(data, id, v):
