@@ -631,19 +631,11 @@ def markers(data, id, v):
 	
 def materias(data, id, v):
 	return {
-		'mat1':					ref('items', v[0]),
-		'mat2':					ref('items', v[1]),
-		'mat3':					ref('items', v[2]),
-		'mat4':					ref('items', v[3]),
-		'mat5':					ref('items', v[4]),
-		
+		'mat': 					[{
+									'item': ref('items', v[i]),
+									'value': v[i+11]
+								} for i in range(5)],
 		'attribute':			ref('base_params', v[10]),
-		
-		'value1':				v[11],
-		'value2':				v[12],
-		'value3':				v[13],
-		'value4':				v[14],
-		'value5':				v[15],
 		
 		'unmapped_values':      unmapped(
             list(range(6, 10))
