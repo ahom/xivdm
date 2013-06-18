@@ -569,7 +569,7 @@ def items(data, id, v):
 
             'is_unique':                v[73],
             'is_untradable':            v[74],
-
+			'materia_slots':          	v[26],
             'buy_price':                v[76],
 
             'race_restrictions':        [v[i] for i in range(81, 86)],
