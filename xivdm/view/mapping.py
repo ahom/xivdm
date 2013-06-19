@@ -521,6 +521,10 @@ def item_special_bonuses(data, id, v):
 	return {
 		'name': string(data, id, 0),
 	}
+def item_series(data, id, v):
+	return {
+		'name': string(data, id, 0),
+	}
 	
 def item_ui_categories(data, id, v):
     return {
@@ -562,8 +566,8 @@ def items(data, id, v):
 										
 			'set_stats': {
 										'special_bonus': 	ref('item_special_bonuses', v[44]),
-										'id': 				ref('base_params', v[45]),
-										'value': 			v[46]},
+										'stats': 			[stat(v[i], v[i+1]) for i in range(45, 57, 2)],
+										},
 
             'item_action':              full_ref('item_actions',                   v[71]),
 
@@ -577,7 +581,7 @@ def items(data, id, v):
             'class_job_category':       ref('class_job_categories',         v[88]),
 
             'grand_company':            ref('grand_companies',              v[90]),
-
+			 'set_name': 				ref('item_series',             		v[92]),
             'unmapped_values':          unmapped(
                 list(range(1, 2))
                 + list(range(3, 8))
