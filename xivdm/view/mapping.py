@@ -230,7 +230,7 @@ def class_jobs(data, id, v):
 def companions(data, id, v):
     return {
         'name':                 string(data, id, 0),
-
+		'icon':					v[14],
         'plural_name':          string(data, id, 2),
 
         'unmapped_values':      unmapped(
@@ -569,7 +569,7 @@ def items(data, id, v):
 
             'is_unique':                v[73],
             'is_untradable':            v[74],
-
+			'materia_slots':          	v[26],
             'buy_price':                v[76],
 
             'race_restrictions':        [v[i] for i in range(81, 86)],
@@ -582,7 +582,8 @@ def items(data, id, v):
                 list(range(1, 2))
                 + list(range(3, 8))
                 + list(range(13, 14))
-                + list(range(19, 31))
+                + list(range(19, 26))
+				+ list(range(27, 31))
                 + list(range(43, 44))
 				+ list(range(43, 56))
                 + list(range(59, 60))
