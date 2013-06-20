@@ -350,7 +350,7 @@ def fates(data, id, v):
         #'level':                v[7],
 		#'icon':                	v[18],
 		
-		'position':             ref('levels', v[1]),
+		'position':             full_ref('levels', v[1]),
 		'level':            	v[2],
 		'icon':            		v[9],
 		
