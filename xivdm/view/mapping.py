@@ -350,10 +350,13 @@ def fates(data, id, v):
         #'level':                v[7],
 		#'icon':                	v[18],
 		
-		'level':                ref('levels', v[1]),
+		'position':             ref('levels', v[1]),
+		'level':            	v[2],
+		'icon':            		v[9],
+		
         'name':                 string(data, id, 17),
         'description':          string(data, id, 18),
-		'special_text': 		[string(data, id, i), for i in range(19, 23)],
+		'special_text': 		[string(data, id, i) for i in range(19, 23)],
 		
         'unmapped_values':          unmapped(
             list(range(0, 17)), v)
