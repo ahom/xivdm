@@ -59,6 +59,7 @@ class Manager:
             'item_foods': simple_mapping('ItemFood', item_foods), 
             'item_search_categories': simple_mapping('ItemSearchCategory', item_search_categories), 
             'item_search_class_filters': simple_mapping('ItemSearchClassFilter', item_search_class_filters), 
+            'item_series': simple_mapping('ItemSeries', item_series), 
 			'item_special_bonuses': simple_mapping('ItemSpecialBonus', item_special_bonuses), 
             'item_ui_categories': simple_mapping('ItemUICategory', item_ui_categories), 
             'items': simple_mapping('Item', items), 

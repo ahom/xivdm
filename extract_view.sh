@@ -1,0 +1,1 @@
+python xivdmcli.py extract view
