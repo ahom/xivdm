@@ -350,13 +350,11 @@ def fates(data, id, v):
         #'level':                v[7],
 		#'icon':                	v[18],
 		
+		'level':                ref('levels', v[1]),
         'name':                 string(data, id, 17),
         'description':          string(data, id, 18),
-        'special_text_1':       string(data, id, 19),
-        'special_text_2':       string(data, id, 20),
-        'special_text_3':       string(data, id, 21),
-        'special_text_4':       string(data, id, 22),
-
+		'special_text': 		[stat(v[i], v[i+1]) for i in range(19, 23, 1)],
+		
         'unmapped_values':          unmapped(
             list(range(0, 17)), v)
     }
@@ -609,6 +607,15 @@ def leves(data, id, v):
         'unmapped_values':      unmapped(
             list(range(3, 28)), v)
     }
+	
+	
+def levels(data, id, v):
+    return {
+        'place_name':           ref('place_names', v[9]),
+        'unmapped_values':      unmapped(
+            list(range(1, 9)), v)
+    }
+	
 
 def leve_clients(data, id, v):
     return {
