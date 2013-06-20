@@ -353,7 +353,7 @@ def fates(data, id, v):
 		'level':                ref('levels', v[1]),
         'name':                 string(data, id, 17),
         'description':          string(data, id, 18),
-		'special_text': 		[stat(v[i], v[i+1]) for i in range(19, 23, 1)],
+		'special_text': 		[v[i] for i in range(19, 23)],
 		
         'unmapped_values':          unmapped(
             list(range(0, 17)), v)
