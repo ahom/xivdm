@@ -64,6 +64,7 @@ class Manager:
             'item_ui_categories': simple_mapping('ItemUICategory', item_ui_categories), 
             'items': simple_mapping('Item', items), 
             'leves': simple_mapping('Leve', leves), 
+            'levels': simple_mapping('Level', levels), 
             'leve_clients': simple_mapping('LeveClient', leve_clients), 
             'maps': simple_mapping('Map', maps),
 			'materias': simple_mapping('Materia', materias), 
