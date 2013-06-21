@@ -258,6 +258,11 @@ def completions(data, id, v):
             + list(range(3, 4)), v)
     }
 
+def craft_crystal_type(data, id, v):
+    return {
+		'item':                 ref('items', v[0])
+    }
+	
 def craft_leves(data, id, v):
     return {
         'unmapped_values':      unmapped(
@@ -271,6 +276,12 @@ def craft_types(data, id, v):
         'unmapped_values':      unmapped(
             list(range(0, 2)), v)
     }
+
+def crystals(crystal, amount):
+	return {
+		'crystal':     full_ref('craft_crystal_type', crystal),
+		'amount':	   amount
+	}
 
 def custom_talks(data, id, v):
     return {
@@ -818,6 +829,8 @@ def recipes(data, id, v):
         'level':        v[1],
         'result':       mat(v[2], v[3]),
         'mats':         [mat(v[i], v[i+1]) for i in range(4, 20, 2)],
+		
+		'crystals': 	[crystals(v[i], v[i+1]) for i in range(20, 24, 2)],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)

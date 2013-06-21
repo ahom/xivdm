@@ -25,6 +25,7 @@ class Manager:
             'companions': simple_mapping('Companion', companions),
             'complete_journals': simple_mapping('CompleteJournal', complete_journals),
             'completions': simple_mapping('Completion', completions),
+            'craft_crystal_type': simple_mapping('CraftCrystalType', craft_crystal_type), 
             'craft_leves': simple_mapping('CraftLeve', craft_leves), 
             'craft_types': simple_mapping('CraftType', craft_types), 
             'custom_talks': simple_mapping('CustomTalk', custom_talks), 
