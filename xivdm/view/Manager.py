@@ -86,8 +86,8 @@ class Manager:
             'titles': simple_mapping('Title', titles),
             'towns': simple_mapping('Town', towns),
             'traits': simple_mapping('Trait', traits),
-            'journal_genre': simple_mapping('JournalGenre', weathers),
-            'journal_cat': simple_mapping('JournalCategory', weathers),
+            'journal_genre': simple_mapping('JournalGenre', journal_genre),
+            'journal_cat': simple_mapping('JournalCategory', journal_cat),
             'weathers': simple_mapping('Weather', weathers),
             'worlds': simple_mapping('World', worlds)
         }
