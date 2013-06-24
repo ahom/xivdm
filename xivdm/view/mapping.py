@@ -745,11 +745,14 @@ def quests(exd_manager):
     data_ln = data[list(data.keys())[0]]
     return_dict = {}
 
+    param_grow_data = exd_manager.get_category('ParamGrow').get_data()
+    param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
+
     for id, v in data_ln.items():
         return_dict[id] = {
             'name':                 string(data, id, 0),
 
-            'level':                v[3],
+            'level':                (v[3] if v[3] != 0xFFFF else 0) + v[4],
 
             'class':                v[17],
 
@@ -760,13 +763,22 @@ def quests(exd_manager):
 
             'steps':                quest_steps(v[24:74], v[74:124]),
 
-            'exp_reward':           v[1133],
+            'base_exp':             v[1133],
             'gil_reward':           v[1134],
+
+            'main_rewards':         [mat(v[i], v[i+3]) for i in range(1139, 1142)]
+                                    + [mat(v[i], v[i+3]) for i in range(1145, 1148)],
+
+            'optional_rewards':     [mat(v[i], v[i+5]) for i in range(1160, 1165)],
 
             #'main_reward':          mat(v[728], v[729]),
             
             #'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
         }
+
+        return_dict[id].update({
+            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][10] * (45 + 5 * return_dict[id]['level']))) // 100
+        })
 
         if v[1] != b'':
             quest_base_exd_name = v[1].decode('utf-8')
