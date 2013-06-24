@@ -890,6 +890,17 @@ def traits(data, id, v):
             list(range(5, 7)), v)
     }
 
+def journal_genre(data, id , v):
+    return {
+		'header_image':     v[0],
+        'cat':          ref('journal_cat', v[1]),
+        'name':         string(data, id, 2)
+    }	
+
+def journal_cat(data, id , v):
+    return {
+        'name':         string(data, id, 0)
+    }	
 def weathers(data, id , v):
     return {
         'icon':          v[0],
