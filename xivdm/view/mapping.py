@@ -750,10 +750,6 @@ def quest_steps(labels, ids):
                         })
     return result_steps
 
-
-	
-	
-	
 def quests(exd_manager):
     data = exd_manager.get_category('Quest').get_data()
     data_ln = data[list(data.keys())[0]]
@@ -761,15 +757,14 @@ def quests(exd_manager):
 
     param_grow_data = exd_manager.get_category('ParamGrow').get_data()
     param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
-	
-	
-	complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
-	complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
-	
-	complete_journal_search_dict = {
+    
+    complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
+    complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
+
+    complete_journal_search_dict = {
         cj_data[5]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
     }
-	
+    
 
     for id, v in data_ln.items():
         return_dict[id] = {
@@ -802,10 +797,10 @@ def quests(exd_manager):
         return_dict[id].update({
             'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][10] * (45 + 5 * return_dict[id]['level']))) // 100
         })
-		
-		#Lookup complete journal by name and extract genre id (v[4])
-		return_dict[id].update({
-            'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[return_dict[id]['name']]][4])['
+
+        #Lookup complete journal by name and extract genre id (v[4])
+        return_dict[id].update({
+            'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[return_dict[id]['name']]][4])
         })
 
         if v[1] != b'':
