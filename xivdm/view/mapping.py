@@ -12,8 +12,9 @@ def simple_mapping(exd_name, mapping_function):
         }
     return generated_function
 
-def string(data, id, member_id):
+def string(data, id, member_id, enable_conditions = False):
     return {
+        'enable_conditions': enable_conditions,
         'type': 'string',
         'ln': {
             get_language_name(language): data[language][id][member_id] for language in data.keys()
@@ -136,7 +137,7 @@ def action_categories(data, id, v):
 def actions(data, id, v):
     return {
         'name':                 string(data, id, 0),
-        'description':          string(data, id, 1),
+        'description':          string(data, id, 1, enable_conditions = True),
         'icon':                 v[2],
         'category':             ref('action_categories', v[3]),
 
@@ -820,6 +821,7 @@ def quests(exd_manager):
                     quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
                 ],
                 'texts': {
+                    'enable_conditions': False,
                     'type': 'string',
                     'ln': {
                         get_language_name(language): [
