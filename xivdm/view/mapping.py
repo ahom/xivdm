@@ -14,7 +14,10 @@ def simple_mapping(exd_name, mapping_function):
 
 def string(data, id, member_id):
     return {
-        get_language_name(language): data[language][id][member_id] for language in data.keys()
+        'type': 'string',
+        'ln': {
+            get_language_name(language): data[language][id][member_id] for language in data.keys()
+        }
     }
 
 def ref(view_name, value):
