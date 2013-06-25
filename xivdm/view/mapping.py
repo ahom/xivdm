@@ -221,7 +221,7 @@ def class_jobs(data, id, v):
         'is_job':               v[20],
         'caps_name':            string(data, id, 21),
 
-        'caps_full_name':       string(data, id, 25),
+        'caps_full_name':       string(data, id, 26),
 
         'unmapped_values':  unmapped(
             list(range(2, 3))
@@ -641,10 +641,10 @@ def leve_clients(data, id, v):
 
 def maps(data, id, v):
     return {
-        'name':                 string(data, id, 3),
+        'name':                 v[5].decode('utf-8'),
 
-        'zone':                 ref('place_names', v[6]),
-        'region':               ref('place_names', v[7]),
+        'zone':                 ref('place_names', v[7]),
+        'region':               ref('place_names', v[8]),
 
         'unmapped_values':      unmapped(
             list(range(0, 3))
@@ -687,7 +687,7 @@ def monster_notes(data, id, v):
 
 def npc_yells(data, id, v):
     return {
-        'name':                 string(data, id, 0),
+        'name':                 string(data, id, 4),
         
         'unmapped_values':      unmapped(
             list(range(1, 5)), v)
@@ -793,9 +793,12 @@ def quests(exd_manager):
                     quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
                 ],
                 'texts': {
-                    get_language_name(language): [
-                        quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
-                    ] for language in quest_exd_data.keys()
+                    'type': 'string',
+                    'ln': {
+                        get_language_name(language): [
+                            quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
+                        ] for language in quest_exd_data.keys()
+                    }
                 }  
             })
         
@@ -853,7 +856,7 @@ def recipes(data, id, v):
 
 def stories(data, id, v):
     return {
-        'story_name':                 string(data, id, 0)
+        'story_name':   v[0].decode('utf-8')
     }
 
 def text_commands(data, id , v):

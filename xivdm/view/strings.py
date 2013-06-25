@@ -1,9 +1,10 @@
 import logging
 
 class StringConverter:
-    def __init__(self, exd_manager, language):
+    def __init__(self, exd_manager, language, enable_conditions = false):
         self.exd_manager = exd_manager
         self.language = language
+        self.enable_conditions = enable_conditions
 
     def process_string(self, bytes_mem_view):
         bytes_mem_view, string_size = self.process_sequence(bytes_mem_view[1:])

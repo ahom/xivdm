@@ -495,17 +495,21 @@ static main(void)
                     aMiscAddress = Dword(aCurrentAddress);
                     if (GetFunctionAttr(aMiscAddress, FUNCATTR_START) != aMiscAddress)
                     {
-                        if (isUnknown(GetFlags(aMiscAddress)))
-                        {
-                            if (!MakeFunction(aMiscAddress, BADADDR))
-                            {
-                                break;
-                            }
-                        }
-                        else
+                        if (!MakeFunction(aMiscAddress, BADADDR))
                         {
                             break;
                         }
+                        // if (isUnknown(GetFlags(aMiscAddress)))
+                        // {
+                        //     if (!MakeFunction(aMiscAddress, BADADDR))
+                        //     {
+                        //         break;
+                        //     }
+                        // }
+                        // else
+                        // {
+                        //     break;
+                        // }
                     }
                     
                     aName = form("%s%d", "?virt_", aCurrentAddress - GetArrayElement(AR_LONG, aVTableAddressArrayId, j));

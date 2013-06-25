@@ -132,7 +132,6 @@ class Manager:
                     view_ref = value.get('view')
                     id = value.get('id')
                     if view_ref and id is not None: 
-                        logging.debug('view: %s - id: %d' % (view_ref, id))
                         raw_json = self.get_json(view_ref)
                         if not id in raw_json:
                             if id in [-1, 0]:
