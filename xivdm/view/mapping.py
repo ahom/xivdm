@@ -803,7 +803,15 @@ def quests(exd_manager):
             return_dict[id].update({
                 'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][4])
             })
-
+		
+			
+		#Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT	
+		if v[17] = 0:
+			return_dict[id].update({
+                'class': v[1132]
+            })
+		
+		
         if v[1] != b'':
             quest_base_exd_name = v[1].decode('utf-8')
             quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
