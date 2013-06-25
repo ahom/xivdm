@@ -107,12 +107,20 @@ class Manager:
         self._walk_json(self._jsons[name], self._parse_view_refs)
 
     def _parse_string(self, key, value):
-        if type(value) == bytes:
-            return StringConverter(self._exd_manager, get_language_id(key)).convert(memoryview(value))
-        elif type(value) == list and value and type(value[0]) == bytes:
-            return [
-                StringConverter(self._exd_manager, get_language_id(key)).convert(memoryview(sub_value)) for sub_value in value
-            ]
+        if type(value) == dict:
+            if 'type' in value:
+                if value['type'] == 'string':
+                    logging.info(value)
+                    return_dict = dict()
+                    languages = value['ln']
+                    for ln in languages.keys():
+                        if type(languages[ln]) == list:
+                            return_dict[ln] = [
+                                StringConverter(self._exd_manager, get_language_id(ln)).convert(memoryview(sub_str)) for sub_str in languages[ln]
+                            ]
+                        else:
+                            return_dict[ln] = StringConverter(self._exd_manager, get_language_id(ln)).convert(memoryview(languages[ln]))
+                    return return_dict
         return None
 
     def _parse_view_refs(self, key, value):
@@ -124,7 +132,6 @@ class Manager:
                     view_ref = value.get('view')
                     id = value.get('id')
                     if view_ref and id is not None: 
-                        logging.debug('view: %s - id: %d' % (view_ref, id))
                         raw_json = self.get_json(view_ref)
                         if not id in raw_json:
                             if id in [-1, 0]:

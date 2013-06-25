@@ -14,7 +14,10 @@ def simple_mapping(exd_name, mapping_function):
 
 def string(data, id, member_id):
     return {
-        get_language_name(language): data[language][id][member_id] for language in data.keys()
+        'type': 'string',
+        'ln': {
+            get_language_name(language): data[language][id][member_id] for language in data.keys()
+        }
     }
 
 def ref(view_name, value):
@@ -31,6 +34,13 @@ def full_ref(view_name, value):
         'id': value
     }
 
+def name_ref(view_name, value):
+    return {
+        'type': 'view_name_ref',
+        'view': view_name,
+        'name': value
+    }	
+	
 def unmapped(index_list, v):
     return {
         index: repr(v[index]) for index in index_list
@@ -218,7 +228,7 @@ def class_jobs(data, id, v):
         'is_job':               v[20],
         'caps_name':            string(data, id, 21),
 
-        'caps_full_name':       string(data, id, 25),
+        'caps_full_name':       string(data, id, 26),
 
         'unmapped_values':  unmapped(
             list(range(2, 3))
@@ -638,10 +648,10 @@ def leve_clients(data, id, v):
 
 def maps(data, id, v):
     return {
-        'name':                 string(data, id, 3),
+        'name':                 v[5].decode('utf-8'),
 
-        'zone':                 ref('place_names', v[6]),
-        'region':               ref('place_names', v[7]),
+        'zone':                 ref('place_names', v[7]),
+        'region':               ref('place_names', v[8]),
 
         'unmapped_values':      unmapped(
             list(range(0, 3))
@@ -684,7 +694,7 @@ def monster_notes(data, id, v):
 
 def npc_yells(data, id, v):
     return {
-        'name':                 string(data, id, 0),
+        'name':                 string(data, id, 4),
         
         'unmapped_values':      unmapped(
             list(range(1, 5)), v)
@@ -740,6 +750,10 @@ def quest_steps(labels, ids):
                         })
     return result_steps
 
+
+	
+	
+	
 def quests(exd_manager):
     data = exd_manager.get_category('Quest').get_data()
     data_ln = data[list(data.keys())[0]]
@@ -747,6 +761,15 @@ def quests(exd_manager):
 
     param_grow_data = exd_manager.get_category('ParamGrow').get_data()
     param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
+	
+	
+	complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
+	complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
+
+    complete_journal_search_dict = {
+        cj_data[5]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
+    }
+	
 
     for id, v in data_ln.items():
         return_dict[id] = {
@@ -779,6 +802,11 @@ def quests(exd_manager):
         return_dict[id].update({
             'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][10] * (45 + 5 * return_dict[id]['level']))) // 100
         })
+		
+		#Lookup complete journal by name and extract genre id (v[4])
+		return_dict[id].update({
+            'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[return_dict[id]['name']]][4])['
+        })
 
         if v[1] != b'':
             quest_base_exd_name = v[1].decode('utf-8')
@@ -790,9 +818,12 @@ def quests(exd_manager):
                     quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
                 ],
                 'texts': {
-                    get_language_name(language): [
-                        quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
-                    ] for language in quest_exd_data.keys()
+                    'type': 'string',
+                    'ln': {
+                        get_language_name(language): [
+                            quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
+                        ] for language in quest_exd_data.keys()
+                    }
                 }  
             })
         
@@ -850,7 +881,7 @@ def recipes(data, id, v):
 
 def stories(data, id, v):
     return {
-        'story_name':                 string(data, id, 0)
+        'story_name':   v[0].decode('utf-8')
     }
 
 def text_commands(data, id , v):
