@@ -806,7 +806,7 @@ def quests(exd_manager):
 		
 			
 		#Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT	
-		if v[17] == 0:
+		if v[17].eq(0):
 			return_dict[id].update({
                 'class': v[1132]
             })
