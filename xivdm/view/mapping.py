@@ -571,8 +571,8 @@ def items(data, id, v):
                                         stat(13, v[62]),  # magic_damage
                                         stat(14, v[63]),  # delay
 
-                                        stat(18, v[65]),  # block
-                                        stat(17, v[66]),  # block_rate
+                                        stat(18, v[66]),  # block
+                                        stat(17, v[65]),  # block_rate
                                         stat(21, v[67]),  # defense
                                         stat(24, v[68])], # magic_defense
 										
