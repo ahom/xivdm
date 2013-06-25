@@ -800,7 +800,8 @@ def quests(exd_manager):
 
         #Lookup complete journal by name and extract genre id (v[4])
         return_dict[id].update({
-            'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][4])
+            if complete_journal_data_in[complete_journal_search_dict[v[0]]][4] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
+                'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][4])
         })
 
         if v[1] != b'':
