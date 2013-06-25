@@ -25,6 +25,7 @@ class Manager:
             'companions': simple_mapping('Companion', companions),
             'complete_journals': simple_mapping('CompleteJournal', complete_journals),
             'completions': simple_mapping('Completion', completions),
+            'craft_crystal_type': simple_mapping('CraftCrystalType', craft_crystal_type), 
             'craft_leves': simple_mapping('CraftLeve', craft_leves), 
             'craft_types': simple_mapping('CraftType', craft_types), 
             'custom_talks': simple_mapping('CustomTalk', custom_talks), 
@@ -85,6 +86,8 @@ class Manager:
             'titles': simple_mapping('Title', titles),
             'towns': simple_mapping('Town', towns),
             'traits': simple_mapping('Trait', traits),
+            'journal_genre': simple_mapping('JournalGenre', journal_genre),
+            'journal_cat': simple_mapping('JournalCategory', journal_cat),
             'weathers': simple_mapping('Weather', weathers),
             'worlds': simple_mapping('World', worlds)
         }
