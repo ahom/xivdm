@@ -765,8 +765,8 @@ def quests(exd_manager):
 	
 	complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
 	complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
-
-    complete_journal_search_dict = {
+	
+	complete_journal_search_dict = {
         cj_data[5]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
     }
 	
