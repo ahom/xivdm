@@ -1,7 +1,7 @@
 import logging
 
 class StringConverter:
-    def __init__(self, exd_manager, language, enable_conditions = false):
+    def __init__(self, exd_manager, language, enable_conditions = False):
         self.exd_manager = exd_manager
         self.language = language
         self.enable_conditions = enable_conditions
