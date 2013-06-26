@@ -106,13 +106,13 @@ class StringConverter:
             result = 'standard_emotes_color'
         elif special_type == 0xE9 and value == 0x44:
             result = 'class_job'
-        elif special_type == 0xE9 and value == 0x45:
+        elif special_type == 0xE9 and value in [0x45, 0x48]:
             result = 'level'
         else:
             result = 'not_implemented(0x%0.2X-0x%0.2X)' % (special_type, value)
             #logging.warn(result)
-            
-        return bytes_mem_view, ''
+
+        return bytes_mem_view, result if self.enable_conditions else ''
 
     def process_test(self, bytes_mem_view):
         test_type = bytes_mem_view[0]
@@ -137,7 +137,11 @@ class StringConverter:
             logging.error('Unknown test_type for process_test: %s', first_byte)
             raise Exception('Integrity error')
         
-        return bytes_mem_view, ''
+        return bytes_mem_view, {
+            'operator': test_operator,
+            'left_operand': left_value,
+            'right_operand': right_value
+        } if self.enable_conditions else ''
 
     def process_date(self, bytes_mem_view):
         date_type = bytes_mem_view[0]
@@ -191,7 +195,11 @@ class StringConverter:
         bytes_mem_view, condition = self.process_sequence(bytes_mem_view)
         bytes_mem_view, value_Y = self.process_sequence(bytes_mem_view)
         bytes_mem_view, value_N = self.process_sequence(bytes_mem_view)
-        return '%s' % value_Y
+        return {
+            'condition': condition,
+            'yes': value_Y if type(value_Y) != int else '%d' % value_Y,
+            'no': value_N if type(value_N) != int else '%d' % value_N,
+        } if self.enable_conditions else '%s' % value_Y
 
     def control_linefeed(self, bytes_mem_view):
         return '  '
@@ -297,4 +305,21 @@ class StringConverter:
                 bytes_mem_view, ascii_control_result = self.parse_ascii_control(bytes_mem_view[stx_index:])
                 result.append(ascii_control_result)
 
-        return ''.join(result)
+        current_result = list()
+        current_str_list = list()
+        for item in result:
+            if type(item) == str:
+                current_str_list.append(item)
+            else:
+                if current_str_list:
+                    current_result.append(''.join(current_str_list))
+                    current_str_list = list()
+                current_result.append(item)
+
+        if current_str_list:
+            current_result.append(''.join(current_str_list))
+
+        if len(current_result) == 1 and type(current_result[0]) == str:
+            current_result = current_result[0]
+
+        return current_result

@@ -113,13 +113,14 @@ class Manager:
                     logging.info(value)
                     return_dict = dict()
                     languages = value['ln']
+                    enable_conditions = value['enable_conditions']
                     for ln in languages.keys():
                         if type(languages[ln]) == list:
                             return_dict[ln] = [
-                                StringConverter(self._exd_manager, get_language_id(ln)).convert(memoryview(sub_str)) for sub_str in languages[ln]
+                                StringConverter(self._exd_manager, get_language_id(ln), enable_conditions).convert(memoryview(sub_str)) for sub_str in languages[ln]
                             ]
                         else:
-                            return_dict[ln] = StringConverter(self._exd_manager, get_language_id(ln)).convert(memoryview(languages[ln]))
+                            return_dict[ln] = StringConverter(self._exd_manager, get_language_id(ln), enable_conditions).convert(memoryview(languages[ln]))
                     return return_dict
         return None
 
