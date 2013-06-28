@@ -71,6 +71,7 @@ class Manager:
 			'materias': simple_mapping('Materia', materias), 
             'markers': simple_mapping('Marker', markers), 
             'monster_notes': simple_mapping('MonsterNote', monster_notes), 
+            'monster_notes_target': simple_mapping('MonsterNoteTarget', monster_notes_target), 
             'npc_yells': simple_mapping('NpcYell', npc_yells), 
             'online_statuses': simple_mapping('OnlineStatus', online_statuses), 
             'base_params': simple_mapping('BaseParam', base_params), 
