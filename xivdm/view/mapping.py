@@ -639,7 +639,7 @@ def levels(data, id, v):
         'place_name':           ref('place_names', v[9]),
 		'x':					v[0],
 		'y':					v[2],
-		'map':					ref('maps',v[7]),
+		'map':					full_ref('maps',v[7]),
         'unmapped_values':      unmapped(
             list(range(1, 9)), v)
     }
