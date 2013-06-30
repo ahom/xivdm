@@ -637,6 +637,9 @@ def leves(data, id, v):
 def levels(data, id, v):
     return {
         'place_name':           ref('place_names', v[9]),
+		'x':					v[0],
+		'y':					v[2],
+		'map':					ref('maps',v[7]),
         'unmapped_values':      unmapped(
             list(range(1, 9)), v)
     }
@@ -649,7 +652,7 @@ def leve_clients(data, id, v):
 
 def maps(data, id, v):
     return {
-        'name':                 v[5].decode('utf-8'),
+        'id':                 v[5].decode('utf-8'),
 
         'zone':                 ref('place_names', v[7]),
         'region':               ref('place_names', v[8]),
