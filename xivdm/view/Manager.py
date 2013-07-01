@@ -38,6 +38,7 @@ class Manager:
             'event_items': simple_mapping('EventItem', event_items),
             'fates': simple_mapping('Fate', fates),
             'gathering_leves': simple_mapping('GatheringLeve', gathering_leves), 
+            'gathering_points': simple_mapping('GatheringPoint', gathering_points), 
             'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank), 
             'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank), 
             'gcrank_limsa_female_texts': simple_mapping('GCRankLimsaFemaleText', gcrank), 

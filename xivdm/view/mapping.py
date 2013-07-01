@@ -104,6 +104,25 @@ def npc_stuff_range(return_dict, value):
     if view_name:
         return_dict.setdefault(view_name, []).append(ref(view_name, value))
 
+def level_stuff_range(return_dict, value):
+    view_name = None
+
+    if value == 5000000:
+        logging.info('Unmapped id range: %d' % value)
+    elif value >= 2000000:
+        view_name = 'eobjs'
+    elif value >= 30000:
+        view_name = 'gathering_points'
+    elif value >= 10000:
+        view_name = 'enpc_residents'
+    elif 10000 >= value > 0:
+        logging.info('Unmapped id range BGMSituation: %d' % value)
+    elif value > 0:
+        raise Exception('Unmapped id range: %d' % value)
+
+    if view_name:
+        return_dict[view_name] = ref(view_name, value)
+
 #### MAPPINGS ####
 def achievements(data, id, v):
     return {
@@ -384,6 +403,12 @@ def fates(data, id, v):
             list(range(0, 17)), v)
     }
 
+def gathering_points(data, id, v):
+    return {
+        'unmapped_values':          unmapped(
+            list(range(0, 15)), v)
+    }   
+
 def gathering_leves(data, id, v):
     return {
         'unmapped_values':          unmapped(
@@ -633,17 +658,17 @@ def leves(data, id, v):
             list(range(3, 28)), v)
     }
 	
-	
 def levels(data, id, v):
-    return {
+    return_dict = {
         'place_name':           ref('place_names', v[9]),
-		'x':					v[0],
-		'y':					v[2],
-		'map':					full_ref('maps',v[7]),
+        'x':                    v[0],
+        'y':                    v[2],
+        'map':                  full_ref('maps',v[7]),
         'unmapped_values':      unmapped(
             list(range(1, 9)), v)
     }
-	
+    level_stuff_range(return_dict, v[6])
+    return return_dict
 
 def leve_clients(data, id, v):
     return {
