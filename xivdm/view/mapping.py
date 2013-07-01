@@ -960,4 +960,9 @@ def worlds(data, id , v):
         'name':            string(data, id, 0),
         'message':         string(data, id, 1)
     }
+def warps(data, id , v):
+    return {
+        'name':            string(data, id, 9),
+        'map':         	   full_ref('levels', v[0]),
+    }
 

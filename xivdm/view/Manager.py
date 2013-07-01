@@ -90,7 +90,8 @@ class Manager:
             'journal_genre': simple_mapping('JournalGenre', journal_genre),
             'journal_cat': simple_mapping('JournalCategory', journal_cat),
             'weathers': simple_mapping('Weather', weathers),
-            'worlds': simple_mapping('World', worlds)
+            'worlds': simple_mapping('World', worlds),
+            'warps': simple_mapping('Warp', warps)
         }
         self._jsons = {}
 
