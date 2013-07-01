@@ -637,6 +637,9 @@ def leves(data, id, v):
 def levels(data, id, v):
     return {
         'place_name':           ref('place_names', v[9]),
+		'x':					v[0],
+		'y':					v[2],
+		'map':					full_ref('maps',v[7]),
         'unmapped_values':      unmapped(
             list(range(1, 9)), v)
     }
@@ -649,7 +652,7 @@ def leve_clients(data, id, v):
 
 def maps(data, id, v):
     return {
-        'name':                 v[5].decode('utf-8'),
+        'id':                 v[5].decode('utf-8'),
 
         'zone':                 ref('place_names', v[7]),
         'region':               ref('place_names', v[8]),
@@ -681,7 +684,7 @@ def materias(data, id, v):
 
 def monster_notes(data, id, v):
     return {
-        'npcs':                 [ref('bnpc_names', v[i]) for i in range(0, 3)],
+        'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(0, 3)],
 
         'npc_quantities':       [v[i] for i in range(4, 7)],
 
@@ -691,6 +694,16 @@ def monster_notes(data, id, v):
         'unmapped_values':      unmapped(
             list(range(3, 4))
             + list(range(7, 8)), v)
+    }
+
+def monster_notes_target(data,id,v):
+	return {
+        'mob':                 ref('bnpc_names', v[0]),
+        'icon':       			v[1],
+        
+        'unmapped_values':      unmapped(
+            list(range(2, 8))
+			, v)
     }
 
 def npc_yells(data, id, v):
