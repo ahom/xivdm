@@ -403,11 +403,35 @@ def fates(data, id, v):
             list(range(0, 17)), v)
     }
 
+
+def gathering_type(data, id, v):
+    return {
+		'name': 		 string(data, id, 0),
+        'unmapped_values':          unmapped(
+            list(range(1, 2)), v)
+    } 	
+	
 def gathering_points(data, id, v):
     return {
+		'base': 		 full_ref('gathering_points_base', v[1]),
         'unmapped_values':          unmapped(
-            list(range(0, 15)), v)
+            list(range(1, 15)), v)
     }   
+
+def gathering_points_base(data, id, v):
+    return {
+		'node_name': 	full_ref('gathering_type', v[0]),
+		'level': 		v[1],
+        'unmapped_values':          unmapped(
+            list(range(2, 19)), v)
+    }
+
+def gathering_points_name(data, id, v):
+    return {
+		'name': 		 string(data, id, 0),
+        'unmapped_values':          unmapped(
+            list(range(1, 8)), v)
+    }
 
 def gathering_leves(data, id, v):
     return {
