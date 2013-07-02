@@ -121,7 +121,7 @@ def level_stuff_range(return_dict, value):
         raise Exception('Unmapped id range: %d' % value)
 
     if view_name:
-        return_dict[view_name] = ref(view_name, value)
+        return_dict[view_name] = full_ref(view_name, value)
 
 #### MAPPINGS ####
 def achievements(data, id, v):
