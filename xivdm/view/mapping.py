@@ -681,7 +681,7 @@ def maps(data, id, v):
 
         'zone':                 ref('place_names', v[7]),
         'region':               ref('place_names', v[8]),
-
+		'scale':				v[6],
         'unmapped_values':      unmapped(
             list(range(0, 3))
             + list(range(4, 6))
