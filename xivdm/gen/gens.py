@@ -58,12 +58,12 @@ def icons(dat_manager):
 
 def maps_icons(dat_manager):
     maps_icons_result_tree = {}
-    for a in map(chr, range(ord('a'), ord('z') + 1)):
-        for i in range(10):
-            for b in map(chr, range(ord('a'), ord('z') + 1)):
-                for j in range(10):
+    for a in list(map(chr, range(ord('a'), ord('z') + 1))) + list(range(10)):
+        for i in list(map(chr, range(ord('a'), ord('z') + 1))) + list(range(10)):
+            for b in list(map(chr, range(ord('a'), ord('z') + 1))) + list(range(10)):
+                for j in list(map(chr, range(ord('a'), ord('z') + 1))) + list(range(10)):
                     for k in range(100):
-                        basename = '%s%d%s%d' % (a, i, b, j)
+                        basename = '%s%s%s%s' % (a, i, b, j)
                         num = '%0.2d' % k
                         folder_path = 'ui/map/%s/%s/' % (basename, num)
                         if dat_manager.check_dir_existence(folder_path):
