@@ -411,21 +411,57 @@ def gathering_type(data, id, v):
             list(range(1, 2)), v)
     } 	
 	
-def gathering_points(data, id, v):
-    return {
-		'base': 		 full_ref('gathering_points_base', v[1]),
-        'unmapped_values':          unmapped(
-            list(range(1, 15)), v)
-    }   
+def gathering_points(exd_manager):
+	data = exd_manager.get_category('GatheringPoint').get_data()
+	data_ln = data[list(data.keys())[0]]
+	return_dict = {}
+
+	maps_data = exd_manager.get_category('Map').get_data()
+	maps_data_in = maps_data[list(maps_data.keys())[0]]
+
+	maps_search_dict = {
+		m_data[13]: m_id for m_id, m_data in maps_data_in.items()
+	}
+	for id, v in data_ln.items():
+		return_dict[id] = {
+			'base': 		full_ref('gathering_points_base', v[1]),
+			'unmapped_values':          unmapped(
+				list(range(1, 15)), v)
+		}
+		return_dict[id].update({
+			'map': ref('maps', maps_search_dict[v[12]])
+		})
+	return return_dict
 
 def gathering_points_base(data, id, v):
     return {
-		'node_name': 	full_ref('gathering_type', v[0]),
-		'level': 		v[1],
+        'node_name':    full_ref('gathering_type', v[0]),
+        'level':        v[1],
+        'items':        [full_ref('gathering_items', v[i]) for i in range(3, 18, 2)],
         'unmapped_values':          unmapped(
             list(range(2, 19)), v)
     }
+def gathering_items(data, id, v):
+    return_dict = {
+        'gathering_level': v[1]
+    }
+    gathering_items_range(return_dict, v[0])
+    return return_dict
 
+
+def gathering_items_range(return_dict, value):
+    view_name = None
+
+    if value < 2000000:
+         view_name = 'items'
+    elif value >= 2000000:
+         view_name = 'event_items'
+    elif value >= 3000000:
+        raise Exception('Unmapped id range: %d' % value)
+      
+    if view_name:
+        return_dict[view_name] = ref(view_name, value)	
+	
 def gathering_points_name(data, id, v):
     return {
 		'name': 		 string(data, id, 0),
@@ -706,6 +742,7 @@ def maps(data, id, v):
         'zone':                 ref('place_names', v[7]),
         'region':               ref('place_names', v[8]),
 		'scale':				v[6],
+		'pseudo_link':			v[13], #used to link gathering points to maps and maybe others
         'unmapped_values':      unmapped(
             list(range(0, 3))
             + list(range(4, 6))
