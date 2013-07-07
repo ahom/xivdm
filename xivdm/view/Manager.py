@@ -43,6 +43,8 @@ class Manager:
             'gathering_points_name': simple_mapping('GatheringPointName', gathering_points_name), 
             'gathering_items': simple_mapping('GatheringItem', gathering_items), 
             'gathering_type': simple_mapping('GatheringType', gathering_type), 
+            'gathering_condition': simple_mapping('GatheringCondition', gathering_condition), 
+            'gathering_bonus_type': simple_mapping('GatheringPointBonusType', gathering_bonus_type), 
             'gcrank_gridania_female_texts': simple_mapping('GCRankGridaniaFemaleText', gcrank), 
             'gcrank_gridania_male_texts': simple_mapping('GCRankGridaniaMaleText', gcrank), 
             'gcrank_limsa_female_texts': simple_mapping('GCRankLimsaFemaleText', gcrank), 

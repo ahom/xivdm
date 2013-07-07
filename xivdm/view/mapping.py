@@ -424,7 +424,11 @@ def gathering_points(exd_manager):
 	}
 	for id, v in data_ln.items():
 		return_dict[id] = {
-			'base': 		full_ref('gathering_points_base', v[1]),
+			'base': 				full_ref('gathering_points_base', v[1]),
+			'req':					ref('gathering_condition', v[7]),
+			'req_max':				v[8],
+			'bonus':				ref('gathering_bonus_type', v[9]),
+			'bonus_amount':			v[10],
 			'unmapped_values':          unmapped(
 				list(range(1, 15)), v)
 		}
@@ -475,6 +479,15 @@ def gathering_leves(data, id, v):
             list(range(0, 19)), v)
     }    
 
+def gathering_condition(data, id, v):
+    return {
+		'name': 		 string(data, id, 0)
+    }
+def gathering_bonus_type(data, id, v):
+    return {
+		'name': 		 string(data, id, 0)
+    }	
+	
 def gcrank(data, id, v):
     return {
         'name':                 string(data, id, 0),
