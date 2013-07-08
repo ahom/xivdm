@@ -743,6 +743,15 @@ def levels(data, id, v):
     level_stuff_range(return_dict, v[6])
     return return_dict
 
+	
+def param_grow(data, id, v):
+    return {
+        'exp':               v[0],
+        'unmapped_values':      unmapped(
+            list(range(1, 13)), v)
+    }
+	
+	
 def leve_clients(data, id, v):
     return {
         'name':                 string(data, id, 0)

@@ -74,6 +74,7 @@ class Manager:
             'leves': simple_mapping('Leve', leves), 
             'levels': simple_mapping('Level', levels), 
             'leve_clients': simple_mapping('LeveClient', leve_clients), 
+            'param_grow': simple_mapping('ParamGrow', param_grow), 
             'maps': simple_mapping('Map', maps),
 			'materias': simple_mapping('Materia', materias), 
             'markers': simple_mapping('Marker', markers), 
