@@ -579,13 +579,34 @@ def guildleve_assignments(data, id, v):
 #            list(range(0, 2)), v)
 #    }
 
-def instance_contents(data, id, v):
-    return {
-        'name':                 string(data, id, 1),  
+def instance_contents(exd_manager):
 
-        'unmapped_values':          unmapped(
-            list(range(0, 1))
-            + list(range(2, 6)), v)
+	data = exd_manager.get_category('InstanceContent').get_data()
+	data_ln = data[list(data.keys())[0]]
+	return_dict = {}
+	for id, v in data_ln.items():
+		return_dict[id] = {
+			'name':                 string(data, id, 1),
+			'time':          		v[0],
+			'type':              	full_ref('instance_content_type', v[3]),
+			'minlvl':				v[5],
+			'synclvl':				v[6],
+			'playercount':			v[11],
+			'unmapped_values':      unmapped(
+				list(range(4, 5)) + list(range(12, 27)), v)
+		}
+		if v[8] > 10000:
+			return_dict[id].update({
+				'issuenpc': ref('enpc_residents', v[8])
+			})
+	return return_dict
+	
+def instance_content_type(data, id, v):
+    return {
+        'info':                 full_ref('addons', v[0]),
+        'icon':          		v[1],
+        'unmapped_values':      unmapped(
+            list(range(2, 4)), v)
     }
 
 def item_actions(data, id, v):
