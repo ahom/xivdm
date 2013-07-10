@@ -298,6 +298,16 @@ def craft_leves(data, id, v):
         'unmapped_values':      unmapped(
             list(range(0, 15)), v)
     }
+def craft_action(data, id, v):
+    return {
+		'name': 			string(data, id, 0),
+		'description':		string(data, id, 1),
+		'icon':				v[4],
+		'class_job':        ref('class_jobs', v[5]),
+		'level':            v[7],
+		'cp':				v[8],
+		'class_job_category':   ref('class_job_categories', v[6]),
+    }
 
 def craft_types(data, id, v):
     return {
