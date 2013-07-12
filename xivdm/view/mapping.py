@@ -792,8 +792,8 @@ def maps(data, id, v):
     return {
         'id':                 v[5].decode('utf-8'),
 
-        'zone':                 ref('place_names', v[7]),
-        'region':               ref('place_names', v[8]),
+        'zone':                 full_ref('place_names', v[7]),
+        'region':               full_ref('place_names', v[8]),
 		'scale':				v[6],
 		'pseudo_link':			v[13], #used to link gathering points to maps and maybe others
         'unmapped_values':      unmapped(
