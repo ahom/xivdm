@@ -388,6 +388,7 @@ def event_items(data, id, v):
         'description_bis':      string(data, id, 9),
 
         'quest':                ref('quests', v[13]),
+		
 
         'unmapped_values':          unmapped(
             list(range(1, 2))
@@ -734,6 +735,7 @@ def items(data, id, v):
 
             'grand_company':            ref('grand_companies',              v[90]),
 			 'set_name': 				ref('item_series',             		v[92]),
+			 'model':					v[29],
             'unmapped_values':          unmapped(
                 list(range(1, 2))
                 + list(range(3, 8))
