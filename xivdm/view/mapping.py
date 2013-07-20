@@ -360,6 +360,7 @@ def enpc_bases(data, id, v):
     return_dict = {}
     for i in range(2, 32):
         npc_stuff_range(return_dict, v[i])
+    return_dict.setdefault('model', []).append(v[64])
     return return_dict
 
 def eobjs(data, id, v):
