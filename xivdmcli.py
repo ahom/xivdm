@@ -97,12 +97,12 @@ def extract_file(args, conf):
     if not path.exists(path.dirname(output_file_path)):
         makedirs(path.dirname(output_file_path))
 
-    if output_file_path.endswith('.tex'):
-        with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
-            file_handle.write(Texture(file_data).get_as_dds().getvalue())
-    else:
-        with open(output_file_path, 'wb') as file_handle:
-            file_handle.write(file_data.getvalue())
+    #if output_file_path.endswith('.tex'):
+    #    with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
+    #        file_handle.write(Texture(file_data).get_as_dds().getvalue())
+    #else:
+    with open(output_file_path, 'wb') as file_handle:
+        file_handle.write(file_data.getvalue())
 
 def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))
@@ -114,7 +114,7 @@ def extract_exd(args, conf):
         data = exd_manager.get_category(category_name).get_csv()
         for language, csv in data.items():
             output_file_path = path.join(
-                output_path, 
+                output_path,
                 'exd/%s_%s.exd' % (category_name, get_language_name(language)))
 
             if not path.exists(path.dirname(output_file_path)):
@@ -134,7 +134,7 @@ def extract_exh(args, conf):
     for category_name in exd_manager.get_categories():
         struct_def = exd_manager.get_category(category_name).get_struct_def()
         output_file_path = path.join(
-            output_path, 
+            output_path,
             'exd/%s.exh' % category_name)
 
         if not path.exists(path.dirname(output_file_path)):
@@ -155,22 +155,28 @@ def extract_view(args, conf):
     view_names = None
     if args.name:
         view_names = args.name.split(',')
-    
+
     if not view_names:
         view_names = view_manager.get_mappings()
 
     for view_name in view_names:
+        logging.info("Processing: %s", view_name)
+
         output_file_path = path.join(output_path, '%s.json' % (view_name))
 
         if not path.exists(path.dirname(output_file_path)):
             makedirs(path.dirname(output_file_path))
 
+        json_output = view_manager.get_json(view_name);
+
+        logging.info(json_output)
+
         with open(output_file_path, 'w') as file_handle:
             file_handle.write(
                 json.dumps(
-                    view_manager.get_json(view_name), 
-                    sort_keys=True, 
-                    indent=4, 
+                    json_output,
+                    sort_keys=True,
+                    indent=4,
                     separators=(',', ': ')))
 
 def walk_gen(dat_manager, node, output_path):

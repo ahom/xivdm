@@ -40,8 +40,8 @@ def name_ref(view_name, value):
         'type': 'view_name_ref',
         'view': view_name,
         'name': value
-    }	
-	
+    }
+
 def unmapped(index_list, v):
     return {
         index: repr(v[index]) for index in index_list
@@ -64,6 +64,12 @@ def mat(item_id, quantity):
     return {
         'item': ref('items', item_id),
         'quantity': quantity
+    }
+
+def crystals(crystal, amount):
+    return {
+        'crystal':     full_ref('craft_crystal_type', crystal),
+        'amount':      amount
     }
 
 def npc_stuff_range(return_dict, value):
@@ -123,18 +129,32 @@ def level_stuff_range(return_dict, value):
     if view_name:
         return_dict[view_name] = full_ref(view_name, value)
 
+def gathering_items_range(return_dict, value):
+    view_name = None
+
+    if value < 2000000:
+         view_name = 'items'
+    elif value >= 2000000:
+         view_name = 'event_items'
+    elif value >= 3000000:
+        raise Exception('Unmapped id range: %d' % value)
+
+    if view_name:
+        return_dict[view_name] = ref(view_name, value)
+
 #### MAPPINGS ####
 def achievements(data, id, v):
     return {
-        'category':     ref('achievement_categories', v[0]),
-        'name':         string(data, id, 1),
-        'description':  string(data, id, 2),
-        'points':       v[3],
-        'title':        ref('titles', v[4]),
-        'item':         ref('items', v[5]),
 
-        'unmapped_values':      unmapped(
-            list(range(6, 8)), v)
+        'name':         string(data, id, 0),
+        'description':  string(data, id, 1),
+        'item':         ref('items', v[2]),
+        'title':        ref('titles', v[3]),
+
+        'category':     ref('achievement_categories', v[5]),
+        'points':       v[6],
+
+        'unmapped_values':      unmapped([4, 7], v)
     }
 
 def achievement_categories(data, id, v):
@@ -158,25 +178,30 @@ def actions(data, id, v):
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1, enable_conditions = True),
         'icon':                 v[2],
-        'category':             ref('action_categories', v[3]),
 
-        'class_job':            ref('class_jobs', v[9]),
-        'level':                v[10],
-        'range':                v[11],
+        'resource_value':       v[5],
 
-        'radius':               v[22],
+        'cast':                 v[8],
+        'recast':               v[9],
 
-        'resource_type':        v[24],
-        'resource_value':       v[25],
+        'category':             ref('action_categories', v[12]),
 
-        'cast':                 v[30],
-        'recast':               v[31],
+        'level':                v[15],
+        'radius':               v[16],
+        'resource_type':        v[17],
 
-        'attack_type':          ref('attack_types', v[33]),
+        'class_job_category':   ref('class_job_categories', v[24]),
+        'class_job':            ref('class_jobs', v[26]),
+        'range':                v[27],
+        'attack_type':          ref('attack_types', v[28]),
 
-        'class_job_category':   ref('class_job_categories', v[41])
+        'unmapped_values':      unmapped(
+            [3, 5, 6, 7, 10, 11, 13, 14]
+            + list(range(18, 24))
+            + [25]
+            + list(range(29, 43)), v)
     }
-	
+
 def addons(data, id, v):
     return {
         'name': string(data, id, 0)
@@ -189,10 +214,18 @@ def attack_types(data, id, v):
 
 def balloons(data, id, v):
     return {
-        'text': string(data, id, 1),
+        'text': string(data, id, 0),
 
         'unmapped_values':  unmapped(
-            [0], v)
+            [1], v)
+    }
+
+def base_params(data, id, v):
+    return {
+        'name': string(data, id, 0),
+
+        'unmapped_values':      unmapped(
+            list(range(1, 30)), v)
     }
 
 def behest_rewards(data, id, v):
@@ -203,18 +236,16 @@ def behest_rewards(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(0, 1))
-            + list(range(4, 6)), v) 
+            + list(range(4, 6)), v)
     }
 
 def bnpc_names(data, id, v):
     return {
         'name':                 string(data, id, 0),
-
-        'plural_name':          string(data, id, 2),
+        'plural_name':          string(data, id, 1),
 
         'unmapped_values':      unmapped(
-            list(range(1, 2))
-            + list(range(3, 8)), v)
+            list(range(2, 8)), v)
     }
 
 def chain_bonuses(data, id, v):
@@ -225,10 +256,10 @@ def chain_bonuses(data, id, v):
 
 def chocobo_taxi_stands(data, id, v):
     return {
-        'name':                 string(data, id, 8),
+        'name':                 string(data, id, 0),
 
         'unmapped_values':      unmapped(
-            list(range(0, 8)), v)
+            list(range(1, 9)), v)
     }
 
 def class_job_categories(data, id, v):
@@ -242,86 +273,84 @@ def class_jobs(data, id, v):
         'name':                 string(data, id, 0),
         'acronym':              string(data, id, 1),
 
-        'class_job_category':   ref('class_job_categories', v[3]),
+        'caps_name':            string(data, id, 3),
+        'caps_full_name':       string(data, id, 4),
+        'class_job_category':   ref('class_job_categories', v[5]),
 
-        'base_class':           ref('class_jobs', v[19]),
-        'is_job':               v[20],
-        'caps_name':            string(data, id, 21),
+        'base_class':           ref('class_jobs', v[25]),
+        'is_job':               v[31],
 
-        'caps_full_name':       string(data, id, 26),
 
         'unmapped_values':  unmapped(
-            list(range(2, 3))
-            + list(range(4, 19))
-            + list(range(22, 25))
-            + list(range(26, 28)), v)
+            [2]
+            + list(range(6, 25))
+            + list(range(26, 31)), v)
     }
 
 def companions(data, id, v):
     return {
         'name':                 string(data, id, 0),
-		'icon':					v[14],
-        'plural_name':          string(data, id, 2),
+        'plural_name':          string(data, id, 1),
+
+        'icon':                 v[10],
 
         'unmapped_values':      unmapped(
-            list(range(1, 2))
-            + list(range(3, 13)), v)
+            list(range(2, 10))
+            + list(range(11, 15)), v)
     }
 
 def complete_journals(data, id, v):
     return {
+        'name':             string(data, id, 0),
+
         'header_image':     v[3],
 
-        'name':             string(data, id, 5),
-
         'unmapped_values':      unmapped(
-            list(range(0, 3))
-            + list(range(4, 5)), v)
+            [1, 2]
+            + list(range(4, 6)), v)
     }
 
 def completions(data, id, v):
     return {
-        'name':                 string(data, id, 2),
+        'name':                 string(data, id, 0),
 
         'unmapped_values':      unmapped(
-            list(range(0, 2))
-            + list(range(3, 4)), v)
+            list(range(1, 4)), v)
     }
 
 def craft_crystal_type(data, id, v):
     return {
-		'item':                 ref('items', v[0])
+        'item':                 ref('items', v[0])
     }
-	
+
 def craft_leves(data, id, v):
     return {
         'unmapped_values':      unmapped(
             list(range(0, 15)), v)
     }
+
 def craft_action(data, id, v):
     return {
-		'name': 			string(data, id, 0),
-		'description':		string(data, id, 1),
-		'icon':				v[4],
-		'class_job':        ref('class_jobs', v[5]),
-		'level':            v[7],
-		'cp':				v[8],
-		'class_job_category':   ref('class_job_categories', v[6]),
+        'name':             string(data, id, 0),
+        'description':      string(data, id, 1),
+
+        'icon':             v[4],
+        'class_job':        ref('class_jobs', v[8]),
+        'class_job_category':   ref('class_job_categories', v[5]),
+        'level':            v[6],
+        'cp':               v[7],
+
+        'unmapped_values':      unmapped(
+            [2, 3], v)
     }
 
 def craft_types(data, id, v):
     return {
-        'name':                 string(data, id, 2),
+        'name':                 string(data, id, 0),
 
         'unmapped_values':      unmapped(
-            list(range(0, 2)), v)
+            [1, 2], v)
     }
-
-def crystals(crystal, amount):
-	return {
-		'crystal':     full_ref('craft_crystal_type', crystal),
-		'amount':	   amount
-	}
 
 def custom_talks(data, id, v):
     return {
@@ -337,41 +366,45 @@ def default_talks(data, id, v):
 
 def emotes(data, id, v):
     return {
-        'icon':         v[15],
-        'name':         string(data, id, 14),
+        'name':         string(data, id, 0),
+        'icon':         v[8],
 
         'unmapped_values':      unmapped(
-            list(range(1, 14))
-            + list(range(15, 19)), v)
+            list(range(1, 8))
+            + list(range(9, 19)), v)
     }
 
 def enpc_residents(data, id, v):
     return {
         'name':                 string(data, id, 0),
-
-        'name_bis':             string(data, id, 2),
-
-        'title':                string(data, id, 8),
+        'name_bis':             string(data, id, 1),
+        'title':                string(data, id, 2),
 
         'infos':                full_ref('enpc_bases', id),
+
+        'unmapped_values':      unmapped(
+            list(range(3, 10)), v)
     }
 
 def enpc_bases(data, id, v):
-    return_dict = {}
-    for i in range(2, 32):
+    return_dict = {
+        'model':            v[64],
+
+        'unmapped_values':      unmapped(
+            list(range(30, 63))
+            + list(range(65, 93)), v)
+    }
+    for i in range(30):
         npc_stuff_range(return_dict, v[i])
-    return_dict.setdefault('model', []).append(v[64])
     return return_dict
 
 def eobjs(data, id, v):
     return {
         'name':                 string(data, id, 0),
-
-        'description':          string(data, id, 2),
+        'description':          string(data, id, 1),
 
         'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 14)), v)
+            list(range(2, 14)), v)
     }
 
 def errors(data, id, v):
@@ -382,81 +415,87 @@ def errors(data, id, v):
 def event_items(data, id, v):
     return {
         'name':                 string(data, id, 0),
+        'name_plural':          string(data, id, 1),
+        'description':          string(data, id, 2),
+        'description_bis':      string(data, id, 3),
 
-        'name_plural':          string(data, id, 2),
+        'quest':                ref('quests', v[10]),
 
-        'description':          string(data, id, 8),
-        'description_bis':      string(data, id, 9),
-
-        'quest':                ref('quests', v[13]),
-		
 
         'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 8))
-            + list(range(10, 13))
-            + list(range(14, 15)), v)
+            list(range(4, 10))
+            + list(range(11, 15)), v)
     }
 
 def fates(data, id, v):
     return {
-        #'level':                v[7],
-		#'icon':                	v[18],
-		
-		'position':             full_ref('levels', v[1]),
-		'level':            	v[2],
-		'icon':            		v[10],
-		
-        'name':                 string(data, id, 17),
-        'description':          string(data, id, 18),
-		'special_text': 		[string(data, id, i) for i in range(19, 23)],
-		
+        'name':                 string(data, id, 0),
+        'description':          string(data, id, 1),
+        'special_text':         [string(data, id, i) for i in range(2, 5)],
+
+        'position':             full_ref('levels', v[9]),
+
+        'icon':                 v[11],
+
+        'level':                v[18],
+
         'unmapped_values':          unmapped(
-            list(range(0, 17)), v)
+            list(range(5, 9))
+            + [10]
+            + list(range(12, 18))
+            + list(range(19, 23)), v)
     }
 
 
 def gathering_type(data, id, v):
     return {
-		'name': 		 string(data, id, 0),
+        'name':          string(data, id, 0),
         'unmapped_values':          unmapped(
-            list(range(1, 2)), v)
-    } 	
-	
+            [1], v)
+    }
+
 def gathering_points(exd_manager):
-	data = exd_manager.get_category('GatheringPoint').get_data()
-	data_ln = data[list(data.keys())[0]]
-	return_dict = {}
+    data = exd_manager.get_category('GatheringPoint').get_data()
+    data_ln = data[list(data.keys())[0]]
+    return_dict = {}
 
-	maps_data = exd_manager.get_category('Map').get_data()
-	maps_data_in = maps_data[list(maps_data.keys())[0]]
+    maps_data = exd_manager.get_category('Map').get_data()
+    maps_data_in = maps_data[list(maps_data.keys())[0]]
 
-	maps_search_dict = {
-		m_data[13]: m_id for m_id, m_data in maps_data_in.items()
-	}
-	for id, v in data_ln.items():
-		return_dict[id] = {
-			'base': 				full_ref('gathering_points_base', v[1]),
-			'req':					ref('gathering_condition', v[7]),
-			'req_max':				v[8],
-			'bonus':				ref('gathering_bonus_type', v[9]),
-			'bonus_amount':			v[10],
-			'unmapped_values':          unmapped(
-				list(range(1, 15)), v)
-		}
-		return_dict[id].update({
-			'map': ref('maps', maps_search_dict[v[12]])
-		})
-	return return_dict
+    maps_search_dict = {
+        m_data[7]: m_id for m_id, m_data in maps_data_in.items()
+    }
+
+    for id, v in data_ln.items():
+        return_dict[id] = {
+            'base':                 full_ref('gathering_points_base', v[0]),
+
+            'req':                  ref('gathering_condition', v[2]),
+            'bonus':                ref('gathering_bonus_type', v[3]),
+
+            'map':                  ref('maps', maps_search_dict[v[5]]),
+
+            'req_max':              v[9],
+            'bonus_amount':         v[10],
+
+            'unmapped_values':          unmapped(
+                [1]
+                + [4]
+                + list(range(6, 9))
+                + list(range(10, 15)), v)
+        }
+    return return_dict
 
 def gathering_points_base(data, id, v):
     return {
         'node_name':    full_ref('gathering_type', v[0]),
-        'level':        v[1],
-        'items':        [full_ref('gathering_items', v[i]) for i in range(3, 18, 2)],
+        'items':        [full_ref('gathering_items', v[i]) for i in range(1, 9)],
+        'level':        v[9],
+
         'unmapped_values':          unmapped(
-            list(range(2, 19)), v)
+            list(range(10, 19)), v)
     }
+
 def gathering_items(data, id, v):
     return_dict = {
         'gathering_level': v[1]
@@ -464,23 +503,9 @@ def gathering_items(data, id, v):
     gathering_items_range(return_dict, v[0])
     return return_dict
 
-
-def gathering_items_range(return_dict, value):
-    view_name = None
-
-    if value < 2000000:
-         view_name = 'items'
-    elif value >= 2000000:
-         view_name = 'event_items'
-    elif value >= 3000000:
-        raise Exception('Unmapped id range: %d' % value)
-      
-    if view_name:
-        return_dict[view_name] = ref(view_name, value)	
-	
 def gathering_points_name(data, id, v):
     return {
-		'name': 		 string(data, id, 0),
+        'name':          string(data, id, 0),
         'unmapped_values':          unmapped(
             list(range(1, 8)), v)
     }
@@ -489,26 +514,25 @@ def gathering_leves(data, id, v):
     return {
         'unmapped_values':          unmapped(
             list(range(0, 19)), v)
-    }    
+    }
 
 def gathering_condition(data, id, v):
     return {
-		'name': 		 string(data, id, 0)
+        'name':          string(data, id, 0)
     }
+
 def gathering_bonus_type(data, id, v):
     return {
-		'name': 		 string(data, id, 0)
-    }	
-	
+        'name':          string(data, id, 0)
+    }
+
 def gcrank(data, id, v):
     return {
         'name':                 string(data, id, 0),
-
-        'plural':               string(data, id, 2),
+        'plural':               string(data, id, 1),
 
         'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(3, 10)), v)
+            list(range(2, 10)), v)
     }
 
 def gcshops(data, id, v):
@@ -528,7 +552,7 @@ def general_actions(data, id, v):
         'description':          string(data, id, 1),
 
         'unmapped_values':      unmapped(
-            list(range(2, 3)), v)
+            [2], v)
     }
 
 def grand_companies(data, id, v):
@@ -536,27 +560,29 @@ def grand_companies(data, id, v):
         'name':                 string(data, id, 0),
 
         'unmapped_values':      unmapped(
-            list(range(1, 2)), v)
+            list(range(1, 10)), v)
     }
 
 def grand_company_ranks(data, id, v):
     return {
-        'rank':                 v[0],
-        'max_seals':            v[1],
+        'rank':                 v[8],
+        'max_seals':            v[9],
 
         'unmapped_values':      unmapped(
-            list(range(2, 6)), v)
+            list(range(0, 8))
+            + [10], v)
     }
 
 def grand_company_seal_shop_items(data, id, v):
     return {
-        'item':                 ref('items', v[0]),
-        
-        'seal_cost':            v[3],
+        'seal_cost':            v[1],
+        'item':                 ref('items', v[2]),
+
         'category':             ref('gcshop_item_categories', v[4]),
 
         'unmapped_values':      unmapped(
-            list(range(1, 3)), v)
+            [0]
+            + [3], v)
     }
 
 def guardian_deities(data, id, v):
@@ -582,58 +608,59 @@ def guild_order_officers(data, id, v):
 def guildleve_assignments(data, id, v):
     return {
         'unmapped_values':      unmapped(
-            list(range(0, 3)), v)
+            list(range(0, 7)), v)
     }
 
-#def guildleve_offers(data, id, v):
-#    return {
-#        'unmapped_values':      unmapped(
-#            list(range(0, 2)), v)
-#    }
-
 def instance_contents(exd_manager):
+    data = exd_manager.get_category('InstanceContent').get_data()
+    data_ln = data[list(data.keys())[0]]
+    return_dict = {}
+    for id, v in data_ln.items():
+        return_dict[id] = {
+            'name':                 string(data, id, 0),
 
-	data = exd_manager.get_category('InstanceContent').get_data()
-	data_ln = data[list(data.keys())[0]]
-	return_dict = {}
-	for id, v in data_ln.items():
-		return_dict[id] = {
-			'name':                 string(data, id, 1),
-			'time':          		v[0],
-			'type':              	full_ref('instance_content_type', v[3]),
-			'minlvl':				v[5],
-			'synclvl':				v[6],
-			'playercount':			v[11],
-			'unmapped_values':      unmapped(
-				list(range(4, 5)) + list(range(12, 27)), v)
-		}
-		if v[8] > 10000:
-			return_dict[id].update({
-				'issuenpc': ref('enpc_residents', v[8])
-			})
-	return return_dict
-	
+            'time':                 v[12],
+
+            'type':                 full_ref('instance_content_type', v[17]),
+            'minlvl':               v[18],
+            'synclvl':              v[19],
+
+            'playercount':          v[21],
+
+            'unmapped_values':      unmapped(
+                list(range(1, 12))
+                + [13]
+                + list(range(15, 17))
+                + [20]
+                + list(range(22, 28)), v)
+        }
+        if v[14] > 10000:
+            return_dict[id].update({
+                'issuenpc': ref('enpc_residents', v[14])
+            })
+    return return_dict
+
 def instance_content_type(data, id, v):
     return {
         'info':                 full_ref('addons', v[0]),
-        'icon':          		v[1],
+        'icon':                 v[1],
+
         'unmapped_values':      unmapped(
             list(range(2, 4)), v)
     }
 
 def item_actions(data, id, v):
-    action_type = v[4]
+    action_type = v[1]
     if action_type in [48, 49]:
         return {
-            'item_food':    full_ref('item_foods', v[5]),
-            'duration':     v[6],
+            'item_food':    full_ref('item_foods', v[2]),
+            'duration':     v[3],
         }
     else:
         return {
-			'percentage':    v[4],
-            'value_max':     v[5],
-            'unmapped_values': unmapped(list(range(0, 4)) + list(range(6, 22)), v)
-        }
+            'percentage':    v[1],
+            'value_max':     v[2],
+         }
 
 def item_categories(data, id, v):
     return {
@@ -642,16 +669,12 @@ def item_categories(data, id, v):
 
 def item_foods(data, id, v):
     return {
-        'stats': [                  food_stat(v[0], v[2], v[3]),
-                                    food_stat(v[6], v[8], v[9]),
-                                    food_stat(v[12], v[14], v[15])],
+        'stats': [                  food_stat(v[0], v[3], v[6]),
+                                    food_stat(v[1], v[4], v[7]),
+                                    food_stat(v[2], v[5], v[8])],
 
         'unmapped_values':          unmapped(
-            list(range(1, 2))
-            + list(range(4, 6))
-            + list(range(7, 8))
-            + list(range(10, 12))
-            + list(range(13, 14)), v)
+            list(range(9, 18)), v)
     }
 
 def item_search_categories(data, id, v):
@@ -668,18 +691,19 @@ def item_search_class_filters(data, id, v):
         'name': string(data, id, 0),
 
         'unmapped_values':  unmapped(
-            list(range(1, 2)), v)
+             [1], v)
     }
 
 def item_special_bonuses(data, id, v):
-	return {
-		'name': string(data, id, 0),
-	}
+    return {
+        'name': string(data, id, 0),
+    }
+
 def item_series(data, id, v):
-	return {
-		'name': string(data, id, 0),
-	}
-	
+    return {
+        'name': string(data, id, 0),
+    }
+
 def item_ui_categories(data, id, v):
     return {
         'name': string(data, id, 0),
@@ -689,103 +713,131 @@ def item_ui_categories(data, id, v):
 def items(data, id, v):
     return {
             'noon':                     string(data, id, 0),
+            'plural_noon':              string(data, id, 1),
+            'description':              string(data, id, 2),
+            'name':                     string(data, id, 3),
 
-            'plural_noon':              string(data, id, 2),
+            'model':                    v[10],
 
-            'description':              string(data, id, 8),
-            'name':                     string(data, id, 9),
-            'icon':                     v[10],
-            'item_level':               v[11],
-            'class_job_level':          v[12],
+            'number_per_stack':         v[12],
 
-            'number_per_stack':         v[14],
-            'item_ui_category':         ref('item_ui_categories',              v[17]),
+            'buy_price':                v[14],
 
-            'rarity':                   v[19],
+            'stats':                    [stat(v[i], v[i+25]) for i in range(19, 25)],
 
-            'stats':                    [stat(v[i], v[i+1]) for i in range(32, 44, 2)],
+            'set_stats': {
+                                        'special_bonus':    ref('item_special_bonuses', v[59]),
+                                        'stats':            [stat(v[i], v[i+44]) for i in range(25, 31)]
+            },
 
-            'repair_class_job':         ref('class_jobs',                   v[57]),
-            'repair_material':          ref('items',                        v[58]),
-            'item_search_class_filter': ref('item_search_class_filters',    v[59]),
-        
-            'base_stats': [             stat(12, v[61]),  # physical_damage
-                                        stat(13, v[62]),  # magic_damage
-                                        stat(14, v[63]),  # delay
+            'repair_class_job':         ref('class_jobs',                   v[31]),
+            'repair_material':          ref('items',                        v[32]),
+            'icon':                     v[33],
 
-                                        stat(18, v[66]),  # block
-                                        stat(17, v[65]),  # block_rate
-                                        stat(21, v[67]),  # defense
-                                        stat(24, v[68])], # magic_defense
-										
-			'set_stats': {
-										'special_bonus': 	ref('item_special_bonuses', v[44]),
-										'stats': 			[stat(v[i], v[i+1]) for i in range(45, 57, 2)],
-										},
+            'base_stats': [             stat(12, v[35]),  # physical_damage
+                                        stat(13, v[36]),  # magic_damage
+                                        stat(14, v[37]),  # delay
+                                        stat(17, v[38]),  # block_rate
+                                        stat(18, v[39]),  # block
+                                        stat(21, v[40]),  # defense
+                                        stat(24, v[41])], # magic_defense
 
-            'item_action':              full_ref('item_actions',                   v[71]),
+            'item_action':              full_ref('item_actions',                   v[43]),
 
-            'is_unique':                v[73],
-            'is_untradable':            v[74],
-			'materia_slots':          	v[26],
-            'buy_price':                v[76],
+            'item_level':               v[50],
+            'class_job_level':          v[51],
 
-            'race_restrictions':        [v[i] for i in range(81, 86)],
-            'gender_restrictions':      [v[i] for i in range(86, 88)],
-            'class_job_category':       ref('class_job_categories',         v[88]),
+            'item_ui_category':         ref('item_ui_categories',              v[53]),
 
-            'grand_company':            ref('grand_companies',              v[90]),
-			 'set_name': 				ref('item_series',             		v[92]),
-			 'model':					v[29],
+            'rarity':                   v[55],
+
+            'materia_slots':            v[57],
+
+            'item_search_class_filter': ref('item_search_class_filters',    v[60]),
+
+            'class_job_category':       ref('class_job_categories',         v[64]),
+            'grand_company':            ref('grand_companies',              v[65]),
+
+            'set_name':                 ref('item_series',                  v[67]),
+
+            'is_unique':                v[82],
+            'is_untradable':            v[83],
+
+            'race_restrictions':        [v[i] for i in range(87, 92)],
+            'gender_restrictions':      [v[i] for i in range(92, 94)],
+
+
+
             'unmapped_values':          unmapped(
-                list(range(1, 2))
-                + list(range(3, 8))
-                + list(range(13, 14))
-                + list(range(19, 26))
-				+ list(range(27, 31))
-                + list(range(43, 44))
-				+ list(range(43, 56))
-                + list(range(59, 60))
-                + list(range(63, 64))
-                + list(range(68, 71))
-                + list(range(73, 74))
-                + list(range(76, 78))
-                + list(range(79, 82))
-                + list(range(90, 91))
-                + list(range(92, 93)), v)
+                list(range(4, 10))
+                + [11]
+                + [13]
+                + list(range(15, 19))
+                + [34]
+                + [42]
+                + [52]
+                + [54]
+                + [56]
+                + [58]
+                + list(range(61, 64))
+                + [66]
+                + [68]
+                + list(range(76, 82))
+                + list(range(84, 87)), v)
+    }
+
+def journal_genre(data, id , v):
+    return {
+        'name':         string(data, id, 0),
+        'header_image':     v[1],
+        'cat':          ref('journal_cat', v[2])
+    }
+
+def journal_cat(data, id , v):
+    return {
+        'name':         string(data, id, 0)
     }
 
 def leves(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
-        'client':               ref('leve_clients', v[2]),
+
+        'client':               ref('leve_clients', v[9]),
 
         'unmapped_values':      unmapped(
-            list(range(3, 28)), v)
+            list(range(2, 9))
+            + list(range(10, 29)), v)
     }
-	
+
 def levels(data, id, v):
     return_dict = {
-        'place_name':           ref('place_names', v[9]),
         'x':                    v[0],
         'y':                    v[2],
-        'map':                  full_ref('maps',v[7]),
+
+        'map':                  full_ref('maps',v[6]),
+
+        'place_name':           ref('place_names', v[8]),
+
         'unmapped_values':      unmapped(
-            list(range(1, 9)), v)
+            [1]
+            + list(range(3, 5))
+            + [7]
+            + [9], v)
     }
-    level_stuff_range(return_dict, v[6])
+    level_stuff_range(return_dict, v[5])
     return return_dict
 
-	
+
 def param_grow(data, id, v):
     return {
         'exp':               v[0],
+
         'unmapped_values':      unmapped(
-            list(range(1, 13)), v)
+            list(range(1, 14)), v)
     }
-	
-	
+
+
 def leve_clients(data, id, v):
     return {
         'name':                 string(data, id, 0)
@@ -793,65 +845,65 @@ def leve_clients(data, id, v):
 
 def maps(data, id, v):
     return {
-        'id':                 v[5].decode('utf-8'),
+        'id':                   v[0].decode('utf-8'),
+        'scale':                v[1],
 
-        'zone':                 full_ref('place_names', v[7]),
-        'region':               full_ref('place_names', v[8]),
-		'scale':				v[6],
-		'pseudo_link':			v[13], #used to link gathering points to maps and maybe others
+        'zone':                 full_ref('place_names', v[3]),
+        'region':               full_ref('place_names', v[4]),
+
+        'pseudo_link':          v[7], #used to link gathering points to maps and maybe others
+
         'unmapped_values':      unmapped(
-            list(range(0, 3))
-            + list(range(4, 6))
-            + list(range(8, 10)), v)
+            [2]
+            + [5, 6]
+            + list(range(8, 14)), v)
     }
 
 def markers(data, id, v):
     return {
-        'icon':                 v[0],
-        'name':                 string(data, id, 1)
+        'name':                 string(data, id, 0),
+        'icon':                 v[1]
     }
-	
+
 def materias(data, id, v):
-	return {
-		'mat': 					[{
-									'item': ref('items', v[i]),
-									'value': v[i+11]
-								} for i in range(5)],
-		'attribute':			ref('base_params', v[10]),
-		
-		'unmapped_values':      unmapped(
-            list(range(6, 10))
-			+ list(range(16, 20)), v)
-	}
+    return {
+        'mat':                  [{
+                                    'item': ref('items', v[i]),
+                                    'value': v[i+11]
+                                } for i in range(5)],
+        'attribute':            ref('base_params', v[10]),
+
+        'unmapped_values':      unmapped(
+            list(range(5, 10))
+            + list(range(16, 21)), v)
+    }
 
 def monster_notes(data, id, v):
     return {
-        'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(0, 3)],
+        'name':                 string(data, id, 0),
+        'exp':                  v[1],
+        'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(2, 5)],
 
-        'npc_quantities':       [v[i] for i in range(4, 7)],
+        'npc_quantities':       [v[i] for i in range(6, 9)],
 
-        'exp':                  v[8],
-        'name':                 string(data, id, 9),
-        
         'unmapped_values':      unmapped(
-            list(range(3, 4))
-            + list(range(7, 8)), v)
+            [5]
+            + [9], v)
     }
 
 def monster_notes_target(data,id,v):
-	return {
+    return {
         'mob':                 ref('bnpc_names', v[0]),
-        'icon':       			v[1],
-        
+        'icon':                 v[1],
+
         'unmapped_values':      unmapped(
-            list(range(2, 8))
-			, v)
+            list(range(2, 9)), v)
     }
 
 def npc_yells(data, id, v):
     return {
-        'name':                 string(data, id, 4),
-        
+        'name':                 string(data, id, 0),
+
         'unmapped_values':      unmapped(
             list(range(1, 5)), v)
     }
@@ -863,14 +915,6 @@ def online_statuses(data, id, v):
         'icon':                 v[1]
     }
 
-def base_params(data, id, v):
-    return {
-        'name': string(data, id, 1),
-
-        'unmapped_values':      unmapped(
-            list(range(0, 1)), v)
-    }
-
 def place_names(data, id, v):
     return {
         'name':                 string(data, id, 0),
@@ -878,7 +922,6 @@ def place_names(data, id, v):
         'unmapped_values':      unmapped(
             list(range(1, 10)), v)
     }
-
 
 QUEST_STEP_RE = re.compile(r'^SEQ_(?P<step_number>\d+)_(?P<step_action>.*)$')
 QUEST_ACTOR_RE = re.compile(r'^ACTOR(\d+)$')
@@ -913,61 +956,54 @@ def quests(exd_manager):
 
     param_grow_data = exd_manager.get_category('ParamGrow').get_data()
     param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
-    
+
     complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
     complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
 
     complete_journal_search_dict = {
-        cj_data[5]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
+        cj_data[0]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
     }
-    
+
 
     for id, v in data_ln.items():
         return_dict[id] = {
             'name':                 string(data, id, 0),
 
-            'level':                (v[3] if v[3] != 0xFFFF else 0) + v[4],
+            'level':                (v[1165] if v[1165] != 0xFFFF else 0) + v[1170],
 
-            'class':                v[17],
+            'class':                v[1176],
 
-            'chain_quests':         [ref('quests', v[i]) for i in range(8, 11)],
+            'chain_quests':         [ref('quests', v[i]) for i in range(1157, 1160)],
 
-            #'npcs':                 [ref('enpc_residents', v[17]),
-            #                         ref('enpc_residents', v[18])],    
+            'steps':                quest_steps([v[i] for i in range(1, 100, 2)], [v[i] for i in range(2, 101, 2)]),
 
-            'steps':                quest_steps(v[24:74], v[74:124]),
+            'base_exp':             v[1124],
+            'gil_reward':           v[1109],
 
-            'base_exp':             v[1133],
-            'gil_reward':           v[1134],
+            'main_rewards':         [mat(v[i], v[i+3]) for i in range(1127, 1130)]
+                                    + [mat(v[i], v[i+23]) for i in range(1110, 1113)],
 
-            'main_rewards':         [mat(v[i], v[i+3]) for i in range(1139, 1142)]
-                                    + [mat(v[i], v[i+3]) for i in range(1145, 1148)],
-
-            'optional_rewards':     [mat(v[i], v[i+5]) for i in range(1160, 1165)],
-
-            #'main_reward':          mat(v[728], v[729]),
-            
-            #'optional_rewards':     [mat(v[i], v[i+1]) for i in range(750, 766, 3)],
+            'optional_rewards':     [mat(v[i], v[i+32]) for i in range(1113, 1118)],
         }
 
         return_dict[id].update({
-            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][10] * (45 + 5 * return_dict[id]['level']))) // 100
+            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][13] * (45 + 5 * return_dict[id]['level']))) // 100
         })
 
         #Lookup complete journal by name and extract genre id (v[4])
-        if complete_journal_data_in[complete_journal_search_dict[v[0]]][4] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
+        if complete_journal_data_in[complete_journal_search_dict[v[0]]][2] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
             return_dict[id].update({
-                'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][4])
+                'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][2])
             })
 
-        #Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT	
-        if v[17] == 0:
+        #Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT
+        if v[1176] == 0:
             return_dict[id].update({
-                'class': v[1132]
+                'class': v[1179]
             })
 
-        if v[1] != b'':
-            quest_base_exd_name = v[1].decode('utf-8')
+        if v[1156] != b'':
+            quest_base_exd_name = v[1156].decode('utf-8')
             quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
             quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
             quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
@@ -983,9 +1019,9 @@ def quests(exd_manager):
                             quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
                         ] for language in quest_exd_data.keys()
                     }
-                }  
+                }
             })
-        
+
     return return_dict
 
 def roles(data, id , v):
@@ -994,25 +1030,26 @@ def roles(data, id , v):
         'abbr':                 string(data, id, 1),
 
         'unmapped_values':      unmapped(
-            list(range(2, 3)), v)
+            [2], v)
     }
 
 def shops(data, id , v):
     return {
+        'name':                 string(data, id, 0),
         'icon':                 v[1],
         'items':                [full_ref('shop_items', v[i]) for i in range(2, 42)],
 
-        'name':                 string(data, id, 42),
         'unmapped_values':      unmapped(
-            list(range(0, 1)), v)
+            [42], v)
     }
 
 def shop_items(data, id , v):
     return {
-        'item':                 ref('items', v[0]),
+        'item':                 ref('items', v[3]),
 
         'unmapped_values':      unmapped(
-            list(range(1, 6)), v)
+            list(range(0, 3))
+            + list(range(4, 6)), v)
     }
 
 def statuses(data, id, v):
@@ -1028,11 +1065,11 @@ def statuses(data, id, v):
 def recipes(data, id, v):
     return {
         'craft_type':   ref('craft_types', v[0]),
-        'level':        v[1],
-        'result':       mat(v[2], v[3]),
-        'mats':         [mat(v[i], v[i+1]) for i in range(4, 20, 2)],
-		
-		'crystals': 	[crystals(v[i], v[i+1]) for i in range(20, 24, 2)],
+        'result':       mat(v[1], v[17]),
+
+        'mats':         [mat(v[i], v[i+16]) for i in range(2, 10)],
+        'crystals':     [crystals(v[i], v[i+16]) for i in range(10, 12)],
+        'level':        v[16],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)
@@ -1040,18 +1077,19 @@ def recipes(data, id, v):
 
 def stories(data, id, v):
     return {
-        'story_name':   v[0].decode('utf-8')
+        'story_name':   v[290].decode('utf-8')
     }
 
 def text_commands(data, id , v):
     return {
-        'name':                 string(data, id, 5),
-        'small_name':           string(data, id, 6),
-        'description':          string(data, id, 7),
+        'description':          string(data, id, 0),
+
+        'name':                 string(data, id, 3),
+        'small_name':           string(data, id, 4),
 
         'unmapped_values':      unmapped(
-            list(range(0, 5))
-            + list(range(8, 10)), v)
+            list(range(1, 3))
+            + list(range(5, 11)), v)
     }
 
 def titles(data, id , v):
@@ -1059,7 +1097,7 @@ def titles(data, id , v):
         'name':                 string(data, id, 0),
         'plural_name':          string(data, id, 1),
         'unmapped_values':      unmapped(
-            list(range(2, 3)), v)
+            [2], v)
     }
 
 def towns(data, id , v):
@@ -1073,38 +1111,28 @@ def traits(data, id, v):
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'icon':         v[2],
-        'class_job':    ref('class_jobs', v[3]),
-        'level':        v[4],
+        'class_job':    ref('class_jobs', v[4]),
+        'level':        v[5],
 
         'unmapped_values':      unmapped(
             list(range(5, 7)), v)
     }
 
-def journal_genre(data, id , v):
-    return {
-		'header_image':     v[0],
-        'cat':          ref('journal_cat', v[1]),
-        'name':         string(data, id, 2)
-    }	
-
-def journal_cat(data, id , v):
-    return {
-        'name':         string(data, id, 0)
-    }	
 def weathers(data, id , v):
     return {
-        'icon':          v[0],
-        'name':          string(data, id, 1)
+        'name':          string(data, id, 0),
+        'icon':          v[1]
     }
 
 def worlds(data, id , v):
     return {
-        'name':            string(data, id, 0),
-        'message':         string(data, id, 1)
+        'message':         string(data, id, 0),
+        'name':            string(data, id, 1)
     }
+
 def warps(data, id , v):
     return {
-        'name':            string(data, id, 9),
-        'map':         	   full_ref('levels', v[0]),
+        'name':            string(data, id, 1),
+        'map':             full_ref('levels', v[2])
     }
 

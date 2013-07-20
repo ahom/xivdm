@@ -19,6 +19,9 @@ def extract_header(file_handle):
     for index in range(field_count):
         members.append(MEMBER_NT._make(MEMBER_STRUCT.unpack(file_handle.read(MEMBER_STRUCT.size))))
 
+    members_dict = { member.offset:member for member in members}
+    sorted_members = [ members_dict[key] for key in sorted(members_dict.keys())]
+
     exds = list()
     for index in range(exd_count):
         exds.append(START_ID_STRUCT.unpack(file_handle.read(START_ID_STRUCT.size))[0])
@@ -27,4 +30,4 @@ def extract_header(file_handle):
     for index in range(language_count):
         languages.append(LANGUAGE_STRUCT.unpack(file_handle.read(LANGUAGE_STRUCT.size))[0])
 
-    return HEADER_NT._make((field_count, exds, languages, members, data_offset))
+    return HEADER_NT._make((field_count, exds, languages, sorted_members, data_offset))
