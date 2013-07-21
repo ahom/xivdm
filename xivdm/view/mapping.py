@@ -240,27 +240,34 @@ def behest_rewards(data, id, v):
             + [6], v)
     }
 
-def bnpc_names(data, id, v):
-    return {
-        'name':                 string(data, id, 0),
-        'plural_name':          string(data, id, 1),
-		'infos':                full_ref('bnpc_base', id),
-		
-        'unmapped_values':      unmapped(
-            list(range(2, 8)), v)
-    }
-def bnpc_bases(exd_manager):
-    data = exd_manager.get_category('BNpcBase').get_data()
+def bnpc_names(exd_manager):
+    data = exd_manager.get_category('BNpcName').get_data()
     data_ln = data[list(data.keys())[0]]
+    
+    bnb_data = exd_manager.get_category('BNpcBase').get_data()
+    bnpc_bases = bnb_data[list(bnb_data.keys())[0]]
+
     return_dict = {}
-
-	if v[3] > 0:
-		return_dict[id].update({
-			'model_chara': full_ref('model_chara', v[3])
-		})
-
+    for id, v in data_ln.items():
+        return_dict[id] = {
+            'name':                 string(data, id, 0),
+            'plural_name':          string(data, id, 1),
+            'unmapped_values':      unmapped(
+            list(range(2, 8)), v)
+        }
+        if id in bnpc_bases:
+            return_dict[id].update({
+                'infos':                full_ref('bnpc_bases', id)
+            })
     return return_dict
-
+	
+def bnpc_bases(data, id, v):
+    return {
+        'model':                full_ref('model_chara', v[3]),
+        'unmapped_values':      unmapped(
+            list(range(0, 3))
+				+ list(range(4,14)), v)
+    }
 def chain_bonuses(data, id, v):
     return {
         'exp_percent':  v[0],
@@ -402,7 +409,6 @@ def enpc_residents(data, id, v):
 def enpc_bases(data, id, v):
     return_dict = {
         'model':            v[32],
-
         'unmapped_values':      unmapped(
             [30, 31]
             + list(range(33, 63))
@@ -881,8 +887,8 @@ def markers(data, id, v):
 	
 def model_chara(data, id, v):
     return {
-        'm_value':                string(data, id, 0),
-        'b_value':                string(data, id, 3),
+        'm_value':              v[0],
+        'b_value':              v[3],
 		'unmapped_values':      unmapped(
             list(range(1, 3))
             + list(range(4, 5)), v)
