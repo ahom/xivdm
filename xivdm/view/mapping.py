@@ -232,11 +232,12 @@ def behest_rewards(data, id, v):
     return {
         'items': [ref('items', v[i]) for i in range(1, 4)],
 
-        'level': v[6],
+        'level': v[5],
 
         'unmapped_values':      unmapped(
-            list(range(0, 1))
-            + list(range(4, 6)), v)
+            [0]
+            + [4]
+            + [6], v)
     }
 
 def bnpc_names(data, id, v):
@@ -388,10 +389,11 @@ def enpc_residents(data, id, v):
 
 def enpc_bases(data, id, v):
     return_dict = {
-        'model':            v[64],
+        'model':            v[32],
 
         'unmapped_values':      unmapped(
-            list(range(30, 63))
+            [30, 31]
+            + list(range(33, 63))
             + list(range(65, 93)), v)
     }
     for i in range(30):
@@ -1115,7 +1117,7 @@ def traits(data, id, v):
         'level':        v[5],
 
         'unmapped_values':      unmapped(
-            list(range(5, 7)), v)
+            [3] + [6], v)
     }
 
 def weathers(data, id , v):
