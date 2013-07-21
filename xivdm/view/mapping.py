@@ -243,10 +243,22 @@ def bnpc_names(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'plural_name':          string(data, id, 1),
-
+		'infos':                full_ref('bnpc_base', id),
+		
         'unmapped_values':      unmapped(
             list(range(2, 8)), v)
     }
+def bnpc_bases(exd_manager):
+    data = exd_manager.get_category('BNpcBase').get_data()
+    data_ln = data[list(data.keys())[0]]
+    return_dict = {}
+
+	if v[3] > 0:
+		return_dict[id].update({
+			'model_chara': full_ref('model_chara', v[3])
+		})
+
+    return return_dict
 
 def chain_bonuses(data, id, v):
     return {
@@ -863,6 +875,15 @@ def markers(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'icon':                 v[1]
+    }
+	
+def model_chara(data, id, v):
+    return {
+        'm_value':                string(data, id, 0),
+        'b_value':                string(data, id, 3),
+		'unmapped_values':      unmapped(
+            list(range(1, 3))
+            + list(range(4, 5)), v)
     }
 
 def materias(data, id, v):
