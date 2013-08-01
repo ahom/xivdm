@@ -152,7 +152,7 @@ def achievements(data, id, v):
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'item':         ref('items', v[2]),
-        'category':     ref('achievement_categories', v[3]),
+        'category':     ref('achievement_categories', v[15]),
 
         'title':        ref('titles', v[12]),
 
@@ -461,7 +461,7 @@ def fates(data, id, v):
         'description':          string(data, id, 1),
         'special_text':         [string(data, id, i) for i in range(2, 5)],
 
-        'position':             full_ref('levels', v[9]),
+        'position':             full_ref('levels', v[8]),
 
         'icon':                 v[11],
 
@@ -858,7 +858,7 @@ def param_grow(data, id, v):
         'exp':               v[0],
 
         'unmapped_values':      unmapped(
-            list(range(1, 13)), v)
+            list(range(1, 12)), v)
     }
 
 
