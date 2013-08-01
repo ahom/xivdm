@@ -989,15 +989,15 @@ def quests(exd_manager):
 
     param_grow_data = exd_manager.get_category('ParamGrow').get_data()
     param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
- 
+
     complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
     complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
- 
+
     complete_journal_search_dict = {
         cj_data[0]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
     }
- 
- 
+
+
     for id, v in data_ln.items():
         return_dict[id] = {
  #          'name':                 string(data, id, 0),
@@ -1089,7 +1089,8 @@ def special_shops(data, id , v):
     return {
         'name':                 string(data, id, 0),
 
-        'items':                [ref('items', v[i]) for i in range(4, 1121, 7)]
+        'items':                [[ref('items', v[i]),
+                                  ref('items', v[i+2])] for i in range(4, 1121, 7)]
     }
 
 def statuses(data, id, v):
