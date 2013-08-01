@@ -204,7 +204,7 @@ def actions(data, id, v):
             [3, 5, 6, 7, 10, 11, 13, 14]
             + list(range(18, 24))
             + [25]
-            + list(range(29, 43)), v)
+            + list(range(29, 46)), v)
     }
 
 def addons(data, id, v):
@@ -227,10 +227,10 @@ def balloons(data, id, v):
 
 def base_params(data, id, v):
     return {
-        'name': string(data, id, 0),
-
+        'name'			: string(data, id, 0),
+		'description' 	: string(data, id, 1),
         'unmapped_values':      unmapped(
-            list(range(1, 30)), v)
+            list(range(1, 32)), v)
     }
 
 def behest_rewards(data, id, v):
@@ -271,7 +271,7 @@ def bnpc_bases(data, id, v):
         'model':                full_ref('model_chara', v[3]),
         'unmapped_values':      unmapped(
             list(range(0, 3))
-				+ list(range(4,14)), v)
+				+ list(range(4,13)), v)
     }
 def chain_bonuses(data, id, v):
     return {
@@ -467,7 +467,7 @@ def fates(data, id, v):
             list(range(5, 9))
             + [10]
             + list(range(12, 18))
-            + list(range(19, 23)), v)
+            + list(range(19, 24)), v)
     }
 
 
@@ -494,19 +494,16 @@ def gathering_points(exd_manager):
         return_dict[id] = {
             'base':                 full_ref('gathering_points_base', v[0]),
 
-            'req':                  ref('gathering_condition', v[2]),
-            'bonus':                ref('gathering_bonus_type', v[3]),
+            'req':                  ref('gathering_condition', v[1]),
+            'bonus':                ref('gathering_bonus_type', v[2]),
 
-            'map':                  ref('maps', maps_search_dict[v[5]]),
+            'map':                  ref('maps', maps_search_dict[v[3]]),
 
-            'req_max':              v[9],
-            'bonus_amount':         v[10],
+            'req_max':              v[4],
+            'bonus_amount':         v[5],
 
             'unmapped_values':          unmapped(
-                [1]
-                + [4]
-                + list(range(6, 9))
-                + list(range(10, 15)), v)
+                list(range(6, 9)), v)
         }
     return return_dict
 
@@ -517,7 +514,7 @@ def gathering_points_base(data, id, v):
         'level':        v[9],
 
         'unmapped_values':          unmapped(
-            list(range(10, 19)), v)
+            list(range(10, 11)), v)
     }
 
 def gathering_items(data, id, v):
@@ -643,24 +640,23 @@ def instance_contents(exd_manager):
         return_dict[id] = {
             'name':                 string(data, id, 0),
 
-            'time':                 v[12],
+            'time':                 v[10],
 
-            'type':                 full_ref('instance_content_type', v[17]),
-            'minlvl':               v[18],
-            'synclvl':              v[19],
+            'type':                 full_ref('instance_content_type', v[14]),
+            'minlvl':               v[15],
+            'synclvl':              v[16],
 
-            'playercount':          v[21],
+            'playercount':          v[20],
 
             'unmapped_values':      unmapped(
-                list(range(1, 12))
-                + [13]
-                + list(range(15, 17))
-                + [20]
-                + list(range(22, 28)), v)
+                list(range(1, 10))
+                + list(range(11, 13))
+                + list(range(17, 20))
+                + list(range(21, 27)), v)
         }
         if v[14] > 10000:
             return_dict[id].update({
-                'issuenpc': ref('enpc_residents', v[14])
+                'issuenpc': ref('enpc_residents', v[13])
             })
     return return_dict
 
@@ -670,7 +666,7 @@ def instance_content_type(data, id, v):
         'icon':                 v[1],
 
         'unmapped_values':      unmapped(
-            list(range(2, 4)), v)
+            list(range(2, 5)), v)
     }
 
 def item_actions(data, id, v):
@@ -895,7 +891,7 @@ def model_chara(data, id, v):
         'b_value':              v[3],
 		'unmapped_values':      unmapped(
             list(range(1, 3))
-            + list(range(4, 5)), v)
+            + list(range(4, 6)), v)
     }
 
 def materias(data, id, v):
@@ -1092,7 +1088,7 @@ def statuses(data, id, v):
         'icon':         v[2],
 
         'unmapped_values':      unmapped(
-            list(range(3, 15)), v)
+            list(range(3, 16)), v)
     }
 
 def recipes(data, id, v):
@@ -1100,9 +1096,9 @@ def recipes(data, id, v):
         'craft_type':   ref('craft_types', v[0]),
         'result':       mat(v[1], v[17]),
 
-        'mats':         [mat(v[i], v[i+16]) for i in range(2, 10)],
-        'crystals':     [crystals(v[i], v[i+16]) for i in range(10, 12)],
-        'level':        v[16],
+        'mats':         [mat(v[i], v[i+18]) for i in range(2, 10)],
+        'crystals':     [crystals(v[i], v[i+18]) for i in range(10, 12)],
+        'level':        v[19],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)
@@ -1110,7 +1106,7 @@ def recipes(data, id, v):
 
 def stories(data, id, v):
     return {
-        'story_name':   v[290].decode('utf-8')
+        'story_name':   v[1310].decode('utf-8')
     }
 
 def text_commands(data, id , v):
