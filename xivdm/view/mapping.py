@@ -77,8 +77,10 @@ def npc_stuff_range(return_dict, value):
 
     if value == 0:
         pass
-    elif value > 1703937:
+    elif value > 1769484:
         raise Exception('Unmapped id range: %d' % value)
+    elif value >= 1769472:
+        view_name = 'special_shops'
     elif value >= 1703936:
         view_name = 'stories'
     elif value == 1638401:
@@ -1079,6 +1081,13 @@ def shop_items(data, id , v):
         'unmapped_values':      unmapped(
             list(range(0, 3))
             + list(range(4, 6)), v)
+    }
+
+def special_shops(data, id , v):
+    return {
+        'name':                 string(data, id, 0),
+
+        'items':                [ref('items', v[i]) for i in range(4, 1121, 7)]
     }
 
 def statuses(data, id, v):
