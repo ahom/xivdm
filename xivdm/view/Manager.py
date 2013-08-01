@@ -88,7 +88,7 @@ class Manager:
             'online_statuses': simple_mapping('OnlineStatus', online_statuses), 
             'base_params': simple_mapping('BaseParam', base_params), 
             'place_names': simple_mapping('PlaceName', place_names), 
-            'quests': quests,
+            #'quests': quests,
             'recipes': simple_mapping('Recipe', recipes), 
             'roles': simple_mapping('Role', roles), 
             'shops': simple_mapping('Shop', shops),
