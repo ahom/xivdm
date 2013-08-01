@@ -43,17 +43,17 @@ def icons(dat_manager):
                     file_value = file_value[1:4]
                     icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
         else:
-            for ln in ['en', 'fr', 'de', 'ja']:
-                folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % ln, dir_hash)
+            for suffix in ['en', 'fr', 'de', 'ja', 'hq']:
+                folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % suffix, dir_hash)
                 if folder_value:
                     folder_value = folder_value[0:3]
-                    dir_path = 'ui/icon/%s000/%s' % (folder_value, ln)
+                    dir_path = 'ui/icon/%s000/%s' % (folder_value, suffix)
                     file_prefix_crc = get_hash(folder_value[0:2])
                     for file_hash in dir_hash_table.keys():
                         file_value = get_rev_digits_values(file_prefix_crc, '.tex', file_hash)
                         if file_value:
                             file_value = file_value[1:4]
-                            icons_result_tree.setdefault(folder_value, {}).setdefault(ln, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
+                            icons_result_tree.setdefault(folder_value, {}).setdefault(suffix, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
     return icons_result_tree
 
 def maps_icons(dat_manager):

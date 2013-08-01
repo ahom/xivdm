@@ -52,7 +52,11 @@ struct LodModel
     uint32 next_mesh_index;
     uint16 index;
     uint16 unknown3;
-    uint32 zeros[5];
+    uint32 unknown4;
+    uint32 unknown5;
+    uint32 specular_color;
+    uint32 unknown7;
+    uint32 unknown8;
     uint32 vertex_buffer_size;
     uint32 index_buffer_size;
     uint32 vertex_buffer_offset;

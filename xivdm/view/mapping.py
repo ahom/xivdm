@@ -145,16 +145,20 @@ def gathering_items_range(return_dict, value):
 #### MAPPINGS ####
 def achievements(data, id, v):
     return {
-
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'item':         ref('items', v[2]),
-        'title':        ref('titles', v[3]),
+        'category':     ref('achievement_categories', v[3]),
 
-        'category':     ref('achievement_categories', v[5]),
-        'points':       v[6],
+        'title':        ref('titles', v[12]),
 
-        'unmapped_values':      unmapped([4, 7], v)
+        
+        'points':       v[16],
+
+        'unmapped_values':      unmapped(
+    		list(range(4, 12))
+    		+ list(range(13, 16))
+    		+ [17, 18], v)
     }
 
 def achievement_categories(data, id, v):
@@ -188,12 +192,13 @@ def actions(data, id, v):
 
         'level':                v[15],
         'radius':               v[16],
-        'resource_type':        v[17],
 
-        'class_job_category':   ref('class_job_categories', v[24]),
-        'class_job':            ref('class_jobs', v[26]),
-        'range':                v[27],
-        'attack_type':          ref('attack_types', v[28]),
+        'resource_type':        v[18],
+
+        'class_job_category':   ref('class_job_categories', v[25]),
+        'class_job':            ref('class_jobs', v[27]),
+        'range':                v[28],
+        'attack_type':          ref('attack_types', v[29]),
 
         'unmapped_values':      unmapped(
             [3, 5, 6, 7, 10, 11, 13, 14]
@@ -294,10 +299,9 @@ def class_jobs(data, id, v):
         'acronym':              string(data, id, 1),
 
         'caps_name':            string(data, id, 3),
-        'caps_full_name':       string(data, id, 4),
-        'class_job_category':   ref('class_job_categories', v[5]),
+        'class_job_category':   ref('class_job_categories', v[4]),
 
-        'base_class':           ref('class_jobs', v[25]),
+        'base_class':           ref('class_jobs', v[24]),
         'is_job':               v[31],
 
 
