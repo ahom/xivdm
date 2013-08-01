@@ -77,6 +77,8 @@ def npc_stuff_range(return_dict, value):
 
     if value == 0:
         pass
+    elif value == 1835009:
+        pass
     elif value > 1769484:
         raise Exception('Unmapped id range: %d' % value)
     elif value >= 1769472:
@@ -856,7 +858,7 @@ def param_grow(data, id, v):
         'exp':               v[0],
 
         'unmapped_values':      unmapped(
-            list(range(1, 14)), v)
+            list(range(1, 13)), v)
     }
 
 
@@ -987,72 +989,72 @@ def quests(exd_manager):
 
     param_grow_data = exd_manager.get_category('ParamGrow').get_data()
     param_grow_data_ln = param_grow_data[list(param_grow_data.keys())[0]]
-
+ 
     complete_journal_data = exd_manager.get_category('CompleteJournal').get_data()
     complete_journal_data_in = complete_journal_data[list(complete_journal_data.keys())[0]]
-
+ 
     complete_journal_search_dict = {
         cj_data[0]: cj_id for cj_id, cj_data in complete_journal_data_in.items()
     }
-
-
+ 
+ 
     for id, v in data_ln.items():
         return_dict[id] = {
-            'name':                 string(data, id, 0),
-
-            'level':                (v[1165] if v[1165] != 0xFFFF else 0) + v[1170],
-
-            'class':                v[1176],
-
-            'chain_quests':         [ref('quests', v[i]) for i in range(1157, 1160)],
-
-            'steps':                quest_steps([v[i] for i in range(1, 100, 2)], [v[i] for i in range(2, 101, 2)]),
-
-            'base_exp':             v[1124],
-            'gil_reward':           v[1109],
-
-            'main_rewards':         [mat(v[i], v[i+3]) for i in range(1127, 1130)]
-                                    + [mat(v[i], v[i+23]) for i in range(1110, 1113)],
-
-            'optional_rewards':     [mat(v[i], v[i+32]) for i in range(1113, 1118)],
-        }
-
-        return_dict[id].update({
-            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][13] * (45 + 5 * return_dict[id]['level']))) // 100
-        })
-
-        #Lookup complete journal by name and extract genre id (v[4])
-        if complete_journal_data_in[complete_journal_search_dict[v[0]]][2] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
-            return_dict[id].update({
-                'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][2])
-            })
-
-        #Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT
-        if v[1176] == 0:
-            return_dict[id].update({
-                'class': v[1179]
-            })
-
-        if v[1156] != b'':
-            quest_base_exd_name = v[1156].decode('utf-8')
-            quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
-            quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
-            quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
-            return_dict[id].update({
-                'text_ids':         [
-                    quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
-                ],
-                'texts': {
-                    'enable_conditions': False,
-                    'type': 'string',
-                    'ln': {
-                        get_language_name(language): [
-                            quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
-                        ] for language in quest_exd_data.keys()
-                    }
-                }
-            })
-
+ #          'name':                 string(data, id, 0),
+ #
+ #          'level':                (v[1165] if v[1165] != 0xFFFF else 0) + v[1170],
+ #
+ #          'class':                v[1176],
+ #
+ #          'chain_quests':         [ref('quests', v[i]) for i in range(1157, 1160)],
+ #
+ #          'steps':                quest_steps([v[i] for i in range(1, 100, 2)], [v[i] for i in range(2, 101, 2)]),
+ #
+ #          'base_exp':             v[1124],
+ #          'gil_reward':           v[1109],
+ #
+ #          'main_rewards':         [mat(v[i], v[i+3]) for i in range(1127, 1130)]
+ #                                  + [mat(v[i], v[i+23]) for i in range(1110, 1113)],
+ #
+ #          'optional_rewards':     [mat(v[i], v[i+32]) for i in range(1113, 1118)],
+       }
+ #
+ #      return_dict[id].update({
+ #          'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][13] * (45 + 5 * return_dict[id]['level']))) // 100
+ #      })
+ #
+ #      #Lookup complete journal by name and extract genre id (v[4])
+ #      if complete_journal_data_in[complete_journal_search_dict[v[0]]][2] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
+ #          return_dict[id].update({
+ #              'quest_genre': ref('journal_genre', complete_journal_data_in[complete_journal_search_dict[v[0]]][2])
+ #          })
+ #
+ #      #Check second class column if first one is empty SERIOUSLY SE FIX YOUR SHIT
+ #      if v[1176] == 0:
+ #          return_dict[id].update({
+ #              'class': v[1179]
+ #          })
+ #
+ #      if v[1156] != b'':
+ #          quest_base_exd_name = v[1156].decode('utf-8')
+ #          quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
+ #          quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
+ #          quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
+ #          return_dict[id].update({
+ #              'text_ids':         [
+ #                  quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
+ #              ],
+ #              'texts': {
+ #                  'enable_conditions': False,
+ #                  'type': 'string',
+ #                  'ln': {
+ #                      get_language_name(language): [
+ #                          quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
+ #                      ] for language in quest_exd_data.keys()
+ #                  }
+ #              }
+ #          })
+ #
     return return_dict
 
 def roles(data, id , v):
