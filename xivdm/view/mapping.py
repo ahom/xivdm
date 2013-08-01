@@ -121,11 +121,11 @@ def level_stuff_range(return_dict, value):
         logging.info('Unmapped id range: %d' % value)
     elif value >= 2000000:
         view_name = 'eobjs'
+    elif value >= 1000000:
+        view_name = 'enpc_residents'
     elif value >= 30000:
         view_name = 'gathering_points'
-    elif value >= 10000:
-        view_name = 'enpc_residents'
-    elif 10000 >= value > 0:
+    elif 30000 >= value > 0:
         logging.info('Unmapped id range BGMSituation: %d' % value)
     elif value > 0:
         raise Exception('Unmapped id range: %d' % value)
