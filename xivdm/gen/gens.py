@@ -43,7 +43,7 @@ def icons(dat_manager):
                     file_value = file_value[1:4]
                     icons_result_tree.setdefault(folder_value, {})[file_value] = '%s/%s%s.tex' % (dir_path, folder_value, file_value)
         else:
-            for suffix in ['en', 'fr', 'de', 'ja', 'hq']:
+            for suffix in ['en', 'fr', 'de', 'ja', 'cht', 'hq']:
                 folder_value = get_rev_digits_values(icon_folder_prefix_crc, '00/%s' % suffix, dir_hash)
                 if folder_value:
                     folder_value = folder_value[0:3]
