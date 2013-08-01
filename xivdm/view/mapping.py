@@ -152,7 +152,7 @@ def achievements(data, id, v):
 
         'title':        ref('titles', v[12]),
 
-        
+
         'points':       v[16],
 
         'unmapped_values':      unmapped(
@@ -248,7 +248,7 @@ def behest_rewards(data, id, v):
 def bnpc_names(exd_manager):
     data = exd_manager.get_category('BNpcName').get_data()
     data_ln = data[list(data.keys())[0]]
-    
+
     bnb_data = exd_manager.get_category('BNpcBase').get_data()
     bnpc_bases = bnb_data[list(bnb_data.keys())[0]]
 
@@ -265,7 +265,7 @@ def bnpc_names(exd_manager):
                 'infos':                full_ref('bnpc_bases', id)
             })
     return return_dict
-	
+
 def bnpc_bases(data, id, v):
     return {
         'model':                full_ref('model_chara', v[3]),
@@ -884,7 +884,7 @@ def markers(data, id, v):
         'name':                 string(data, id, 0),
         'icon':                 v[1]
     }
-	
+
 def model_chara(data, id, v):
     return {
         'm_value':              v[0],
@@ -1097,7 +1097,7 @@ def recipes(data, id, v):
         'result':       mat(v[1], v[17]),
 
         'mats':         [mat(v[i], v[i+18]) for i in range(2, 10)],
-        'crystals':     [crystals(v[i], v[i+18]) for i in range(10, 12)],
+        'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
         'level':        v[19],
 
         'unmapped_values':      unmapped(
