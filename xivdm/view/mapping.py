@@ -112,7 +112,7 @@ def npc_stuff_range(return_dict, value):
     elif value > 0:
         raise Exception('Unmapped id range: %d' % value)
     if view_name:
-        return_dict.setdefault(view_name, []).append(ref(view_name, value))
+        return_dict.setdefault(view_name, []).append(full_ref(view_name, value))
 
 def level_stuff_range(return_dict, value):
     view_name = None
@@ -887,6 +887,11 @@ def markers(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'icon':                 v[1]
+    }
+def mounts(data, id, v):
+    return {
+        'name':                 string(data, id, 0),
+        'icon':                 v[39]
     }
 
 def model_chara(data, id, v):

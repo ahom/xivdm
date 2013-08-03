@@ -82,6 +82,7 @@ class Manager:
 			'materias': simple_mapping('Materia', materias),
             'markers': simple_mapping('Marker', markers),
             'model_chara': simple_mapping('ModelChara', model_chara),
+            'mounts': simple_mapping('Mount', mounts),
             'monster_notes': simple_mapping('MonsterNote', monster_notes),
             'monster_notes_target': simple_mapping('MonsterNoteTarget', monster_notes_target),
             'npc_yells': simple_mapping('NpcYell', npc_yells),
