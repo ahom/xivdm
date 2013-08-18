@@ -463,7 +463,7 @@ def fates(data, id, v):
 
         'position':             full_ref('levels', v[8]),
 
-        'icon':                 v[11],
+        'icon':                 v[10],
 
         'level':                v[18],
 
@@ -1114,7 +1114,7 @@ def statuses(data, id, v):
 def recipes(data, id, v):
     return {
         'craft_type':   ref('craft_types', v[0]),
-        'result':       mat(v[1], v[17]),
+        'result':       mat(v[1], v[20]),
 
         'mats':         [mat(v[i], v[i+18]) for i in range(2, 10)],
         'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
