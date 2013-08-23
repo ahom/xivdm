@@ -147,7 +147,7 @@ class Game(Patchable):
         response = opener.open('https://secure.square-enix.com/account/app',
                         data=bytes(urlencode([
                             ('_pr_confData_sqexid', 'Shouu'),
-                            ('_pr_confData_passwd', 'Felix.2012'),
+                            ('_pr_confData_passwd', 'XXX'),
                             ('_event', 'Submit'),
                             ('_url', data_dict['_url']),
                             ('_seq', data_dict['_seq']),

@@ -55,7 +55,7 @@ opener.addheaders = [
 r = opener.open('https://secure.square-enix.com/account/app',
                 data=bytes(urlencode([
                     ('_pr_confData_sqexid', 'Shouu'),
-                    ('_pr_confData_passwd', 'XXXXXXXX'),
+                    ('_pr_confData_passwd', 'Toutoune21121984'),
                     ('_event', 'Submit'),
                     ('_url', data_dict['_url']),
                     ('_seq', data_dict['_seq']),
@@ -78,11 +78,11 @@ cookie_dict = {
 }
 
 print('sid: ' + str(sid))
-print('https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2012.01.01.0000.0000/%s' % sid)
+print('https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/2012.01.01.0000.0000/%s' % sid)
 
-request = Request(url='https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2013.04.16.0000.0000/%s' % sid,
+request = Request(url='https://patch-gamever.ffxiv.com/http/win32/ffxivneob1_release_game/2012.01.01.0000.0000/%s' % sid,
                   method='POST',
-                  data=b'ffxivboot.exe/791360/0c6e4c8682a457826942c923008a3e9c3220cec9,ffxivlauncher.exe/3680064/1b5b736573f989638596b372cf0aecd770f9689e,ffxivupdater.exe/817472/09e77ca42db0db721d6c36514a6a1481c2800d60',
+                  data=b'ffxivboot.exe/809280/7752f115002cec312c7005b4a1bf717b804c5c67,ffxivlauncher.exe/3765568/c62bca2904c0906d5ff25cb76abb6287fe8a4e54,ffxivsysinfo.exe/252736/c62bca2904c0906d5ff25cb76abb6287fe8a4e54,ffxivupdater.exe/837952/ee4e232180996349873ccabf04af83fa12535c38',
                   headers={
                     'User-Agent': 'FFXIV PATCH CLIENT',
                     'Connection': 'Keep-Alive'
