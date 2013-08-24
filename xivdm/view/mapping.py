@@ -745,7 +745,7 @@ def items(data, id, v):
 
             'number_per_stack':         v[12],
 
-            'buy_price':                v[14],
+            'buy_price':                v[15],
 
             'stats':                    [stat(v[i], v[i+25]) for i in range(19, 25)],
 
@@ -796,7 +796,8 @@ def items(data, id, v):
                 list(range(4, 10))
                 + [11]
                 + [13]
-                + list(range(15, 19))
+				+ [14]
+                + list(range(16, 19))
                 + [34]
                 + [42]
                 + [52]
