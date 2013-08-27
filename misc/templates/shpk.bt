@@ -8,16 +8,14 @@ struct
     uint32 strings_offset;
     uint32 vs_count;
     uint32 ps_count;
-    
-    uint32 unknown2;
-
+    uint32 mat_params_size;
     uint32 mat_param_count;
     uint32 uniform_count;
     uint32 sampler_count;
 
-    uint32 unknown3;
     uint32 unknown_a_count;
     uint32 unknown_b_count;
+    uint32 unknown_c_count;
     uint32 record_type1_count;
     uint32 record_type2_count;
 } file_header;
@@ -66,10 +64,11 @@ struct SubRecordType1
 struct RecordType1
 {
     uint32 count;
-    uint32 unknown[4];
+    byte indices[16];
     uint32 skip[3];
-    uint32 skip1[file_header.unknown_a_count];
-    uint32 skip2[file_header.unknown_b_count];
+    uint32 skipa[file_header.unknown_a_count];
+    uint32 skipb[file_header.unknown_b_count];
+    uint32 skipc[file_header.unknown_c_count];
     SubRecordType1 sub_records[count];
 };
 
@@ -88,8 +87,10 @@ Register uniforms[file_header.uniform_count]<optimize=false>;
 Register samplers[file_header.sampler_count]<optimize=false>;
 
 uint32 skip[3];
-uint32 skip1[file_header.unknown_a_count * 2];
-uint32 skip2[file_header.unknown_b_count * 2];
+
+uint32 skipa[file_header.unknown_a_count * 2];
+uint32 skipb[file_header.unknown_b_count * 2];
+uint32 skipc[file_header.unknown_c_count * 2];
 
 RecordType1 records_1[file_header.record_type1_count]<optimize=false>;
 

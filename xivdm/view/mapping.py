@@ -1096,10 +1096,10 @@ def special_shops(data, id , v):
         'name':                 string(data, id, 0),
 
         'items':                [{
-                                    'out': ref('items', v[i]),
-                                    'in':        [ref('items', v[i+2]),
-                                                 ref('items', v[i+3])]}
-                                             for i in range(4, 1121, 7)]
+                                    'out': mat(v[i+3], v[i]),
+                                    'in': [mat(v[i+5], v[i+1]),
+                                           mat(v[i+6], v[i+2])]}
+                                           for i in range(1, 1121, 7)]
     }
 
 def statuses(data, id, v):
