@@ -97,12 +97,12 @@ def extract_file(args, conf):
     if not path.exists(path.dirname(output_file_path)):
         makedirs(path.dirname(output_file_path))
 
-    #if output_file_path.endswith('.tex'):
-    #    with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
-    #        file_handle.write(Texture(file_data).get_as_dds().getvalue())
-    #else:
-    with open(output_file_path, 'wb') as file_handle:
-        file_handle.write(file_data.getvalue())
+    if output_file_path.endswith('.tex'):
+        with open(output_file_path[:-3] + 'dds', 'wb') as file_handle:
+            file_handle.write(Texture(file_data).get_as_dds().getvalue())
+    else:
+        with open(output_file_path, 'wb') as file_handle:
+            file_handle.write(file_data.getvalue())
 
 def extract_exd(args, conf):
     dat_manager = DatManager(conf.get('game', 'path'))

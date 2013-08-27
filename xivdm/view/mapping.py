@@ -921,7 +921,7 @@ def monster_notes(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'exp':                  v[1],
-        'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(2, 5)],
+        'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(2, 6)],
 
         'npc_quantities':       [v[i] for i in range(6, 9)],
 
@@ -1117,7 +1117,7 @@ def recipes(data, id, v):
         'craft_type':   ref('craft_types', v[0]),
         'result':       mat(v[1], v[20]),
 
-        'mats':         [mat(v[i], v[i+18]) for i in range(2, 10)],
+        'mats':         [mat(v[i], v[i+19]) for i in range(2, 10)],
         'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
         'level':        v[19],
 
