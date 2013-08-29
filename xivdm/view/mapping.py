@@ -643,7 +643,8 @@ def instance_contents(exd_manager):
     for id, v in data_ln.items():
         return_dict[id] = {
             'name':                 string(data, id, 0),
-
+			'lore':                 string(data, id, 1),
+			
             'time':                 v[10],
 
             'type':                 full_ref('instance_content_type', v[14]),
