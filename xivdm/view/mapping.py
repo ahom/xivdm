@@ -650,7 +650,7 @@ def instance_contents(exd_manager):
             'minlvl':               v[15],
             'synclvl':              v[16],
 
-            'playercount':          v[20],
+            'playercount':          v[18],
 
             'unmapped_values':      unmapped(
                 list(range(1, 10))
