@@ -88,6 +88,7 @@ class Manager:
             'npc_yells': simple_mapping('NpcYell', npc_yells),
             'online_statuses': simple_mapping('OnlineStatus', online_statuses),
             'base_params': simple_mapping('BaseParam', base_params),
+            'pet_action': simple_mapping('PetAction', pet_action),
             'place_names': simple_mapping('PlaceName', place_names),
             'quests': quests,
             'recipes': simple_mapping('Recipe', recipes),

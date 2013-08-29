@@ -863,6 +863,18 @@ def param_grow(data, id, v):
             list(range(1, 12)), v)
     }
 
+def pet_action(data, id, v):
+    return {
+        'name':               string(data, id, 0),
+        'description':        string(data, id, 1, enable_conditions = True),
+        'pet':       		  v[4], 
+        'icon':       		  v[2], 
+
+        'unmapped_values':      unmapped(
+            list(range(3, 7)), v)
+    }
+
+
 
 def leve_clients(data, id, v):
     return {
