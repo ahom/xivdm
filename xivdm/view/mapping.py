@@ -72,6 +72,24 @@ def crystals(crystal, amount):
         'amount':      amount
     }
 
+def leve_stuff_range(return_dict, value):
+    view_name = None
+
+    if value == 0:
+        pass
+    elif value >= 917504:
+        view_name = 'craft_leves'
+    elif value >= 196608:
+        view_name = 'company_leves'
+    elif value >= 131072:
+        view_name = 'gathering_leves'
+    elif value >= 65536:
+        view_name = 'battle_leves'
+    elif value > 0:
+        raise Exception('Unmapped id range: %d' % value)
+    if view_name:
+        return_dict[view_name] = ref(view_name, value)
+
 def npc_stuff_range(return_dict, value):
     view_name = None
 
@@ -221,6 +239,17 @@ def attack_types(data, id, v):
         'name': string(data, id, 0)
     }
 
+def battle_leves(data, id, v):
+    return {
+        'mob': v[8],
+        'mob_count': v[9],
+
+        'unmapped_values':  unmapped(
+            list(range(0, 8))
+            + list(range(10, 183)), v)
+    }
+
+
 def balloons(data, id, v):
     return {
         'text': string(data, id, 0),
@@ -344,6 +373,12 @@ def completions(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(1, 4)), v)
+    }
+
+def company_leves(data, id, v):
+    return {
+        'unmapped_values':  unmapped(
+            list(range(0, 178)), v)
     }
 
 def craft_crystal_type(data, id, v):
@@ -824,17 +859,47 @@ def journal_cat(data, id , v):
         'name':         string(data, id, 0)
     }
 
-def leves(data, id, v):
+
+def leve_reward_item_groups(data, id, v):
     return {
+        'items':  [mat(v[i], v[i+8]) for i in range(0, 8)]
+    }
+
+def leve_reward_items(data, id, v):
+    return {
+        'leve_reward_item_groups':  [ref('leve_reward_item_groups', v[i]) for i in range(0, 7)]
+    }
+
+def leves(data, id, v):
+    return_dict = {
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
 
+        'reward_item':          full_ref('leve_reward_items', v[4]),
+
+        'start_npc':            full_ref('levels', v[7]),
+        'start_position':       full_ref('levels', v[8]),
         'client':               ref('leve_clients', v[9]),
 
+        'placename':            ref('place_names', v[13]),
+
+        'guildleve_image':      v[17],
+
+        'level':                v[20],
+
+        'timelimit':            v[22],
+
         'unmapped_values':      unmapped(
-            list(range(2, 9))
-            + list(range(10, 29)), v)
+            [2, 3] 
+            + [5, 6]
+            + list(range(10, 13))
+            + list(range(14, 17))
+            + [19]
+            + [21]
+            + list(range(23, 29)), v)
     }
+    leve_stuff_range(return_dict, v[18])
+    return return_dict
 
 def levels(data, id, v):
     return_dict = {
