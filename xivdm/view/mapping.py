@@ -1001,7 +1001,7 @@ def monster_notes(data, id, v):
         'exp':                  v[1],
         'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(2, 6)],
 
-        'npc_quantities':       [v[i] for i in range(6, 9)],
+        'npc_quantities':       [v[i] for i in range(6, 10)],
 
         'unmapped_values':      unmapped(
             [5]
