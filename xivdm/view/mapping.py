@@ -950,6 +950,7 @@ def maps(data, id, v):
     return {
         'id':                   v[0].decode('utf-8'),
         'scale':                v[1],
+        'floor':                v[12],
 
         'zone':                 full_ref('place_names', v[3]),
         'region':               full_ref('place_names', v[4]),
