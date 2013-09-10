@@ -1084,6 +1084,28 @@ def quests(exd_manager):
 
     for id, v in data_ln.items():
         return_dict[id] = {
+            'name':                 string(data, id, 0),
+
+            'vars':                 [[v[i].decode('utf-8'), v[i+1]] for i in range(1, 51, 2)],
+
+            'structs':              [v[i:i+15] for i in range(116, 1048, 15)],
+
+            'gil_reward':           v[1301],
+
+            'base_exp':             v[1318],
+
+            'prerequisit_quests':   [ref('quests', v[i]) for i in range(1352, 1355)],
+            
+            'start':                v[1360],
+            'end':                  v[1361],
+
+            'level':                (v[1363] if v[1363] != 0xFFFF else 0) + v[1370],
+
+            'main_rewards':         [mat(v[i], v[i+25]) for i in range(1302, 1305)],
+            'optional_rewards':     [mat(v[i], v[i+31]) for i in range(1308, 1313)],
+
+
+
  #          'name':                 string(data, id, 0),
  #
  #          'level':                (v[1165] if v[1165] != 0xFFFF else 0) + v[1170],
@@ -1101,11 +1123,11 @@ def quests(exd_manager):
  #                                  + [mat(v[i], v[i+23]) for i in range(1110, 1113)],
  #
  #          'optional_rewards':     [mat(v[i], v[i+32]) for i in range(1113, 1118)],
-       }
+        }
  #
- #      return_dict[id].update({
- #          'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][13] * (45 + 5 * return_dict[id]['level']))) // 100
- #      })
+        return_dict[id].update({
+            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][11] * (45 + 5 * return_dict[id]['level']))) // 100
+        })
  #
  #      #Lookup complete journal by name and extract genre id (v[4])
  #      if complete_journal_data_in[complete_journal_search_dict[v[0]]][2] <= 49: #TEMP FIX UNTIL SE FIXES THEIR SHIT
@@ -1119,26 +1141,23 @@ def quests(exd_manager):
  #              'class': v[1179]
  #          })
  #
- #      if v[1156] != b'':
- #          quest_base_exd_name = v[1156].decode('utf-8')
- #          quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
- #          quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
- #          quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
- #          return_dict[id].update({
- #              'text_ids':         [
- #                  quest_exd_data_ln[quest_exd_id][0].decode('utf-8') for quest_exd_id in sorted(quest_exd_data_ln.keys())
- #              ],
- #              'texts': {
- #                  'enable_conditions': False,
- #                  'type': 'string',
- #                  'ln': {
- #                      get_language_name(language): [
- #                          quest_exd_data[language][quest_exd_id][1] for quest_exd_id in sorted(quest_exd_data_ln.keys())
- #                      ] for language in quest_exd_data.keys()
- #                  }
- #              }
- #          })
- #
+        if v[1351] != b'':
+            quest_base_exd_name = v[1351].decode('utf-8')
+            quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
+            quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
+            quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
+            return_dict[id].update({
+                'texts': {
+                    quest_exd_data_ln[quest_exd_id][0].decode('utf-8'): {
+                        'enable_conditions': False,
+                        'type': 'string',
+                        'ln': {
+                            get_language_name(language): quest_exd_data[language][quest_exd_id][1] for language in quest_exd_data.keys()
+                        }
+                    } for quest_exd_id in sorted(quest_exd_data_ln.keys())
+                }
+            })
+  
     return return_dict
 
 def roles(data, id , v):
