@@ -950,6 +950,7 @@ def maps(data, id, v):
     return {
         'id':                   v[0].decode('utf-8'),
         'scale':                v[1],
+        'floor':                v[12],
 
         'zone':                 full_ref('place_names', v[3]),
         'region':               full_ref('place_names', v[4]),
@@ -1001,7 +1002,7 @@ def monster_notes(data, id, v):
         'exp':                  v[1],
         'npcs':                 [full_ref('monster_notes_target', v[i]) for i in range(2, 6)],
 
-        'npc_quantities':       [v[i] for i in range(6, 9)],
+        'npc_quantities':       [v[i] for i in range(6, 10)],
 
         'unmapped_values':      unmapped(
             [5]
