@@ -126,7 +126,8 @@ def npc_stuff_range(return_dict, value):
     elif value >= 131072:
         view_name = 'gathering_leves'
     elif value >= 65536:
-        view_name = 'quests'
+        #view_name = 'quests'
+        pass #ignoring quests as it's too big
     elif value > 0:
         raise Exception('Unmapped id range: %d' % value)
     if view_name:
