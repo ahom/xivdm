@@ -1203,9 +1203,10 @@ def special_shops(data, id , v):
 
 def statuses(data, id, v):
     return {
-        'name':         string(data, id, 0),
-        'description':  string(data, id, 1),
-        'icon':         v[2],
+        'name':         	string(data, id, 0),
+        'description':  	string(data, id, 1),
+        'icon':         	v[2],
+        'company_action':   v[15],
 
         'unmapped_values':      unmapped(
             list(range(3, 16)), v)
