@@ -1220,6 +1220,8 @@ def recipes(data, id, v):
         'mats':         [mat(v[i], v[i+19]) for i in range(2, 10)],
         'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
         'level':        v[19],
+        'required':     v[18],
+        'affinity':     v[31],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)
