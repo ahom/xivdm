@@ -1229,9 +1229,10 @@ def special_shops(data, id , v):
 
 def statuses(data, id, v):
     return {
-        'name':         string(data, id, 0),
-        'description':  string(data, id, 1),
-        'icon':         v[2],
+        'name':         	string(data, id, 0),
+        'description':  	string(data, id, 1),
+        'icon':         	v[2],
+        'company_action':   v[15],
 
         'unmapped_values':      unmapped(
             list(range(3, 16)), v)
@@ -1245,6 +1246,8 @@ def recipes(data, id, v):
         'mats':         [mat(v[i], v[i+19]) for i in range(2, 10)],
         'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
         'level':        v[19],
+        'required':     v[18],
+        'affinity':     v[31],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)
