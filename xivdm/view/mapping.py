@@ -171,7 +171,9 @@ def achievements(data, id, v):
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'item':         ref('items', v[2]),
+		'icon': 		v[13],
         'category':     ref('achievement_categories', v[15]),
+
 
         'title':        ref('titles', v[12]),
 
@@ -681,6 +683,11 @@ def instance_contents(exd_manager):
             'name':                 string(data, id, 0),
 			'lore':                 string(data, id, 1),
 			
+			'banner': 				v[4],
+			
+			'todo_start': 			v[8],
+			'todo_end': 			v[9],
+			
             'time':                 v[10],
 
             'type':                 full_ref('instance_content_type', v[14]),
@@ -688,6 +695,8 @@ def instance_contents(exd_manager):
             'synclvl':              v[16],
 
             'playercount':          v[18],
+			
+			
 
             'unmapped_values':      unmapped(
                 list(range(1, 10))
@@ -701,6 +710,11 @@ def instance_contents(exd_manager):
             })
     return return_dict
 
+def instance_content_textdata(data, id, v):
+    return {
+        'text':               string(data, id, 0)
+    }
+	
 def instance_content_type(data, id, v):
     return {
         'info':                 full_ref('addons', v[0]),
@@ -851,7 +865,7 @@ def items(data, id, v):
 def journal_genre(data, id , v):
     return {
         'name':         string(data, id, 0),
-        'header_image':     v[1],
+        'icon':     	v[1],
         'cat':          ref('journal_cat', v[2])
     }
 
@@ -883,12 +897,14 @@ def leves(data, id, v):
         'client':               ref('leve_clients', v[9]),
 
         'placename':            ref('place_names', v[13]),
-
-        'guildleve_image':      v[17],
+		'genre':				v[14],
+		
+		'guildleve_eorzean':    v[17],
+        'guildleve_banner':     v[19],
 
         'level':                v[20],
-
         'timelimit':            v[22],
+		'leve_fx': 				v[24],
 
         'unmapped_values':      unmapped(
             [2, 3] 
@@ -902,6 +918,12 @@ def leves(data, id, v):
     leve_stuff_range(return_dict, v[18])
     return return_dict
 
+def leves_vfx(data, id , v):
+    return {
+        'file':         string(data, id, 0),
+		'image': 		v[1]
+    }
+	
 def levels(data, id, v):
     return_dict = {
         'x':                    v[0],
@@ -1097,9 +1119,13 @@ def quests(exd_manager):
             'base_exp':             v[1318],
 
             'prerequisit_quests':   [ref('quests', v[i]) for i in range(1352, 1355)],
+			
+			'genre':				v[1384],
+			'class_job':			ref('class_jobs', v[1383]),
             
             'start':                v[1360],
             'end':                  v[1361],
+			'banner':				v[1362],
 
             'level':                (v[1363] if v[1363] != 0xFFFF else 0) + v[1370],
 
