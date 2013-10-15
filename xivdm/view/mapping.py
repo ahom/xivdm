@@ -171,7 +171,7 @@ def achievements(data, id, v):
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'item':         ref('items', v[2]),
-		'icon': 		v[13],
+        'icon':         v[13],
         'category':     ref('achievement_categories', v[15]),
 
 
@@ -181,9 +181,9 @@ def achievements(data, id, v):
         'points':       v[16],
 
         'unmapped_values':      unmapped(
-    		list(range(4, 12))
-    		+ list(range(13, 16))
-    		+ [17, 18], v)
+            list(range(4, 12))
+            + list(range(13, 16))
+            + [17, 18], v)
     }
 
 def achievement_categories(data, id, v):
@@ -263,8 +263,8 @@ def balloons(data, id, v):
 
 def base_params(data, id, v):
     return {
-        'name'			: string(data, id, 0),
-		'description' 	: string(data, id, 1),
+        'name'          : string(data, id, 0),
+        'description'   : string(data, id, 1),
         'unmapped_values':      unmapped(
             list(range(1, 32)), v)
     }
@@ -307,7 +307,7 @@ def bnpc_bases(data, id, v):
         'model':                full_ref('model_chara', v[3]),
         'unmapped_values':      unmapped(
             list(range(0, 3))
-				+ list(range(4,13)), v)
+                + list(range(4,13)), v)
     }
 def chain_bonuses(data, id, v):
     return {
@@ -682,13 +682,13 @@ def instance_contents(exd_manager):
     for id, v in data_ln.items():
         return_dict[id] = {
             'name':                 string(data, id, 0),
-			'lore':                 string(data, id, 1),
-			
-			'banner': 				v[4],
-			
-			'todo_start': 			v[8],
-			'todo_end': 			v[9],
-			
+            'lore':                 string(data, id, 1),
+            
+            'banner':               v[4],
+            
+            'todo_start':           v[8],
+            'todo_end':             v[9],
+            
             'time':                 v[10],
 
             'type':                 full_ref('instance_content_type', v[14]),
@@ -696,8 +696,8 @@ def instance_contents(exd_manager):
             'synclvl':              v[16],
 
             'playercount':          v[18],
-			
-			
+            
+            
 
             'unmapped_values':      unmapped(
                 list(range(1, 10))
@@ -715,7 +715,7 @@ def instance_content_textdata(data, id, v):
     return {
         'text':               string(data, id, 0)
     }
-	
+    
 def instance_content_type(data, id, v):
     return {
         'info':                 full_ref('addons', v[0]),
@@ -848,7 +848,7 @@ def items(data, id, v):
                 list(range(4, 10))
                 + [11]
                 + [13]
-				+ [14]
+                + [14]
                 + list(range(16, 19))
                 + [34]
                 + [42]
@@ -866,7 +866,7 @@ def items(data, id, v):
 def journal_genre(data, id , v):
     return {
         'name':         string(data, id, 0),
-        'icon':     	v[1],
+        'icon':         v[1],
         'cat':          ref('journal_cat', v[2])
     }
 
@@ -898,14 +898,14 @@ def leves(data, id, v):
         'client':               ref('leve_clients', v[9]),
 
         'placename':            ref('place_names', v[13]),
-		'genre':				v[14],
-		
-		'guildleve_eorzean':    v[17],
+        'genre':                v[14],
+        
+        'guildleve_eorzean':    v[17],
         'guildleve_banner':     v[19],
 
         'level':                v[20],
         'timelimit':            v[22],
-		'leve_fx': 				v[24],
+        'leve_fx':              v[24],
 
         'unmapped_values':      unmapped(
             [2, 3] 
@@ -922,9 +922,9 @@ def leves(data, id, v):
 def leves_vfx(data, id , v):
     return {
         'file':         string(data, id, 0),
-		'image': 		v[1]
+        'image':        v[1]
     }
-	
+    
 def levels(data, id, v):
     return_dict = {
         'x':                    v[0],
@@ -956,8 +956,8 @@ def pet_action(data, id, v):
     return {
         'name':               string(data, id, 0),
         'description':        string(data, id, 1, enable_conditions = True),
-        'pet':       		  v[4], 
-        'icon':       		  v[2], 
+        'pet':                v[4], 
+        'icon':               v[2], 
 
         'unmapped_values':      unmapped(
             list(range(3, 7)), v)
@@ -1002,7 +1002,7 @@ def model_chara(data, id, v):
     return {
         'm_value':              v[0],
         'b_value':              v[3],
-		'unmapped_values':      unmapped(
+        'unmapped_values':      unmapped(
             list(range(1, 3))
             + list(range(4, 6)), v)
     }
@@ -1117,21 +1117,21 @@ def quests(exd_manager):
 
             'gil_reward':           v[1301],
 
+            'main_rewards':         [mat(v[i], v[i+25]) for i in range(1302, 1305)],
+            'optional_rewards':     [mat(v[i], v[i+31]) for i in range(1308, 1313)],
+
             'base_exp':             v[1318],
 
             'prerequisit_quests':   [ref('quests', v[i]) for i in range(1352, 1355)],
-			
-			'genre':				v[1384],
-			'class_job':			ref('class_jobs', v[1383]),
             
             'start':                v[1360],
             'end':                  v[1361],
-			'banner':				v[1362],
+            'banner':               v[1362],
 
-            'level':                (v[1363] if v[1363] != 0xFFFF else 0) + v[1370],
+            'level':                (v[1363] if v[1363] != 0xFFFF else 0) + v[1372],
 
-            'main_rewards':         [mat(v[i], v[i+25]) for i in range(1302, 1305)],
-            'optional_rewards':     [mat(v[i], v[i+31]) for i in range(1308, 1313)],
+            'class_job':            ref('class_jobs', v[1385]),
+            'genre':                v[1386],
 
 
 
@@ -1230,9 +1230,9 @@ def special_shops(data, id , v):
 
 def statuses(data, id, v):
     return {
-        'name':         	string(data, id, 0),
-        'description':  	string(data, id, 1),
-        'icon':         	v[2],
+        'name':             string(data, id, 0),
+        'description':      string(data, id, 1),
+        'icon':             v[2],
         'company_action':   v[15],
 
         'unmapped_values':      unmapped(
