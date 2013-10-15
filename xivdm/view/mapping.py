@@ -351,6 +351,7 @@ def companions(data, id, v):
     return {
         'name':                 string(data, id, 0),
         'plural_name':          string(data, id, 1),
+		'description':			string(data, id, 2),
 
         'icon':                 v[10],
 
