@@ -60,6 +60,13 @@ def stat(stat_type, stat_value):
         'value': stat_value
     }
 
+def hq_stat(stat_type, stat_value, hq_stat_value):
+    return_value = stat(stat_type, stat_value)
+    return_value.update({
+        'hq_value': stat_value + hq_stat_value
+    })
+    return return_value
+
 def mat(item_id, quantity):
     return {
         'item': ref('items', item_id),
@@ -799,7 +806,8 @@ def items(data, id, v):
 
             'buy_price':                v[15],
 
-            'stats':                    [stat(v[i], v[i+25]) for i in range(19, 25)],
+            'stats':                    [hq_stat(v[i], v[i+25], v[i+52]) for i in range(19, 23)]
+                                        + [stat(v[i], v[i+25]) for i in range(23, 25)],
 
             'set_stats': {
                                         'special_bonus':    ref('item_special_bonuses', v[59]),
@@ -810,13 +818,13 @@ def items(data, id, v):
             'repair_material':          ref('items',                        v[32]),
             'icon':                     v[33],
 
-            'base_stats': [             stat(12, v[35]),  # physical_damage
-                                        stat(13, v[36]),  # magic_damage
+            'base_stats': [             hq_stat(12, v[35], v[69]),  # physical_damage
+                                        hq_stat(13, v[36], v[70]),  # magic_damage
                                         stat(14, v[37]),  # delay
                                         stat(17, v[38]),  # block_rate
                                         stat(18, v[39]),  # block
-                                        stat(21, v[40]),  # defense
-                                        stat(24, v[41])], # magic_defense
+                                        hq_stat(21, v[40], v[69]),  # defense
+                                        hq_stat(24, v[41], v[70])], # magic_defense
 
             'item_action':              full_ref('item_actions',                   v[43]),
 
