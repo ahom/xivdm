@@ -408,14 +408,14 @@ def craft_action(data, id, v):
         'name':             string(data, id, 0),
         'description':      string(data, id, 1),
 
-        'icon':             v[4],
-        'class_job':        ref('class_jobs', v[8]),
-        'class_job_category':   ref('class_job_categories', v[5]),
-        'level':            v[6],
-        'cp':               v[7],
+        'icon':             v[12],
+        'class_job':        ref('class_jobs', v[16]),
+        'class_job_category':   ref('class_job_categories', v[13]),
+        'level':            v[14],
+        'cp':               v[15],
 
         'unmapped_values':      unmapped(
-            [2, 3], v)
+            list(range(2, 12)), v)
     }
 
 def craft_types(data, id, v):
@@ -441,11 +441,11 @@ def default_talks(data, id, v):
 def emotes(data, id, v):
     return {
         'name':         string(data, id, 0),
-        'icon':         v[8],
+        'icon':         v[9],
 
         'unmapped_values':      unmapped(
-            list(range(1, 8))
-            + list(range(9, 19)), v)
+            list(range(1, 9))
+            + list(range(10, 19)), v)
     }
 
 def enpc_residents(data, id, v):
@@ -690,12 +690,12 @@ def instance_contents(exd_manager):
         return_dict[id] = {
             'name':                 string(data, id, 0),
             'lore':                 string(data, id, 1),
-            
+
             'banner':               v[4],
-            
+
             'todo_start':           v[8],
             'todo_end':             v[9],
-            
+
             'time':                 v[10],
 
             'type':                 full_ref('instance_content_type', v[14]),
@@ -703,8 +703,8 @@ def instance_contents(exd_manager):
             'synclvl':              v[16],
 
             'playercount':          v[18],
-            
-            
+
+
 
             'unmapped_values':      unmapped(
                 list(range(1, 10))
@@ -722,7 +722,7 @@ def instance_content_textdata(data, id, v):
     return {
         'text':               string(data, id, 0)
     }
-    
+
 def instance_content_type(data, id, v):
     return {
         'info':                 full_ref('addons', v[0]),
@@ -907,7 +907,7 @@ def leves(data, id, v):
 
         'placename':            ref('place_names', v[13]),
         'genre':                v[14],
-        
+
         'guildleve_eorzean':    v[17],
         'guildleve_banner':     v[19],
 
@@ -916,7 +916,7 @@ def leves(data, id, v):
         'leve_fx':              v[24],
 
         'unmapped_values':      unmapped(
-            [2, 3] 
+            [2, 3]
             + [5, 6]
             + list(range(10, 13))
             + list(range(14, 17))
@@ -932,7 +932,7 @@ def leves_vfx(data, id , v):
         'file':         string(data, id, 0),
         'image':        v[1]
     }
-    
+
 def levels(data, id, v):
     return_dict = {
         'x':                    v[0],
@@ -964,8 +964,8 @@ def pet_action(data, id, v):
     return {
         'name':               string(data, id, 0),
         'description':        string(data, id, 1, enable_conditions = True),
-        'pet':                v[4], 
-        'icon':               v[2], 
+        'pet':                v[4],
+        'icon':               v[2],
 
         'unmapped_values':      unmapped(
             list(range(3, 7)), v)
@@ -1131,7 +1131,7 @@ def quests(exd_manager):
             'base_exp':             v[1318],
 
             'prerequisit_quests':   [ref('quests', v[i]) for i in range(1352, 1355)],
-            
+
             'start':                v[1360],
             'end':                  v[1361],
             'banner':               v[1362],
@@ -1194,7 +1194,7 @@ def quests(exd_manager):
                     } for quest_exd_id in sorted(quest_exd_data_ln.keys())
                 }
             })
-  
+
     return return_dict
 
 def roles(data, id , v):
