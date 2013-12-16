@@ -1,3 +1,4 @@
 cache/
 config.cfg
 __pycache__
+/.project

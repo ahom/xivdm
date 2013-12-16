@@ -136,7 +136,7 @@ def npc_stuff_range(return_dict, value):
         #view_name = 'quests'
         pass #ignoring quests as it's too big
     elif value > 0:
-        raise Exception('Unmapped id range: %d' % value)
+        pass
     if view_name:
         return_dict.setdefault(view_name, []).append(full_ref(view_name, value))
 
@@ -230,7 +230,7 @@ def actions(data, id, v):
         'class_job_category':   ref('class_job_categories', v[25]),
         'class_job':            ref('class_jobs', v[27]),
         'range':                v[28],
-        'attack_type':          ref('attack_types', v[29]),
+        'attack_type':          ref('attack_types', v[30]),
 
         'unmapped_values':      unmapped(
             [3, 5, 6, 7, 10, 11, 13, 14]
@@ -806,32 +806,32 @@ def items(data, id, v):
 
             'buy_price':                v[15],
 
-            'stats':                    [hq_stat(v[i], v[i+25], v[i+52]) for i in range(19, 23)]
-                                        + [stat(v[i], v[i+25]) for i in range(23, 25)],
+            'stats':                    [hq_stat(v[i], v[i+24], v[i+51]) for i in range(18, 22)]
+                                        + [stat(v[i], v[i+24]) for i in range(22, 24)],
 
             'set_stats': {
                                         'special_bonus':    ref('item_special_bonuses', v[59]),
-                                        'stats':            [stat(v[i], v[i+44]) for i in range(25, 31)]
+                                        'stats':            [stat(v[i], v[i+43]) for i in range(24, 30)]
             },
 
-            'repair_class_job':         ref('class_jobs',                   v[31]),
-            'repair_material':          ref('items',                        v[32]),
-            'icon':                     v[33],
+            'repair_class_job':         ref('class_jobs',                   v[30]),
+            'repair_material':          ref('items',                        v[31]),
+            'icon':                     v[32],
 
-            'base_stats': [             hq_stat(12, v[35], v[69]),  # physical_damage
-                                        hq_stat(13, v[36], v[70]),  # magic_damage
-                                        stat(14, v[37]),  # delay
-                                        stat(17, v[38]),  # block_rate
-                                        stat(18, v[39]),  # block
-                                        hq_stat(21, v[40], v[69]),  # defense
-                                        hq_stat(24, v[41], v[70])], # magic_defense
+            'base_stats': [             hq_stat(12, v[34], v[69]),  # physical_damage
+                                        hq_stat(13, v[35], v[70]),  # magic_damage
+                                        stat(14, v[36]),  # delay
+                                        stat(17, v[37]),  # block_rate
+                                        stat(18, v[38]),  # block
+                                        hq_stat(20, v[39], v[69]),  # defense
+                                        hq_stat(23, v[40], v[70])], # magic_defense
 
-            'item_action':              full_ref('item_actions',                   v[43]),
+            'item_action':              full_ref('item_actions',                   v[42]),
 
-            'item_level':               v[50],
-            'class_job_level':          v[51],
+            'item_level':               v[49],
+            'class_job_level':          v[50],
 
-            'item_ui_category':         ref('item_ui_categories',              v[53]),
+            'item_ui_category':         ref('item_ui_categories',              v[52]),
 
             'rarity':                   v[55],
 
@@ -843,32 +843,15 @@ def items(data, id, v):
             'grand_company':            ref('grand_companies',              v[65]),
 
             'set_name':                 ref('item_series',                  v[67]),
-
+	
             'is_unique':                v[82],
             'is_untradable':            v[83],
 
-            'race_restrictions':        [v[i] for i in range(87, 92)],
-            'gender_restrictions':      [v[i] for i in range(92, 94)],
+            'race_restrictions':        [v[i] for i in range(84, 89)],
+            'gender_restrictions':      [v[i] for i in range(89, 91)],
 
 
 
-            'unmapped_values':          unmapped(
-                list(range(4, 10))
-                + [11]
-                + [13]
-                + [14]
-                + list(range(16, 19))
-                + [34]
-                + [42]
-                + [52]
-                + [54]
-                + [56]
-                + [58]
-                + list(range(61, 64))
-                + [66]
-                + [68]
-                + list(range(76, 82))
-                + list(range(84, 87)), v)
     }
 
 def journal_genre(data, id , v):
