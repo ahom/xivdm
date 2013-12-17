@@ -1109,7 +1109,7 @@ def quests(exd_manager):
             'gil_reward':           v[1301],
 
             'main_rewards':         [mat(v[i], v[i+25]) for i in range(1302, 1305)],
-            'optional_rewards':     [mat(v[i], v[i+31]) for i in range(1308, 1313)],
+            'optional_rewards':     [mat(v[i], v[i+32]) for i in range(1308, 1313)],
 
             'base_exp':             v[1319],
 
@@ -1121,8 +1121,8 @@ def quests(exd_manager):
 
             'level':                (v[1368] if v[1368] != 0xFFFF else 0) + v[1376],
 
-            'class_job':            ref('class_jobs', v[1389]),
-            'genre':                v[1395],
+            'class_job':            ref('class_jobs', v[1395]),
+            'genre':                v[1396],
 
 
 
