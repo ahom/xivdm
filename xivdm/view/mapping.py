@@ -1111,18 +1111,18 @@ def quests(exd_manager):
             'main_rewards':         [mat(v[i], v[i+25]) for i in range(1302, 1305)],
             'optional_rewards':     [mat(v[i], v[i+31]) for i in range(1308, 1313)],
 
-            'base_exp':             v[1318],
+            'base_exp':             v[1319],
 
-            'prerequisit_quests':   [ref('quests', v[i]) for i in range(1352, 1355)],
+            'prerequisit_quests':   [ref('quests', v[i]) for i in range(1356, 1359)],
 
-            'start':                v[1360],
-            'end':                  v[1361],
-            'banner':               v[1362],
+            'start':                v[1364],
+            'end':                  v[1365],
+            'banner':               v[1366],
 
-            'level':                (v[1363] if v[1363] != 0xFFFF else 0) + v[1372],
+            'level':                (v[1368] if v[1368] != 0xFFFF else 0) + v[1376],
 
-            'class_job':            ref('class_jobs', v[1385]),
-            'genre':                v[1386],
+            'class_job':            ref('class_jobs', v[1389]),
+            'genre':                v[1395],
 
 
 
@@ -1161,8 +1161,8 @@ def quests(exd_manager):
  #              'class': v[1179]
  #          })
  #
-        if v[1351] != b'':
-            quest_base_exd_name = v[1351].decode('utf-8')
+        if v[1355] != b'':
+            quest_base_exd_name = v[1355].decode('utf-8')
             quest_exd_name = 'quest/%s/%s' % (quest_base_exd_name[10:13], quest_base_exd_name)
             quest_exd_data = exd_manager.get_category(quest_exd_name).get_data()
             quest_exd_data_ln = quest_exd_data[list(quest_exd_data.keys())[0]]
