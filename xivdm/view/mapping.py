@@ -105,7 +105,7 @@ def npc_stuff_range(return_dict, value):
     elif value == 1835009:
         pass
     elif value > 1769484:
-        raise Exception('Unmapped id range: %d' % value)
+        logging.info('Unmapped id range: %d' % value)
     elif value >= 1769472:
         view_name = 'special_shops'
     elif value >= 1703936:
