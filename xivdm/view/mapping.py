@@ -223,14 +223,14 @@ def actions(data, id, v):
         'category':             ref('action_categories', v[12]),
 
         'level':                v[15],
-        'radius':               v[16],
+        'radius':               v[17],
 
-        'resource_type':        v[18],
+        'resource_type':        v[19],
 
-        'class_job_category':   ref('class_job_categories', v[25]),
-        'class_job':            ref('class_jobs', v[27]),
-        'range':                v[28],
-        'attack_type':          ref('attack_types', v[30]),
+        'class_job_category':   ref('class_job_categories', v[26]),
+        'class_job':            ref('class_jobs', v[28]),
+        'range':                v[29],
+        'attack_type':          ref('attack_types', v[31]),
 
         'unmapped_values':      unmapped(
             [3, 5, 6, 7, 10, 11, 13, 14]
@@ -364,7 +364,7 @@ def companions(data, id, v):
 
         'unmapped_values':      unmapped(
             list(range(2, 10))
-            + list(range(11, 15)), v)
+            + list(range(11, 21)), v)
     }
 
 def complete_journals(data, id, v):
@@ -691,18 +691,18 @@ def instance_contents(exd_manager):
             'name':                 string(data, id, 0),
             'lore':                 string(data, id, 1),
 
-            'banner':               v[4],
+            'banner':               v[20],
 
-            'todo_start':           v[8],
-            'todo_end':             v[9],
+            'todo_start':           v[24],
+            'todo_end':             v[25],
 
-            'time':                 v[10],
+            'time':                 v[26],
 
-            'type':                 full_ref('instance_content_type', v[14]),
-            'minlvl':               v[15],
-            'synclvl':              v[16],
+            'type':                 full_ref('instance_content_type', v[30]),
+            'minlvl':               v[33],
+            'synclvl':              v[34],
 
-            'playercount':          v[18],
+            'playercount':          v[35],
 
 
 
@@ -712,9 +712,9 @@ def instance_contents(exd_manager):
                 + list(range(17, 20))
                 + list(range(21, 27)), v)
         }
-        if v[14] > 10000:
+        if v[30] > 10000:
             return_dict[id].update({
-                'issuenpc': ref('enpc_residents', v[13])
+                'issuenpc': ref('enpc_residents', v[29])
             })
     return return_dict
 
@@ -806,12 +806,12 @@ def items(data, id, v):
 
             'buy_price':                v[15],
 
-            'stats':                    [hq_stat(v[i], v[i+24], v[i+51]) for i in range(18, 22)]
-                                        + [stat(v[i], v[i+24]) for i in range(22, 24)],
+            'stats':                    [hq_stat(v[i], v[i+25], v[i+52]) for i in range(18, 22)]
+                                        + [stat(v[i], v[i+25]) for i in range(22, 24)],
 
             'set_stats': {
                                         'special_bonus':    ref('item_special_bonuses', v[59]),
-                                        'stats':            [stat(v[i], v[i+43]) for i in range(24, 30)]
+                                        'stats':            [stat(v[i], v[i+45]) for i in range(24, 30)]
             },
 
             'repair_class_job':         ref('class_jobs',                   v[30]),
@@ -823,15 +823,15 @@ def items(data, id, v):
                                         stat(14, v[36]),  # delay
                                         stat(17, v[37]),  # block_rate
                                         stat(18, v[38]),  # block
-                                        hq_stat(20, v[39], v[69]),  # defense
-                                        hq_stat(23, v[40], v[70])], # magic_defense
+                                        hq_stat(21, v[39], v[69]),  # defense
+                                        hq_stat(24, v[40], v[70])], # magic_defense
 
             'item_action':              full_ref('item_actions',                   v[42]),
 
             'item_level':               v[49],
             'class_job_level':          v[50],
 
-            'item_ui_category':         ref('item_ui_categories',              v[52]),
+            'item_ui_category':         ref('item_ui_categories',              v[53]),
 
             'rarity':                   v[55],
 
@@ -843,9 +843,9 @@ def items(data, id, v):
             'grand_company':            ref('grand_companies',              v[65]),
 
             'set_name':                 ref('item_series',                  v[67]),
-	
-            'is_unique':                v[82],
-            'is_untradable':            v[83],
+
+            'is_unique':                v[81],
+            'is_untradable':            v[82],
 
             'race_restrictions':        [v[i] for i in range(84, 89)],
             'gender_restrictions':      [v[i] for i in range(89, 91)],
@@ -882,7 +882,7 @@ def leves(data, id, v):
         'name':                 string(data, id, 0),
         'description':          string(data, id, 1),
 
-        'reward_item':          full_ref('leve_reward_items', v[4]),
+        'reward_item':          full_ref('leve_reward_items', v[5]),
 
         'start_npc':            full_ref('levels', v[7]),
         'start_position':       full_ref('levels', v[8]),
@@ -986,7 +986,7 @@ def markers(data, id, v):
 def mounts(data, id, v):
     return {
         'name':                 string(data, id, 0),
-        'icon':                 v[39]
+        'icon':                 v[46]
     }
 
 def model_chara(data, id, v):
@@ -1146,7 +1146,7 @@ def quests(exd_manager):
         }
  #
         return_dict[id].update({
-            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][11] * (45 + 5 * return_dict[id]['level']))) // 100
+            'exp_reward': (return_dict[id]['base_exp'] * (param_grow_data_ln[return_dict[id]['level']][13] * (45 + 5 * return_dict[id]['level']))) // 100
         })
  #
  #      #Lookup complete journal by name and extract genre id (v[4])
@@ -1224,7 +1224,7 @@ def statuses(data, id, v):
         'name':             string(data, id, 0),
         'description':      string(data, id, 1),
         'icon':             v[2],
-        'company_action':   v[15],
+        #'company_action':   v[15],
 
         'unmapped_values':      unmapped(
             list(range(3, 16)), v)
@@ -1247,7 +1247,7 @@ def recipes(data, id, v):
 
 def stories(data, id, v):
     return {
-        'story_name':   v[1310].decode('utf-8')
+        #'story_name':   v[1310].decode('utf-8')
     }
 
 def text_commands(data, id , v):
@@ -1281,11 +1281,11 @@ def traits(data, id, v):
         'name':         string(data, id, 0),
         'description':  string(data, id, 1),
         'icon':         v[2],
-        'class_job':    ref('class_jobs', v[4]),
-        'level':        v[5],
+        'class_job':    ref('class_jobs', v[5]),
+        'level':        v[6],
 
         'unmapped_values':      unmapped(
-            [3] + [6], v)
+            [3, 4] + [7, 8], v)
     }
 
 def weathers(data, id , v):
