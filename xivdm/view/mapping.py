@@ -806,7 +806,7 @@ def items(data, id, v):
 
             'buy_price':                v[15],
 
-            'stats':                    [hq_stat(v[i], v[i+25], v[i+52]) for i in range(18, 22)]
+            'stats':                    [hq_stat(v[i], v[i+25], v[i+53]) for i in range(18, 22)]
                                         + [stat(v[i], v[i+25]) for i in range(22, 24)],
 
             'set_stats': {
