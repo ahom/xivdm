@@ -1224,7 +1224,7 @@ def statuses(data, id, v):
         'name':             string(data, id, 0),
         'description':      string(data, id, 1),
         'icon':             v[2],
-        #'company_action':   v[15],
+        'company_action':   v[15],
 
         'unmapped_values':      unmapped(
             list(range(3, 16)), v)
