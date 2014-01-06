@@ -229,6 +229,7 @@ def actions(data, id, v):
 
         'class_job_category':   ref('class_job_categories', v[26]),
         'class_job':            ref('class_jobs', v[28]),
+        'pvp':               	v[47],
         'range':                v[29],
         'attack_type':          ref('attack_types', v[31]),
 
