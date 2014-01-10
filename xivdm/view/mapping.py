@@ -1284,6 +1284,7 @@ def traits(data, id, v):
         'icon':         v[2],
         'class_job':    ref('class_jobs', v[5]),
         'level':        v[6],
+        'pvp':          v[9],
 
         'unmapped_values':      unmapped(
             [3, 4] + [7, 8], v)
