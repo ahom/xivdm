@@ -110,7 +110,7 @@ def npc_stuff_range(return_dict, value):
         view_name = 'special_shops'
     elif value >= 1703936:
         view_name = 'stories'
-    elif value == 1638401:
+    elif value >= 1572870:
         logging.info('Unmapped id range: %d' % value)
     elif value >= 1572864:
         view_name = 'guild_order_officers'
@@ -277,17 +277,17 @@ def base_params(data, id, v):
             list(range(1, 32)), v)
     }
 
-def behest_rewards(data, id, v):
-    return {
-        'items': [ref('items', v[i]) for i in range(1, 4)],
-
-        'level': v[5],
-
-        'unmapped_values':      unmapped(
-            [0]
-            + [4]
-            + [6], v)
-    }
+#def behest_rewards(data, id, v):
+#    return {
+#        'items': [ref('items', v[i]) for i in range(1, 4)],
+#
+#        'level': v[5],
+#
+#        'unmapped_values':      unmapped(
+#            [0]
+#            + [4]
+#            + [6], v)
+#    }
 
 def bnpc_names(exd_manager):
     data = exd_manager.get_category('BNpcName').get_data()
@@ -342,17 +342,17 @@ def class_jobs(data, id, v):
         'name':                 string(data, id, 0),
         'acronym':              string(data, id, 1),
 
-        'caps_name':            string(data, id, 3),
-        'class_job_category':   ref('class_job_categories', v[4]),
+        'caps_name':            string(data, id, 4),
+        'class_job_category':   ref('class_job_categories', v[5]),
 
-        'base_class':           ref('class_jobs', v[24]),
-        'is_job':               v[31],
+        'base_class':           ref('class_jobs', v[25]),
+        'is_job':               v[32],
 
 
         'unmapped_values':  unmapped(
-            [2]
+            [2, 3]
             + list(range(6, 25))
-            + list(range(26, 31)), v)
+            + list(range(26, 32)), v)
     }
 
 def companions(data, id, v):
@@ -442,11 +442,11 @@ def default_talks(data, id, v):
 def emotes(data, id, v):
     return {
         'name':         string(data, id, 0),
-        'icon':         v[9],
+        'icon':         v[10],
 
         'unmapped_values':      unmapped(
-            list(range(1, 9))
-            + list(range(10, 19)), v)
+            list(range(1, 10))
+            + list(range(11, 19)), v)
     }
 
 def enpc_residents(data, id, v):
@@ -692,30 +692,29 @@ def instance_contents(exd_manager):
             'name':                 string(data, id, 0),
             'lore':                 string(data, id, 1),
 
-            'banner':               v[20],
+            'banner':               v[21],
 
-            'todo_start':           v[24],
-            'todo_end':             v[25],
+            'todo_start':           v[25],
+            'todo_end':             v[26],
 
-            'time':                 v[26],
+            'time':                 v[27],
 
-            'type':                 full_ref('instance_content_type', v[30]),
-            'minlvl':               v[33],
-            'synclvl':              v[34],
+            'type':                 full_ref('instance_content_type', v[31]),
+            'minlvl':               v[34],
+            'synclvl':              v[35],
 
-            'playercount':          v[35],
+            'playercount':          v[36],
 
 
 
             'unmapped_values':      unmapped(
-                list(range(1, 10))
-                + list(range(11, 13))
-                + list(range(17, 20))
-                + list(range(21, 27)), v)
+                list(range(2, 20))
+                + list(range(21, 24))
+                + [26, 28, 29, 30, 32, 33], v)
         }
-        if v[30] > 10000:
+        if v[31] > 10000:
             return_dict[id].update({
-                'issuenpc': ref('enpc_residents', v[29])
+                'issuenpc': ref('enpc_residents', v[30])
             })
     return return_dict
 
@@ -726,8 +725,8 @@ def instance_content_textdata(data, id, v):
 
 def instance_content_type(data, id, v):
     return {
-        'info':                 full_ref('addons', v[0]),
-        'icon':                 v[1],
+        #'info':                 full_ref('addons', v[0]),
+        'icon':                 v[0],
 
         'unmapped_values':      unmapped(
             list(range(2, 5)), v)
@@ -807,52 +806,49 @@ def items(data, id, v):
 
             'buy_price':                v[15],
 
-            'stats':                    [hq_stat(v[i], v[i+25], v[i+53]) for i in range(18, 22)]
-                                        + [stat(v[i], v[i+25]) for i in range(22, 24)],
+            'stats':                    [hq_stat(v[i], v[i+26], v[i+54]) for i in range(18, 22)]
+                                        + [stat(v[i], v[i+26]) for i in range(22, 24)],
 
             'set_stats': {
-                                        'special_bonus':    ref('item_special_bonuses', v[59]),
-                                        'stats':            [stat(v[i], v[i+45]) for i in range(24, 30)]
+                                        'special_bonus':    ref('item_special_bonuses', v[60]),
+                                        'stats':            [stat(v[i], v[i+46]) for i in range(24, 30)]
             },
 
             'repair_class_job':         ref('class_jobs',                   v[30]),
             'repair_material':          ref('items',                        v[31]),
-            'icon':                     v[32],
+            'icon':                     v[33],
 
-            'base_stats': [             hq_stat(12, v[34], v[69]),  # physical_damage
-                                        hq_stat(13, v[35], v[70]),  # magic_damage
-                                        stat(14, v[36]),  # delay
-                                        stat(17, v[37]),  # block_rate
-                                        stat(18, v[38]),  # block
-                                        hq_stat(21, v[39], v[69]),  # defense
-                                        hq_stat(24, v[40], v[70])], # magic_defense
+            'base_stats': [             hq_stat(12, v[35], v[70]),  # physical_damage
+                                        hq_stat(13, v[36], v[71]),  # magic_damage
+                                        stat(14, v[37]),  # delay
+                                        stat(17, v[38]),  # block_rate
+                                        stat(18, v[39]),  # block
+                                        hq_stat(21, v[40], v[70]),  # defense
+                                        hq_stat(24, v[41], v[71])], # magic_defense
 
-            'item_action':              full_ref('item_actions',                   v[42]),
+            'item_action':              full_ref('item_actions',                   v[43]),
 
-            'item_level':               v[49],
-            'class_job_level':          v[50],
+            'item_level':               v[50],
+            'class_job_level':          v[51],
 
-            'item_ui_category':         ref('item_ui_categories',              v[53]),
+            'item_ui_category':         ref('item_ui_categories',              v[54]),
 
-            'rarity':                   v[55],
+            'rarity':                   v[56],
 
-            'materia_slots':            v[57],
+            'materia_slots':            v[58],
 
-            'item_search_class_filter': ref('item_search_class_filters',    v[60]),
+            'item_search_class_filter': ref('item_search_class_filters',    v[61]),
 
-            'class_job_category':       ref('class_job_categories',         v[64]),
-            'grand_company':            ref('grand_companies',              v[65]),
+            'class_job_category':       ref('class_job_categories',         v[65]),
+            'grand_company':            ref('grand_companies',              v[66]),
 
-            'set_name':                 ref('item_series',                  v[67]),
+            'set_name':                 ref('item_series',                  v[68]),
 
-            'is_unique':                v[81],
-            'is_untradable':            v[82],
+            'is_unique':                v[82],
+            'is_untradable':            v[83],
 
-            'race_restrictions':        [v[i] for i in range(84, 89)],
-            'gender_restrictions':      [v[i] for i in range(89, 91)],
-
-
-
+            'race_restrictions':        [v[i] for i in range(85, 90)],
+            'gender_restrictions':      [v[i] for i in range(90, 92)]
     }
 
 def journal_genre(data, id , v):
@@ -1214,10 +1210,10 @@ def special_shops(data, id , v):
         'name':                 string(data, id, 0),
 
         'items':                [{
-                                    'out': mat(v[i+3], v[i]),
-                                    'in': [mat(v[i+5], v[i+1]),
-                                           mat(v[i+6], v[i+2])]}
-                                           for i in range(1, 1121, 7)]
+                                    'out': mat(v[i+4], v[i+1]),
+                                    'in': [mat(v[i+6], v[i+2]),
+                                           mat(v[i+7], v[i+3])]}
+                                           for i in range(1, 1599, 10)]
     }
 
 def statuses(data, id, v):
@@ -1225,7 +1221,7 @@ def statuses(data, id, v):
         'name':             string(data, id, 0),
         'description':      string(data, id, 1),
         'icon':             v[2],
-        'company_action':   v[15],
+        'company_action':   v[16],
 
         'unmapped_values':      unmapped(
             list(range(3, 16)), v)
@@ -1234,13 +1230,13 @@ def statuses(data, id, v):
 def recipes(data, id, v):
     return {
         'craft_type':   ref('craft_types', v[0]),
-        'result':       mat(v[1], v[20]),
+        'result':       mat(v[1], v[21]),
 
-        'mats':         [mat(v[i], v[i+19]) for i in range(2, 10)],
-        'crystals':     [crystals(v[i], v[i+19]) for i in range(10, 12)],
-        'level':        v[19],
+        'mats':         [mat(v[i], v[i+20]) for i in range(2, 10)],
+        'crystals':     [crystals(v[i], v[i+20]) for i in range(10, 12)],
+        'level':        v[20],
         'required':     v[18],
-        'affinity':     v[31],
+        'affinity':     v[32],
 
         'unmapped_values':      unmapped(
             list(range(20, 31)), v)

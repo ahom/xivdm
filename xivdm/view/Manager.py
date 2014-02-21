@@ -17,7 +17,7 @@ class Manager:
             'attack_types': simple_mapping('AttackType', attack_types),
             'balloons': simple_mapping('Balloon', balloons),
             'battle_leves': simple_mapping('BattleLeve', battle_leves),
-            'behest_rewards': simple_mapping('BehestReward', behest_rewards),
+            #'behest_rewards': simple_mapping('BehestReward', behest_rewards),
             'bnpc_names': bnpc_names,
             'bnpc_bases': simple_mapping('BNpcBase', bnpc_bases),
             'chain_bonuses': simple_mapping('ChainBonus', chain_bonuses),
