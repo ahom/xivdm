@@ -1210,9 +1210,9 @@ def special_shops(data, id , v):
         'name':                 string(data, id, 0),
 
         'items':                [{
-                                    'out': mat(v[i+4], v[i+1]),
-                                    'in': [mat(v[i+6], v[i+2]),
-                                           mat(v[i+7], v[i+3])]}
+                                    'out': mat(v[i+3], v[i]),
+                                    'in': [mat(v[i+5], v[i+1]),
+                                           mat(v[i+6], v[i+2])]}
                                            for i in range(1, 1599, 10)]
     }
 
