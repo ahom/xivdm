@@ -697,13 +697,13 @@ def instance_contents(exd_manager):
             'todo_start':           v[25],
             'todo_end':             v[26],
 
-            'time':                 v[27],
+            'time':                 v[28],
 
-            'type':                 full_ref('instance_content_type', v[31]),
-            'minlvl':               v[34],
-            'synclvl':              v[35],
+            'type':                 full_ref('instance_content_type', v[32]),
+            'minlvl':               v[35],
+            'synclvl':              v[36],
 
-            'playercount':          v[36],
+            'playercount':          v[37],
 
 
 
@@ -712,9 +712,9 @@ def instance_contents(exd_manager):
                 + list(range(21, 24))
                 + [26, 28, 29, 30, 32, 33], v)
         }
-        if v[31] > 10000:
+        if v[32] > 10000:
             return_dict[id].update({
-                'issuenpc': ref('enpc_residents', v[30])
+                'issuenpc': ref('enpc_residents', v[31])
             })
     return return_dict
 
@@ -1023,8 +1023,8 @@ def monster_notes(data, id, v):
 
 def monster_notes_target(data,id,v):
     return {
-        'mob':                 ref('bnpc_names', v[0]),
-        'icon':                 v[1],
+        'mob':                 ref('bnpc_names', v[1]),
+        'icon':                 v[0],
 
         'unmapped_values':      unmapped(
             list(range(2, 9)), v)
@@ -1190,7 +1190,7 @@ def shops(data, id , v):
     return {
         'name':                 string(data, id, 0),
         'icon':                 v[1],
-        'items':                [full_ref('shop_items', v[i]) for i in range(2, 42)],
+        'items':                [full_ref('shop_items', v[i]) for i in range(2, 45)],
 
         'unmapped_values':      unmapped(
             [42], v)
@@ -1213,7 +1213,7 @@ def special_shops(data, id , v):
                                     'out': mat(v[i+3], v[i]),
                                     'in': [mat(v[i+5], v[i+1]),
                                            mat(v[i+6], v[i+2])]}
-                                           for i in range(1, 1599, 10)]
+                                           for i in range(1, 1920, 12)]
     }
 
 def statuses(data, id, v):
