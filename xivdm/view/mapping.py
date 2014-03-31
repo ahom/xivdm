@@ -1190,7 +1190,7 @@ def shops(data, id , v):
     return {
         'name':                 string(data, id, 0),
         'icon':                 v[1],
-        'items':                [full_ref('shop_items', v[i]) for i in range(2, 45)],
+        'items':               [full_ref('shop_items', v[i]) for i in range(5, 45)],
 
         'unmapped_values':      unmapped(
             [42], v)
